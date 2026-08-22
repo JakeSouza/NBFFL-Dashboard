@@ -45,11 +45,16 @@ import os
 # for local runs. If running locally, you can either fill in the literals
 # below OR set the same-named environment variables instead — never commit
 # real ESPN_S2/SWID values to a public repo.
-LEAGUE_ID = int(os.environ.get("LEAGUE_ID", 1234567))
-YEAR = int(os.environ.get("YEAR", 2025))
-ESPN_S2 = os.environ.get("ESPN_S2", "PASTE_ESPN_S2_HERE")
-SWID = os.environ.get("SWID", "PASTE_SWID_HERE")  # looks like {XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX}
-OUTPUT_FILE = "fantasy_dashboard.html"
+def _env_or_default(name, default):
+    """Falls back to default if the env var is missing OR set but blank."""
+    value = os.environ.get(name)
+    return value if value else default
+
+LEAGUE_ID = int(_env_or_default("LEAGUE_ID", 1234567))
+YEAR = int(_env_or_default("YEAR", 2026))
+ESPN_S2 = _env_or_default("ESPN_S2", "PASTE_ESPN_S2_HERE")
+SWID = _env_or_default("SWID", "PASTE_SWID_HERE")  # looks like {XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX}
+OUTPUT_FILE = "index.html"
 RECENT_ACTIVITY_COUNT = 25
 # ==================================================
 
