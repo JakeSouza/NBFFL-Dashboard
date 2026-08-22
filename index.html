@@ -96,6 +96,9 @@
     border-radius: 8px;
     padding: 10px;
     transition: transform 0.1s ease;
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
   }
   .draft-cell:hover { transform: translateY(-2px); }
   .draft-board-wrap { overflow-x: auto; margin-top: 8px; }
@@ -103,11 +106,20 @@
   .draft-board th { color: var(--muted); font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.3px; padding: 4px 6px; text-align: center; vertical-align: bottom; min-width: 124px; max-width: 140px; }
   .draft-board td { vertical-align: top; padding: 0; min-width: 124px; max-width: 140px; }
   .draft-board .round-label { color: var(--accent); font-weight: 700; font-size: 13px; text-align: center; min-width: 28px; width: 28px; }
-  .draft-board .draft-cell { width: 100%; min-width: 0; box-sizing: border-box; }
-  .pick-num { color: var(--accent); font-size: 12px; font-weight: 700; }
-  .player { font-weight: 600; margin: 4px 0 2px 0; font-size: 14px; }
-  .drafted-by { color: var(--muted); font-size: 12px; }
-  .rank-move { font-size: 11px; margin-top: 6px; color: var(--text); opacity: 0.9; }
+  .draft-board .draft-cell { width: 100%; min-width: 0; height: 112px; margin-bottom: 6px; }
+  .draft-board .draft-cell:last-child { margin-bottom: 0; }
+  .pick-num { color: var(--accent); font-size: 12px; font-weight: 700; flex-shrink: 0; }
+  .player {
+    font-weight: 600; margin: 4px 0 2px 0; font-size: 14px;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    flex-shrink: 0;
+  }
+  .drafted-by {
+    color: var(--muted); font-size: 12px;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    flex-shrink: 0;
+  }
+  .rank-move { font-size: 11px; margin-top: 6px; color: var(--text); opacity: 0.9; flex-shrink: 0; }
   .bid { color: var(--accent2); font-size: 12px; margin-top: 4px; }
   .legend {
     display: flex;
@@ -300,7 +312,7 @@
 <body>
 <header>
   <h1>NBFFL</h1>
-  <div class="subtitle">2025 season · updated Aug 22, 2026 09:41 PM</div>
+  <div class="subtitle">2025 season · updated Aug 22, 2026 11:08 PM</div>
 </header>
 
 <nav>
@@ -1708,1053 +1720,1053 @@
       <tbody><tr><td class='round-label'>1</td><td>
             <div class="draft-cell" style="background:#2a3348; border-color:#8a92a8;">
               <div class="pick-num">1.1</div>
-              <div class="player">Ja&#x27;Marr Chase</div>
-              <div class="drafted-by">CHASEing Greatness</div>
+              <div class="player" title="Ja&#x27;Marr Chase">Ja&#x27;Marr Chase</div>
+              <div class="drafted-by" title="CHASEing Greatness">CHASEing Greatness</div>
               <div class='rank-move'>WR1 &rarr; WR3 &#9660;</div>
-              
+              <div class='bid'>&nbsp;</div>
             </div></td><td>
             <div class="draft-cell" style="background:rgba(178,34,34,0.90); border-color:rgba(178,34,34,1.00);">
               <div class="pick-num">1.2</div>
-              <div class="player">CeeDee Lamb</div>
-              <div class="drafted-by">Whats Good My Njigba</div>
+              <div class="player" title="CeeDee Lamb">CeeDee Lamb</div>
+              <div class="drafted-by" title="Whats Good My Njigba">Whats Good My Njigba</div>
               <div class='rank-move'>WR2 &rarr; WR17 &#9660;</div>
-              
+              <div class='bid'>&nbsp;</div>
             </div></td><td>
             <div class="draft-cell" style="background:#2a3348; border-color:#8a92a8;">
               <div class="pick-num">1.3</div>
-              <div class="player">Bijan Robinson</div>
-              <div class="drafted-by">#NoKings </div>
+              <div class="player" title="Bijan Robinson">Bijan Robinson</div>
+              <div class="drafted-by" title="#NoKings ">#NoKings </div>
               <div class='rank-move'>RB1 &rarr; RB2 &#9660;</div>
-              
+              <div class='bid'>&nbsp;</div>
             </div></td><td>
             <div class="draft-cell" style="background:rgba(178,34,34,0.63); border-color:rgba(178,34,34,0.88);">
               <div class="pick-num">1.4</div>
-              <div class="player">Saquon Barkley</div>
-              <div class="drafted-by">BuckO</div>
+              <div class="player" title="Saquon Barkley">Saquon Barkley</div>
+              <div class="drafted-by" title="BuckO">BuckO</div>
               <div class='rank-move'>RB2 &rarr; RB12 &#9660;</div>
-              
+              <div class='bid'>&nbsp;</div>
             </div></td><td>
             <div class="draft-cell" style="background:#2a3348; border-color:#8a92a8;">
               <div class="pick-num">1.5</div>
-              <div class="player">Jahmyr Gibbs</div>
-              <div class="drafted-by">Uncle Rico</div>
+              <div class="player" title="Jahmyr Gibbs">Jahmyr Gibbs</div>
+              <div class="drafted-by" title="Uncle Rico">Uncle Rico</div>
               <div class='rank-move'>RB3 &rarr; RB4 &#9660;</div>
-              
+              <div class='bid'>&nbsp;</div>
             </div></td><td>
             <div class="draft-cell" style="background:rgba(178,34,34,0.90); border-color:rgba(178,34,34,1.00);">
               <div class="pick-num">1.6</div>
-              <div class="player">Justin Jefferson</div>
-              <div class="drafted-by">Evan Squared</div>
+              <div class="player" title="Justin Jefferson">Justin Jefferson</div>
+              <div class="drafted-by" title="Evan Squared">Evan Squared</div>
               <div class='rank-move'>WR3 &rarr; WR22 &#9660;</div>
-              
+              <div class='bid'>&nbsp;</div>
             </div></td><td>
             <div class="draft-cell" style="background:#2a3348; border-color:#8a92a8;">
               <div class="pick-num">1.7</div>
-              <div class="player">Christian McCaffrey</div>
-              <div class="drafted-by">Bad Blood</div>
+              <div class="player" title="Christian McCaffrey">Christian McCaffrey</div>
+              <div class="drafted-by" title="Bad Blood">Bad Blood</div>
               <div class='rank-move'>RB4 &rarr; RB1 &#9650;</div>
-              
+              <div class='bid'>&nbsp;</div>
             </div></td><td>
             <div class="draft-cell" style="background:rgba(178,34,34,0.90); border-color:rgba(178,34,34,1.00);">
               <div class="pick-num">1.8</div>
-              <div class="player">Malik Nabers</div>
-              <div class="drafted-by">For Nabers</div>
+              <div class="player" title="Malik Nabers">Malik Nabers</div>
+              <div class="drafted-by" title="For Nabers">For Nabers</div>
               <div class='rank-move'>WR4 &rarr; WR97 &#9660;</div>
-              
+              <div class='bid'>&nbsp;</div>
             </div></td><td>
             <div class="draft-cell" style="background:#2a3348; border-color:#8a92a8;">
               <div class="pick-num">1.9</div>
-              <div class="player">Amon-Ra St. Brown</div>
-              <div class="drafted-by">HERB YOUR ENTHUSIASM</div>
+              <div class="player" title="Amon-Ra St. Brown">Amon-Ra St. Brown</div>
+              <div class="drafted-by" title="HERB YOUR ENTHUSIASM">HERB YOUR ENTHUSIASM</div>
               <div class='rank-move'>WR5 &rarr; WR4 &#9650;</div>
-              
+              <div class='bid'>&nbsp;</div>
             </div></td><td>
             <div class="draft-cell" style="background:#2a3348; border-color:#8a92a8;">
               <div class="pick-num">1.10</div>
-              <div class="player">Derrick Henry</div>
-              <div class="drafted-by">Cant Find Nico </div>
+              <div class="player" title="Derrick Henry">Derrick Henry</div>
+              <div class="drafted-by" title="Cant Find Nico ">Cant Find Nico </div>
               <div class='rank-move'>RB5 &rarr; RB7 &#9660;</div>
-              
+              <div class='bid'>&nbsp;</div>
             </div></td></tr><tr><td class='round-label'>2</td><td>
             <div class="draft-cell" style="background:#2a3348; border-color:#8a92a8;">
               <div class="pick-num">2.10</div>
-              <div class="player">Chase Brown</div>
-              <div class="drafted-by">CHASEing Greatness</div>
+              <div class="player" title="Chase Brown">Chase Brown</div>
+              <div class="drafted-by" title="CHASEing Greatness">CHASEing Greatness</div>
               <div class='rank-move'>RB11 &rarr; RB8 &#9650;</div>
-              
+              <div class='bid'>&nbsp;</div>
             </div></td><td>
             <div class="draft-cell" style="background:rgba(178,34,34,0.63); border-color:rgba(178,34,34,0.88);">
               <div class="pick-num">2.9</div>
-              <div class="player">Drake London</div>
-              <div class="drafted-by">Whats Good My Njigba</div>
+              <div class="player" title="Drake London">Drake London</div>
+              <div class="drafted-by" title="Whats Good My Njigba">Whats Good My Njigba</div>
               <div class='rank-move'>WR9 &rarr; WR19 &#9660;</div>
-              
+              <div class='bid'>&nbsp;</div>
             </div></td><td>
             <div class="draft-cell" style="background:rgba(34,139,34,0.47); border-color:rgba(34,139,34,0.72);">
               <div class="pick-num">2.8</div>
-              <div class="player">Jonathan Taylor</div>
-              <div class="drafted-by">#NoKings </div>
+              <div class="player" title="Jonathan Taylor">Jonathan Taylor</div>
+              <div class="drafted-by" title="#NoKings ">#NoKings </div>
               <div class='rank-move'>RB10 &rarr; RB3 &#9650;</div>
-              
+              <div class='bid'>&nbsp;</div>
             </div></td><td>
             <div class="draft-cell" style="background:rgba(178,34,34,0.90); border-color:rgba(178,34,34,1.00);">
               <div class="pick-num">2.7</div>
-              <div class="player">Bucky Irving</div>
-              <div class="drafted-by">BuckO</div>
+              <div class="player" title="Bucky Irving">Bucky Irving</div>
+              <div class="drafted-by" title="BuckO">BuckO</div>
               <div class='rank-move'>RB9 &rarr; RB32 &#9660;</div>
-              
+              <div class='bid'>&nbsp;</div>
             </div></td><td>
             <div class="draft-cell" style="background:rgba(178,34,34,0.90); border-color:rgba(178,34,34,1.00);">
               <div class="pick-num">2.6</div>
-              <div class="player">Brian Thomas Jr.</div>
-              <div class="drafted-by">Uncle Rico</div>
+              <div class="player" title="Brian Thomas Jr.">Brian Thomas Jr.</div>
+              <div class="drafted-by" title="Uncle Rico">Uncle Rico</div>
               <div class='rank-move'>WR8 &rarr; WR45 &#9660;</div>
-              
+              <div class='bid'>&nbsp;</div>
             </div></td><td>
             <div class="draft-cell" style="background:rgba(178,34,34,0.41); border-color:rgba(178,34,34,0.66);">
               <div class="pick-num">2.5</div>
-              <div class="player">Josh Jacobs</div>
-              <div class="drafted-by">Evan Squared</div>
+              <div class="player" title="Josh Jacobs">Josh Jacobs</div>
+              <div class="drafted-by" title="Evan Squared">Evan Squared</div>
               <div class='rank-move'>RB8 &rarr; RB14 &#9660;</div>
-              
+              <div class='bid'>&nbsp;</div>
             </div></td><td>
             <div class="draft-cell" style="background:rgba(34,139,34,0.41); border-color:rgba(34,139,34,0.66);">
               <div class="pick-num">2.4</div>
-              <div class="player">Puka Nacua</div>
-              <div class="drafted-by">Bad Blood</div>
+              <div class="player" title="Puka Nacua">Puka Nacua</div>
+              <div class="drafted-by" title="Bad Blood">Bad Blood</div>
               <div class='rank-move'>WR7 &rarr; WR1 &#9650;</div>
-              
+              <div class='bid'>&nbsp;</div>
             </div></td><td>
             <div class="draft-cell" style="background:#2a3348; border-color:#8a92a8;">
               <div class="pick-num">2.3</div>
-              <div class="player">De&#x27;Von Achane</div>
-              <div class="drafted-by">For Nabers</div>
+              <div class="player" title="De&#x27;Von Achane">De&#x27;Von Achane</div>
+              <div class="drafted-by" title="For Nabers">For Nabers</div>
               <div class='rank-move'>RB7 &rarr; RB6 &#9650;</div>
-              
+              <div class='bid'>&nbsp;</div>
             </div></td><td>
             <div class="draft-cell" style="background:#2a3348; border-color:#8a92a8;">
               <div class="pick-num">2.2</div>
-              <div class="player">Ashton Jeanty</div>
-              <div class="drafted-by">HERB YOUR ENTHUSIASM</div>
+              <div class="player" title="Ashton Jeanty">Ashton Jeanty</div>
+              <div class="drafted-by" title="HERB YOUR ENTHUSIASM">HERB YOUR ENTHUSIASM</div>
               <div class='rank-move'>RB6 &rarr; RB9 &#9660;</div>
-              
+              <div class='bid'>&nbsp;</div>
             </div></td><td>
             <div class="draft-cell" style="background:#2a3348; border-color:#8a92a8;">
               <div class="pick-num">2.1</div>
-              <div class="player">Nico Collins</div>
-              <div class="drafted-by">Cant Find Nico </div>
+              <div class="player" title="Nico Collins">Nico Collins</div>
+              <div class="drafted-by" title="Cant Find Nico ">Cant Find Nico </div>
               <div class='rank-move'>WR6 &rarr; WR8 &#9660;</div>
-              
+              <div class='bid'>&nbsp;</div>
             </div></td></tr><tr><td class='round-label'>3</td><td>
             <div class="draft-cell" style="background:rgba(178,34,34,0.47); border-color:rgba(178,34,34,0.72);">
               <div class="pick-num">3.1</div>
-              <div class="player">Brock Bowers</div>
-              <div class="drafted-by">CHASEing Greatness</div>
+              <div class="player" title="Brock Bowers">Brock Bowers</div>
+              <div class="drafted-by" title="CHASEing Greatness">CHASEing Greatness</div>
               <div class='rank-move'>TE1 &rarr; TE8 &#9660;</div>
-              
+              <div class='bid'>&nbsp;</div>
             </div></td><td>
             <div class="draft-cell" style="background:#2a3348; border-color:#8a92a8;">
               <div class="pick-num">3.2</div>
-              <div class="player">A.J. Brown</div>
-              <div class="drafted-by">Whats Good My Njigba</div>
+              <div class="player" title="A.J. Brown">A.J. Brown</div>
+              <div class="drafted-by" title="Whats Good My Njigba">Whats Good My Njigba</div>
               <div class='rank-move'>WR10 &rarr; WR10 &#8211;</div>
-              
+              <div class='bid'>&nbsp;</div>
             </div></td><td>
             <div class="draft-cell" style="background:rgba(178,34,34,0.90); border-color:rgba(178,34,34,1.00);">
               <div class="pick-num">3.3</div>
-              <div class="player">Tyreek Hill</div>
-              <div class="drafted-by">#NoKings </div>
+              <div class="player" title="Tyreek Hill">Tyreek Hill</div>
+              <div class="drafted-by" title="#NoKings ">#NoKings </div>
               <div class='rank-move'>WR11 &rarr; WR102 &#9660;</div>
-              
+              <div class='bid'>&nbsp;</div>
             </div></td><td>
             <div class="draft-cell" style="background:#2a3348; border-color:#8a92a8;">
               <div class="pick-num">3.4</div>
-              <div class="player">Josh Allen</div>
-              <div class="drafted-by">BuckO</div>
+              <div class="player" title="Josh Allen">Josh Allen</div>
+              <div class="drafted-by" title="BuckO">BuckO</div>
               <div class='rank-move'>QB1 &rarr; QB1 &#8211;</div>
-              
+              <div class='bid'>&nbsp;</div>
             </div></td><td>
             <div class="draft-cell" style="background:rgba(178,34,34,0.90); border-color:rgba(178,34,34,1.00);">
               <div class="pick-num">3.5</div>
-              <div class="player">Lamar Jackson</div>
-              <div class="drafted-by">Uncle Rico</div>
+              <div class="player" title="Lamar Jackson">Lamar Jackson</div>
+              <div class="drafted-by" title="Uncle Rico">Uncle Rico</div>
               <div class='rank-move'>QB2 &rarr; QB21 &#9660;</div>
-              
+              <div class='bid'>&nbsp;</div>
             </div></td><td>
             <div class="draft-cell" style="background:#2a3348; border-color:#8a92a8;">
               <div class="pick-num">3.6</div>
-              <div class="player">Kyren Williams</div>
-              <div class="drafted-by">Evan Squared</div>
+              <div class="player" title="Kyren Williams">Kyren Williams</div>
+              <div class="drafted-by" title="Evan Squared">Evan Squared</div>
               <div class='rank-move'>RB12 &rarr; RB11 &#9650;</div>
-              
+              <div class='bid'>&nbsp;</div>
             </div></td><td>
             <div class="draft-cell" style="background:rgba(178,34,34,0.90); border-color:rgba(178,34,34,1.00);">
               <div class="pick-num">3.7</div>
-              <div class="player">Alvin Kamara</div>
-              <div class="drafted-by">Bad Blood</div>
+              <div class="player" title="Alvin Kamara">Alvin Kamara</div>
+              <div class="drafted-by" title="Bad Blood">Bad Blood</div>
               <div class='rank-move'>RB13 &rarr; RB46 &#9660;</div>
-              
+              <div class='bid'>&nbsp;</div>
             </div></td><td>
             <div class="draft-cell" style="background:#2a3348; border-color:#8a92a8;">
               <div class="pick-num">3.8</div>
-              <div class="player">Trey McBride</div>
-              <div class="drafted-by">For Nabers</div>
+              <div class="player" title="Trey McBride">Trey McBride</div>
+              <div class="drafted-by" title="For Nabers">For Nabers</div>
               <div class='rank-move'>TE2 &rarr; TE1 &#9650;</div>
-              
+              <div class='bid'>&nbsp;</div>
             </div></td><td>
             <div class="draft-cell" style="background:rgba(178,34,34,0.90); border-color:rgba(178,34,34,1.00);">
               <div class="pick-num">3.9</div>
-              <div class="player">Mike Evans</div>
-              <div class="drafted-by">HERB YOUR ENTHUSIASM</div>
+              <div class="player" title="Mike Evans">Mike Evans</div>
+              <div class="drafted-by" title="HERB YOUR ENTHUSIASM">HERB YOUR ENTHUSIASM</div>
               <div class='rank-move'>WR12 &rarr; WR75 &#9660;</div>
-              
+              <div class='bid'>&nbsp;</div>
             </div></td><td>
             <div class="draft-cell" style="background:rgba(178,34,34,0.90); border-color:rgba(178,34,34,1.00);">
               <div class="pick-num">3.10</div>
-              <div class="player">Omarion Hampton</div>
-              <div class="drafted-by">Cant Find Nico </div>
+              <div class="player" title="Omarion Hampton">Omarion Hampton</div>
+              <div class="drafted-by" title="Cant Find Nico ">Cant Find Nico </div>
               <div class='rank-move'>RB14 &rarr; RB34 &#9660;</div>
-              
+              <div class='bid'>&nbsp;</div>
             </div></td></tr><tr><td class='round-label'>4</td><td>
             <div class="draft-cell" style="background:rgba(34,139,34,0.68); border-color:rgba(34,139,34,0.93);">
               <div class="pick-num">4.10</div>
-              <div class="player">James Cook III</div>
-              <div class="drafted-by">CHASEing Greatness</div>
+              <div class="player" title="James Cook III">James Cook III</div>
+              <div class="drafted-by" title="CHASEing Greatness">CHASEing Greatness</div>
               <div class='rank-move'>RB16 &rarr; RB5 &#9650;</div>
-              
+              <div class='bid'>&nbsp;</div>
             </div></td><td>
             <div class="draft-cell" style="background:rgba(178,34,34,0.47); border-color:rgba(178,34,34,0.72);">
               <div class="pick-num">4.9</div>
-              <div class="player">Kenneth Walker III</div>
-              <div class="drafted-by">Whats Good My Njigba</div>
+              <div class="player" title="Kenneth Walker III">Kenneth Walker III</div>
+              <div class="drafted-by" title="Whats Good My Njigba">Whats Good My Njigba</div>
               <div class='rank-move'>RB15 &rarr; RB22 &#9660;</div>
-              
+              <div class='bid'>&nbsp;</div>
             </div></td><td>
             <div class="draft-cell" style="background:rgba(178,34,34,0.90); border-color:rgba(178,34,34,1.00);">
               <div class="pick-num">4.8</div>
-              <div class="player">Terry McLaurin</div>
-              <div class="drafted-by">#NoKings </div>
+              <div class="player" title="Terry McLaurin">Terry McLaurin</div>
+              <div class="drafted-by" title="#NoKings ">#NoKings </div>
               <div class='rank-move'>WR18 &rarr; WR54 &#9660;</div>
-              
+              <div class='bid'>&nbsp;</div>
             </div></td><td>
             <div class="draft-cell" style="background:rgba(178,34,34,0.90); border-color:rgba(178,34,34,1.00);">
               <div class="pick-num">4.7</div>
-              <div class="player">Garrett Wilson</div>
-              <div class="drafted-by">BuckO</div>
+              <div class="player" title="Garrett Wilson">Garrett Wilson</div>
+              <div class="drafted-by" title="BuckO">BuckO</div>
               <div class='rank-move'>WR17 &rarr; WR64 &#9660;</div>
-              
+              <div class='bid'>&nbsp;</div>
             </div></td><td>
             <div class="draft-cell" style="background:rgba(178,34,34,0.90); border-color:rgba(178,34,34,1.00);">
               <div class="pick-num">4.6</div>
-              <div class="player">Marvin Harrison Jr.</div>
-              <div class="drafted-by">Uncle Rico</div>
+              <div class="player" title="Marvin Harrison Jr.">Marvin Harrison Jr.</div>
+              <div class="drafted-by" title="Uncle Rico">Uncle Rico</div>
               <div class='rank-move'>WR16 &rarr; WR49 &#9660;</div>
-              
+              <div class='bid'>&nbsp;</div>
             </div></td><td>
             <div class="draft-cell" style="background:#2a3348; border-color:#8a92a8;">
               <div class="pick-num">4.5</div>
-              <div class="player">Tee Higgins</div>
-              <div class="drafted-by">Evan Squared</div>
+              <div class="player" title="Tee Higgins">Tee Higgins</div>
+              <div class="drafted-by" title="Evan Squared">Evan Squared</div>
               <div class='rank-move'>WR15 &rarr; WR14 &#9650;</div>
-              
+              <div class='bid'>&nbsp;</div>
             </div></td><td>
             <div class="draft-cell" style="background:rgba(34,139,34,0.74); border-color:rgba(34,139,34,0.99);">
               <div class="pick-num">4.4</div>
-              <div class="player">Jaxon Smith-Njigba</div>
-              <div class="drafted-by">Bad Blood</div>
+              <div class="player" title="Jaxon Smith-Njigba">Jaxon Smith-Njigba</div>
+              <div class="drafted-by" title="Bad Blood">Bad Blood</div>
               <div class='rank-move'>WR14 &rarr; WR2 &#9650;</div>
-              
+              <div class='bid'>&nbsp;</div>
             </div></td><td>
             <div class="draft-cell" style="background:rgba(178,34,34,0.90); border-color:rgba(178,34,34,1.00);">
               <div class="pick-num">4.3</div>
-              <div class="player">Jayden Daniels</div>
-              <div class="drafted-by">For Nabers</div>
+              <div class="player" title="Jayden Daniels">Jayden Daniels</div>
+              <div class="drafted-by" title="For Nabers">For Nabers</div>
               <div class='rank-move'>QB3 &rarr; QB34 &#9660;</div>
-              
+              <div class='bid'>&nbsp;</div>
             </div></td><td>
             <div class="draft-cell" style="background:rgba(178,34,34,0.90); border-color:rgba(178,34,34,1.00);">
               <div class="pick-num">4.2</div>
-              <div class="player">Ladd McConkey</div>
-              <div class="drafted-by">HERB YOUR ENTHUSIASM</div>
+              <div class="player" title="Ladd McConkey">Ladd McConkey</div>
+              <div class="drafted-by" title="HERB YOUR ENTHUSIASM">HERB YOUR ENTHUSIASM</div>
               <div class='rank-move'>WR13 &rarr; WR29 &#9660;</div>
-              
+              <div class='bid'>&nbsp;</div>
             </div></td><td>
             <div class="draft-cell" style="background:rgba(178,34,34,0.63); border-color:rgba(178,34,34,0.88);">
               <div class="pick-num">4.1</div>
-              <div class="player">George Kittle</div>
-              <div class="drafted-by">Cant Find Nico </div>
+              <div class="player" title="George Kittle">George Kittle</div>
+              <div class="drafted-by" title="Cant Find Nico ">Cant Find Nico </div>
               <div class='rank-move'>TE3 &rarr; TE13 &#9660;</div>
-              
+              <div class='bid'>&nbsp;</div>
             </div></td></tr><tr><td class='round-label'>5</td><td>
             <div class="draft-cell" style="background:rgba(178,34,34,0.36); border-color:rgba(178,34,34,0.61);">
               <div class="pick-num">5.1</div>
-              <div class="player">Jalen Hurts</div>
-              <div class="drafted-by">CHASEing Greatness</div>
+              <div class="player" title="Jalen Hurts">Jalen Hurts</div>
+              <div class="drafted-by" title="CHASEing Greatness">CHASEing Greatness</div>
               <div class='rank-move'>QB4 &rarr; QB9 &#9660;</div>
-              
+              <div class='bid'>&nbsp;</div>
             </div></td><td>
             <div class="draft-cell" style="background:#2a3348; border-color:#8a92a8;">
               <div class="pick-num">5.2</div>
-              <div class="player">TreVeyon Henderson</div>
-              <div class="drafted-by">Whats Good My Njigba</div>
+              <div class="player" title="TreVeyon Henderson">TreVeyon Henderson</div>
+              <div class="drafted-by" title="Whats Good My Njigba">Whats Good My Njigba</div>
               <div class='rank-move'>RB17 &rarr; RB16 &#9650;</div>
-              
+              <div class='bid'>&nbsp;</div>
             </div></td><td>
             <div class="draft-cell" style="background:rgba(178,34,34,0.90); border-color:rgba(178,34,34,1.00);">
               <div class="pick-num">5.3</div>
-              <div class="player">Joe Burrow</div>
-              <div class="drafted-by">#NoKings </div>
+              <div class="player" title="Joe Burrow">Joe Burrow</div>
+              <div class="drafted-by" title="#NoKings ">#NoKings </div>
               <div class='rank-move'>QB5 &rarr; QB30 &#9660;</div>
-              
+              <div class='bid'>&nbsp;</div>
             </div></td><td>
             <div class="draft-cell" style="background:rgba(178,34,34,0.90); border-color:rgba(178,34,34,1.00);">
               <div class="pick-num">5.4</div>
-              <div class="player">DJ Moore</div>
-              <div class="drafted-by">BuckO</div>
+              <div class="player" title="DJ Moore">DJ Moore</div>
+              <div class="drafted-by" title="BuckO">BuckO</div>
               <div class='rank-move'>WR19 &rarr; WR36 &#9660;</div>
-              
+              <div class='bid'>&nbsp;</div>
             </div></td><td>
             <div class="draft-cell" style="background:rgba(178,34,34,0.90); border-color:rgba(178,34,34,1.00);">
               <div class="pick-num">5.5</div>
-              <div class="player">Xavier Worthy</div>
-              <div class="drafted-by">Uncle Rico</div>
+              <div class="player" title="Xavier Worthy">Xavier Worthy</div>
+              <div class="drafted-by" title="Uncle Rico">Uncle Rico</div>
               <div class='rank-move'>WR20 &rarr; WR59 &#9660;</div>
-              
+              <div class='bid'>&nbsp;</div>
             </div></td><td>
             <div class="draft-cell" style="background:rgba(178,34,34,0.90); border-color:rgba(178,34,34,1.00);">
               <div class="pick-num">5.6</div>
-              <div class="player">Chuba Hubbard</div>
-              <div class="drafted-by">Evan Squared</div>
+              <div class="player" title="Chuba Hubbard">Chuba Hubbard</div>
+              <div class="drafted-by" title="Evan Squared">Evan Squared</div>
               <div class='rank-move'>RB18 &rarr; RB39 &#9660;</div>
-              
+              <div class='bid'>&nbsp;</div>
             </div></td><td>
             <div class="draft-cell" style="background:rgba(34,139,34,0.74); border-color:rgba(34,139,34,0.99);">
               <div class="pick-num">5.7</div>
-              <div class="player">Jameson Williams</div>
-              <div class="drafted-by">Bad Blood</div>
+              <div class="player" title="Jameson Williams">Jameson Williams</div>
+              <div class="drafted-by" title="Bad Blood">Bad Blood</div>
               <div class='rank-move'>WR21 &rarr; WR9 &#9650;</div>
-              
+              <div class='bid'>&nbsp;</div>
             </div></td><td>
             <div class="draft-cell" style="background:rgba(34,139,34,0.63); border-color:rgba(34,139,34,0.88);">
               <div class="pick-num">5.8</div>
-              <div class="player">Courtland Sutton</div>
-              <div class="drafted-by">For Nabers</div>
+              <div class="player" title="Courtland Sutton">Courtland Sutton</div>
+              <div class="drafted-by" title="For Nabers">For Nabers</div>
               <div class='rank-move'>WR22 &rarr; WR12 &#9650;</div>
-              
+              <div class='bid'>&nbsp;</div>
             </div></td><td>
             <div class="draft-cell" style="background:rgba(178,34,34,0.90); border-color:rgba(178,34,34,1.00);">
               <div class="pick-num">5.9</div>
-              <div class="player">James Conner</div>
-              <div class="drafted-by">HERB YOUR ENTHUSIASM</div>
+              <div class="player" title="James Conner">James Conner</div>
+              <div class="drafted-by" title="HERB YOUR ENTHUSIASM">HERB YOUR ENTHUSIASM</div>
               <div class='rank-move'>RB19 &rarr; RB79 &#9660;</div>
-              
+              <div class='bid'>&nbsp;</div>
             </div></td><td>
             <div class="draft-cell" style="background:rgba(34,139,34,0.36); border-color:rgba(34,139,34,0.61);">
               <div class="pick-num">5.10</div>
-              <div class="player">Tetairoa McMillan</div>
-              <div class="drafted-by">Cant Find Nico </div>
+              <div class="player" title="Tetairoa McMillan">Tetairoa McMillan</div>
+              <div class="drafted-by" title="Cant Find Nico ">Cant Find Nico </div>
               <div class='rank-move'>WR23 &rarr; WR18 &#9650;</div>
-              
+              <div class='bid'>&nbsp;</div>
             </div></td></tr><tr><td class='round-label'>6</td><td>
             <div class="draft-cell" style="background:rgba(34,139,34,0.52); border-color:rgba(34,139,34,0.77);">
               <div class="pick-num">6.10</div>
-              <div class="player">D&#x27;Andre Swift</div>
-              <div class="drafted-by">CHASEing Greatness</div>
+              <div class="player" title="D&#x27;Andre Swift">D&#x27;Andre Swift</div>
+              <div class="drafted-by" title="CHASEing Greatness">CHASEing Greatness</div>
               <div class='rank-move'>RB23 &rarr; RB15 &#9650;</div>
-              
+              <div class='bid'>&nbsp;</div>
             </div></td><td>
             <div class="draft-cell" style="background:rgba(178,34,34,0.74); border-color:rgba(178,34,34,0.99);">
               <div class="pick-num">6.9</div>
-              <div class="player">Rashee Rice</div>
-              <div class="drafted-by">Whats Good My Njigba</div>
+              <div class="player" title="Rashee Rice">Rashee Rice</div>
+              <div class="drafted-by" title="Whats Good My Njigba">Whats Good My Njigba</div>
               <div class='rank-move'>WR28 &rarr; WR40 &#9660;</div>
-              
+              <div class='bid'>&nbsp;</div>
             </div></td><td>
             <div class="draft-cell" style="background:rgba(34,139,34,0.85); border-color:rgba(34,139,34,1.00);">
               <div class="pick-num">6.8</div>
-              <div class="player">Davante Adams</div>
-              <div class="drafted-by">#NoKings </div>
+              <div class="player" title="Davante Adams">Davante Adams</div>
+              <div class="drafted-by" title="#NoKings ">#NoKings </div>
               <div class='rank-move'>WR27 &rarr; WR13 &#9650;</div>
-              
+              <div class='bid'>&nbsp;</div>
             </div></td><td>
             <div class="draft-cell" style="background:rgba(178,34,34,0.90); border-color:rgba(178,34,34,1.00);">
               <div class="pick-num">6.7</div>
-              <div class="player">Calvin Ridley</div>
-              <div class="drafted-by">BuckO</div>
+              <div class="player" title="Calvin Ridley">Calvin Ridley</div>
+              <div class="drafted-by" title="BuckO">BuckO</div>
               <div class='rank-move'>WR26 &rarr; WR113 &#9660;</div>
-              
+              <div class='bid'>&nbsp;</div>
             </div></td><td>
             <div class="draft-cell" style="background:rgba(34,139,34,0.90); border-color:rgba(34,139,34,1.00);">
               <div class="pick-num">6.6</div>
-              <div class="player">George Pickens</div>
-              <div class="drafted-by">Uncle Rico</div>
+              <div class="player" title="George Pickens">George Pickens</div>
+              <div class="drafted-by" title="Uncle Rico">Uncle Rico</div>
               <div class='rank-move'>WR25 &rarr; WR5 &#9650;</div>
-              
+              <div class='bid'>&nbsp;</div>
             </div></td><td>
             <div class="draft-cell" style="background:#2a3348; border-color:#8a92a8;">
               <div class="pick-num">6.5</div>
-              <div class="player">Tony Pollard</div>
-              <div class="drafted-by">Evan Squared</div>
+              <div class="player" title="Tony Pollard">Tony Pollard</div>
+              <div class="drafted-by" title="Evan Squared">Evan Squared</div>
               <div class='rank-move'>RB22 &rarr; RB23 &#9660;</div>
-              
+              <div class='bid'>&nbsp;</div>
             </div></td><td>
             <div class="draft-cell" style="background:rgba(178,34,34,0.36); border-color:rgba(178,34,34,0.61);">
               <div class="pick-num">6.4</div>
-              <div class="player">Patrick Mahomes</div>
-              <div class="drafted-by">Bad Blood</div>
+              <div class="player" title="Patrick Mahomes">Patrick Mahomes</div>
+              <div class="drafted-by" title="Bad Blood">Bad Blood</div>
               <div class='rank-move'>QB6 &rarr; QB11 &#9660;</div>
-              
+              <div class='bid'>&nbsp;</div>
             </div></td><td>
             <div class="draft-cell" style="background:rgba(34,139,34,0.30); border-color:rgba(34,139,34,0.55);">
               <div class="pick-num">6.3</div>
-              <div class="player">Breece Hall</div>
-              <div class="drafted-by">For Nabers</div>
+              <div class="player" title="Breece Hall">Breece Hall</div>
+              <div class="drafted-by" title="For Nabers">For Nabers</div>
               <div class='rank-move'>RB21 &rarr; RB17 &#9650;</div>
-              
+              <div class='bid'>&nbsp;</div>
             </div></td><td>
             <div class="draft-cell" style="background:#2a3348; border-color:#8a92a8;">
               <div class="pick-num">6.2</div>
-              <div class="player">RJ Harvey</div>
-              <div class="drafted-by">HERB YOUR ENTHUSIASM</div>
+              <div class="player" title="RJ Harvey">RJ Harvey</div>
+              <div class="drafted-by" title="HERB YOUR ENTHUSIASM">HERB YOUR ENTHUSIASM</div>
               <div class='rank-move'>RB20 &rarr; RB21 &#9660;</div>
-              
+              <div class='bid'>&nbsp;</div>
             </div></td><td>
             <div class="draft-cell" style="background:#2a3348; border-color:#8a92a8;">
               <div class="pick-num">6.1</div>
-              <div class="player">DK Metcalf</div>
-              <div class="drafted-by">Cant Find Nico </div>
+              <div class="player" title="DK Metcalf">DK Metcalf</div>
+              <div class="drafted-by" title="Cant Find Nico ">Cant Find Nico </div>
               <div class='rank-move'>WR24 &rarr; WR25 &#9660;</div>
-              
+              <div class='bid'>&nbsp;</div>
             </div></td></tr><tr><td class='round-label'>7</td><td>
             <div class="draft-cell" style="background:rgba(34,139,34,0.57); border-color:rgba(34,139,34,0.82);">
               <div class="pick-num">7.1</div>
-              <div class="player">DeVonta Smith</div>
-              <div class="drafted-by">CHASEing Greatness</div>
+              <div class="player" title="DeVonta Smith">DeVonta Smith</div>
+              <div class="drafted-by" title="CHASEing Greatness">CHASEing Greatness</div>
               <div class='rank-move'>WR29 &rarr; WR20 &#9650;</div>
-              
+              <div class='bid'>&nbsp;</div>
             </div></td><td>
             <div class="draft-cell" style="background:#2a3348; border-color:#8a92a8;">
               <div class="pick-num">7.2</div>
-              <div class="player">Dak Prescott</div>
-              <div class="drafted-by">Whats Good My Njigba</div>
+              <div class="player" title="Dak Prescott">Dak Prescott</div>
+              <div class="drafted-by" title="Whats Good My Njigba">Whats Good My Njigba</div>
               <div class='rank-move'>QB7 &rarr; QB4 &#9650;</div>
-              
+              <div class='bid'>&nbsp;</div>
             </div></td><td>
             <div class="draft-cell" style="background:#2a3348; border-color:#8a92a8;">
               <div class="pick-num">7.3</div>
-              <div class="player">David Montgomery</div>
-              <div class="drafted-by">#NoKings </div>
+              <div class="player" title="David Montgomery">David Montgomery</div>
+              <div class="drafted-by" title="#NoKings ">#NoKings </div>
               <div class='rank-move'>RB24 &rarr; RB27 &#9660;</div>
-              
+              <div class='bid'>&nbsp;</div>
             </div></td><td>
             <div class="draft-cell" style="background:rgba(178,34,34,0.90); border-color:rgba(178,34,34,1.00);">
               <div class="pick-num">7.4</div>
-              <div class="player">Jerry Jeudy</div>
-              <div class="drafted-by">BuckO</div>
+              <div class="player" title="Jerry Jeudy">Jerry Jeudy</div>
+              <div class="drafted-by" title="BuckO">BuckO</div>
               <div class='rank-move'>WR30 &rarr; WR50 &#9660;</div>
-              
+              <div class='bid'>&nbsp;</div>
             </div></td><td>
             <div class="draft-cell" style="background:rgba(178,34,34,0.90); border-color:rgba(178,34,34,1.00);">
               <div class="pick-num">7.5</div>
-              <div class="player">Aaron Jones Sr.</div>
-              <div class="drafted-by">Uncle Rico</div>
+              <div class="player" title="Aaron Jones Sr.">Aaron Jones Sr.</div>
+              <div class="drafted-by" title="Uncle Rico">Uncle Rico</div>
               <div class='rank-move'>RB25 &rarr; RB43 &#9660;</div>
-              
+              <div class='bid'>&nbsp;</div>
             </div></td><td>
             <div class="draft-cell" style="background:#2a3348; border-color:#8a92a8;">
               <div class="pick-num">7.6</div>
-              <div class="player">Bo Nix</div>
-              <div class="drafted-by">Evan Squared</div>
+              <div class="player" title="Bo Nix">Bo Nix</div>
+              <div class="drafted-by" title="Evan Squared">Evan Squared</div>
               <div class='rank-move'>QB8 &rarr; QB8 &#8211;</div>
-              
+              <div class='bid'>&nbsp;</div>
             </div></td><td>
             <div class="draft-cell" style="background:#2a3348; border-color:#8a92a8;">
               <div class="pick-num">7.7</div>
-              <div class="player">Travis Kelce</div>
-              <div class="drafted-by">Bad Blood</div>
+              <div class="player" title="Travis Kelce">Travis Kelce</div>
+              <div class="drafted-by" title="Bad Blood">Bad Blood</div>
               <div class='rank-move'>TE4 &rarr; TE3 &#9650;</div>
-              
+              <div class='bid'>&nbsp;</div>
             </div></td><td>
             <div class="draft-cell" style="background:rgba(178,34,34,0.90); border-color:rgba(178,34,34,1.00);">
               <div class="pick-num">7.8</div>
-              <div class="player">Travis Hunter</div>
-              <div class="drafted-by">For Nabers</div>
+              <div class="player" title="Travis Hunter">Travis Hunter</div>
+              <div class="drafted-by" title="For Nabers">For Nabers</div>
               <div class='rank-move'>WR31 &rarr; WR94 &#9660;</div>
-              
+              <div class='bid'>&nbsp;</div>
             </div></td><td>
             <div class="draft-cell" style="background:#2a3348; border-color:#8a92a8;">
               <div class="pick-num">7.9</div>
-              <div class="player">Baker Mayfield</div>
-              <div class="drafted-by">HERB YOUR ENTHUSIASM</div>
+              <div class="player" title="Baker Mayfield">Baker Mayfield</div>
+              <div class="drafted-by" title="HERB YOUR ENTHUSIASM">HERB YOUR ENTHUSIASM</div>
               <div class='rank-move'>QB9 &rarr; QB12 &#9660;</div>
-              
+              <div class='bid'>&nbsp;</div>
             </div></td><td>
             <div class="draft-cell" style="background:rgba(34,139,34,0.68); border-color:rgba(34,139,34,0.93);">
               <div class="pick-num">7.10</div>
-              <div class="player">Emeka Egbuka</div>
-              <div class="drafted-by">Cant Find Nico </div>
+              <div class="player" title="Emeka Egbuka">Emeka Egbuka</div>
+              <div class="drafted-by" title="Cant Find Nico ">Cant Find Nico </div>
               <div class='rank-move'>WR32 &rarr; WR21 &#9650;</div>
-              
+              <div class='bid'>&nbsp;</div>
             </div></td></tr><tr><td class='round-label'>8</td><td>
             <div class="draft-cell" style="background:#2a3348; border-color:#8a92a8;">
               <div class="pick-num">8.10</div>
-              <div class="player">Tyrone Tracy Jr.</div>
-              <div class="drafted-by">CHASEing Greatness</div>
+              <div class="player" title="Tyrone Tracy Jr.">Tyrone Tracy Jr.</div>
+              <div class="drafted-by" title="CHASEing Greatness">CHASEing Greatness</div>
               <div class='rank-move'>RB30 &rarr; RB28 &#9650;</div>
-              
+              <div class='bid'>&nbsp;</div>
             </div></td><td>
             <div class="draft-cell" style="background:rgba(34,139,34,0.36); border-color:rgba(34,139,34,0.61);">
               <div class="pick-num">8.9</div>
-              <div class="player">Zach Charbonnet</div>
-              <div class="drafted-by">Whats Good My Njigba</div>
+              <div class="player" title="Zach Charbonnet">Zach Charbonnet</div>
+              <div class="drafted-by" title="Whats Good My Njigba">Whats Good My Njigba</div>
               <div class='rank-move'>RB29 &rarr; RB24 &#9650;</div>
-              
+              <div class='bid'>&nbsp;</div>
             </div></td><td>
             <div class="draft-cell" style="background:rgba(34,139,34,0.90); border-color:rgba(34,139,34,1.00);">
               <div class="pick-num">8.8</div>
-              <div class="player">Zay Flowers</div>
-              <div class="drafted-by">#NoKings </div>
+              <div class="player" title="Zay Flowers">Zay Flowers</div>
+              <div class="drafted-by" title="#NoKings ">#NoKings </div>
               <div class='rank-move'>WR35 &rarr; WR7 &#9650;</div>
-              
+              <div class='bid'>&nbsp;</div>
             </div></td><td>
             <div class="draft-cell" style="background:rgba(178,34,34,0.90); border-color:rgba(178,34,34,1.00);">
               <div class="pick-num">8.7</div>
-              <div class="player">Sam LaPorta</div>
-              <div class="drafted-by">BuckO</div>
+              <div class="player" title="Sam LaPorta">Sam LaPorta</div>
+              <div class="drafted-by" title="BuckO">BuckO</div>
               <div class='rank-move'>TE6 &rarr; TE27 &#9660;</div>
-              
+              <div class='bid'>&nbsp;</div>
             </div></td><td>
             <div class="draft-cell" style="background:rgba(178,34,34,0.47); border-color:rgba(178,34,34,0.72);">
               <div class="pick-num">8.6</div>
-              <div class="player">Rome Odunze</div>
-              <div class="drafted-by">Uncle Rico</div>
+              <div class="player" title="Rome Odunze">Rome Odunze</div>
+              <div class="drafted-by" title="Uncle Rico">Uncle Rico</div>
               <div class='rank-move'>WR34 &rarr; WR41 &#9660;</div>
-              
+              <div class='bid'>&nbsp;</div>
             </div></td><td>
             <div class="draft-cell" style="background:#2a3348; border-color:#8a92a8;">
               <div class="pick-num">8.5</div>
-              <div class="player">Jacory Croskey-Merritt</div>
-              <div class="drafted-by">Evan Squared</div>
+              <div class="player" title="Jacory Croskey-Merritt">Jacory Croskey-Merritt</div>
+              <div class="drafted-by" title="Evan Squared">Evan Squared</div>
               <div class='rank-move'>RB28 &rarr; RB30 &#9660;</div>
-              
+              <div class='bid'>&nbsp;</div>
             </div></td><td>
             <div class="draft-cell" style="background:rgba(34,139,34,0.63); border-color:rgba(34,139,34,0.88);">
               <div class="pick-num">8.4</div>
-              <div class="player">Jaylen Waddle</div>
-              <div class="drafted-by">Bad Blood</div>
+              <div class="player" title="Jaylen Waddle">Jaylen Waddle</div>
+              <div class="drafted-by" title="Bad Blood">Bad Blood</div>
               <div class='rank-move'>WR33 &rarr; WR23 &#9650;</div>
-              
+              <div class='bid'>&nbsp;</div>
             </div></td><td>
             <div class="draft-cell" style="background:rgba(178,34,34,0.90); border-color:rgba(178,34,34,1.00);">
               <div class="pick-num">8.3</div>
-              <div class="player">Kaleb Johnson</div>
-              <div class="drafted-by">For Nabers</div>
+              <div class="player" title="Kaleb Johnson">Kaleb Johnson</div>
+              <div class="drafted-by" title="For Nabers">For Nabers</div>
               <div class='rank-move'>RB27 &rarr; RB107 &#9660;</div>
-              
+              <div class='bid'>&nbsp;</div>
             </div></td><td>
             <div class="draft-cell" style="background:rgba(178,34,34,0.90); border-color:rgba(178,34,34,1.00);">
               <div class="pick-num">8.2</div>
-              <div class="player">T.J. Hockenson</div>
-              <div class="drafted-by">HERB YOUR ENTHUSIASM</div>
+              <div class="player" title="T.J. Hockenson">T.J. Hockenson</div>
+              <div class="drafted-by" title="HERB YOUR ENTHUSIASM">HERB YOUR ENTHUSIASM</div>
               <div class='rank-move'>TE5 &rarr; TE26 &#9660;</div>
-              
+              <div class='bid'>&nbsp;</div>
             </div></td><td>
             <div class="draft-cell" style="background:rgba(178,34,34,0.90); border-color:rgba(178,34,34,1.00);">
               <div class="pick-num">8.1</div>
-              <div class="player">Isiah Pacheco</div>
-              <div class="drafted-by">Cant Find Nico </div>
+              <div class="player" title="Isiah Pacheco">Isiah Pacheco</div>
+              <div class="drafted-by" title="Cant Find Nico ">Cant Find Nico </div>
               <div class='rank-move'>RB26 &rarr; RB55 &#9660;</div>
-              
+              <div class='bid'>&nbsp;</div>
             </div></td></tr><tr><td class='round-label'>9</td><td>
             <div class="draft-cell" style="background:rgba(178,34,34,0.90); border-color:rgba(178,34,34,1.00);">
               <div class="pick-num">9.1</div>
-              <div class="player">Ricky Pearsall</div>
-              <div class="drafted-by">CHASEing Greatness</div>
+              <div class="player" title="Ricky Pearsall">Ricky Pearsall</div>
+              <div class="drafted-by" title="CHASEing Greatness">CHASEing Greatness</div>
               <div class='rank-move'>WR36 &rarr; WR69 &#9660;</div>
-              
+              <div class='bid'>&nbsp;</div>
             </div></td><td>
             <div class="draft-cell" style="background:rgba(178,34,34,0.90); border-color:rgba(178,34,34,1.00);">
               <div class="pick-num">9.2</div>
-              <div class="player">David Njoku</div>
-              <div class="drafted-by">Whats Good My Njigba</div>
+              <div class="player" title="David Njoku">David Njoku</div>
+              <div class="drafted-by" title="Whats Good My Njigba">Whats Good My Njigba</div>
               <div class='rank-move'>TE7 &rarr; TE34 &#9660;</div>
-              
+              <div class='bid'>&nbsp;</div>
             </div></td><td>
             <div class="draft-cell" style="background:rgba(178,34,34,0.90); border-color:rgba(178,34,34,1.00);">
               <div class="pick-num">9.3</div>
-              <div class="player">Evan Engram</div>
-              <div class="drafted-by">#NoKings </div>
+              <div class="player" title="Evan Engram">Evan Engram</div>
+              <div class="drafted-by" title="#NoKings ">#NoKings </div>
               <div class='rank-move'>TE8 &rarr; TE29 &#9660;</div>
-              
+              <div class='bid'>&nbsp;</div>
             </div></td><td>
             <div class="draft-cell" style="background:rgba(178,34,34,0.90); border-color:rgba(178,34,34,1.00);">
               <div class="pick-num">9.4</div>
-              <div class="player">Austin Ekeler</div>
-              <div class="drafted-by">BuckO</div>
+              <div class="player" title="Austin Ekeler">Austin Ekeler</div>
+              <div class="drafted-by" title="BuckO">BuckO</div>
               <div class='rank-move'>RB31 &rarr; RB101 &#9660;</div>
-              
+              <div class='bid'>&nbsp;</div>
             </div></td><td>
             <div class="draft-cell" style="background:rgba(34,139,34,0.30); border-color:rgba(34,139,34,0.55);">
               <div class="pick-num">9.5</div>
-              <div class="player">Tyler Warren</div>
-              <div class="drafted-by">Uncle Rico</div>
+              <div class="player" title="Tyler Warren">Tyler Warren</div>
+              <div class="drafted-by" title="Uncle Rico">Uncle Rico</div>
               <div class='rank-move'>TE9 &rarr; TE5 &#9650;</div>
-              
+              <div class='bid'>&nbsp;</div>
             </div></td><td>
             <div class="draft-cell" style="background:rgba(34,139,34,0.90); border-color:rgba(34,139,34,1.00);">
               <div class="pick-num">9.6</div>
-              <div class="player">Travis Etienne Jr.</div>
-              <div class="drafted-by">Evan Squared</div>
+              <div class="player" title="Travis Etienne Jr.">Travis Etienne Jr.</div>
+              <div class="drafted-by" title="Evan Squared">Evan Squared</div>
               <div class='rank-move'>RB32 &rarr; RB10 &#9650;</div>
-              
+              <div class='bid'>&nbsp;</div>
             </div></td><td>
             <div class="draft-cell" style="background:rgba(34,139,34,0.90); border-color:rgba(34,139,34,1.00);">
               <div class="pick-num">9.7</div>
-              <div class="player">Stefon Diggs</div>
-              <div class="drafted-by">Bad Blood</div>
+              <div class="player" title="Stefon Diggs">Stefon Diggs</div>
+              <div class="drafted-by" title="Bad Blood">Bad Blood</div>
               <div class='rank-move'>WR37 &rarr; WR16 &#9650;</div>
-              
+              <div class='bid'>&nbsp;</div>
             </div></td><td>
             <div class="draft-cell" style="background:rgba(178,34,34,0.90); border-color:rgba(178,34,34,1.00);">
               <div class="pick-num">9.8</div>
-              <div class="player">Matthew Golden</div>
-              <div class="drafted-by">For Nabers</div>
+              <div class="player" title="Matthew Golden">Matthew Golden</div>
+              <div class="drafted-by" title="For Nabers">For Nabers</div>
               <div class='rank-move'>WR38 &rarr; WR90 &#9660;</div>
-              
+              <div class='bid'>&nbsp;</div>
             </div></td><td>
             <div class="draft-cell" style="background:rgba(178,34,34,0.90); border-color:rgba(178,34,34,1.00);">
               <div class="pick-num">9.9</div>
-              <div class="player">Chris Godwin Jr.</div>
-              <div class="drafted-by">HERB YOUR ENTHUSIASM</div>
+              <div class="player" title="Chris Godwin Jr.">Chris Godwin Jr.</div>
+              <div class="drafted-by" title="HERB YOUR ENTHUSIASM">HERB YOUR ENTHUSIASM</div>
               <div class='rank-move'>WR39 &rarr; WR78 &#9660;</div>
-              
+              <div class='bid'>&nbsp;</div>
             </div></td><td>
             <div class="draft-cell" style="background:rgba(34,139,34,0.90); border-color:rgba(34,139,34,1.00);">
               <div class="pick-num">9.10</div>
-              <div class="player">Jaylen Warren</div>
-              <div class="drafted-by">Cant Find Nico </div>
+              <div class="player" title="Jaylen Warren">Jaylen Warren</div>
+              <div class="drafted-by" title="Cant Find Nico ">Cant Find Nico </div>
               <div class='rank-move'>RB33 &rarr; RB18 &#9650;</div>
-              
+              <div class='bid'>&nbsp;</div>
             </div></td></tr><tr><td class='round-label'>10</td><td>
             <div class="draft-cell" style="background:rgba(34,139,34,0.90); border-color:rgba(34,139,34,1.00);">
               <div class="pick-num">10.10</div>
-              <div class="player">Michael Pittman Jr.</div>
-              <div class="drafted-by">CHASEing Greatness</div>
+              <div class="player" title="Michael Pittman Jr.">Michael Pittman Jr.</div>
+              <div class="drafted-by" title="CHASEing Greatness">CHASEing Greatness</div>
               <div class='rank-move'>WR45 &rarr; WR23 &#9650;</div>
-              
+              <div class='bid'>&nbsp;</div>
             </div></td><td>
             <div class="draft-cell" style="background:rgba(178,34,34,0.90); border-color:rgba(178,34,34,1.00);">
               <div class="pick-num">10.9</div>
-              <div class="player">Trey Benson</div>
-              <div class="drafted-by">Whats Good My Njigba</div>
+              <div class="player" title="Trey Benson">Trey Benson</div>
+              <div class="drafted-by" title="Whats Good My Njigba">Whats Good My Njigba</div>
               <div class='rank-move'>RB37 &rarr; RB76 &#9660;</div>
-              
+              <div class='bid'>&nbsp;</div>
             </div></td><td>
             <div class="draft-cell" style="background:#2a3348; border-color:#8a92a8;">
               <div class="pick-num">10.8</div>
-              <div class="player">Joe Mixon</div>
-              <div class="drafted-by">#NoKings </div>
+              <div class="player" title="Joe Mixon">Joe Mixon</div>
+              <div class="drafted-by" title="#NoKings ">#NoKings </div>
               <div class='rank-move'>RB36 &rarr; n/a</div>
-              
+              <div class='bid'>&nbsp;</div>
             </div></td><td>
             <div class="draft-cell" style="background:rgba(178,34,34,0.90); border-color:rgba(178,34,34,1.00);">
               <div class="pick-num">10.7</div>
-              <div class="player">Keon Coleman</div>
-              <div class="drafted-by">BuckO</div>
+              <div class="player" title="Keon Coleman">Keon Coleman</div>
+              <div class="drafted-by" title="BuckO">BuckO</div>
               <div class='rank-move'>WR44 &rarr; WR61 &#9660;</div>
-              
+              <div class='bid'>&nbsp;</div>
             </div></td><td>
             <div class="draft-cell" style="background:#2a3348; border-color:#8a92a8;">
               <div class="pick-num">10.6</div>
-              <div class="player">Jordan Mason</div>
-              <div class="drafted-by">Uncle Rico</div>
+              <div class="player" title="Jordan Mason">Jordan Mason</div>
+              <div class="drafted-by" title="Uncle Rico">Uncle Rico</div>
               <div class='rank-move'>RB35 &rarr; RB36 &#9660;</div>
-              
+              <div class='bid'>&nbsp;</div>
             </div></td><td>
             <div class="draft-cell" style="background:rgba(34,139,34,0.90); border-color:rgba(34,139,34,1.00);">
               <div class="pick-num">10.5</div>
-              <div class="player">Deebo Samuel</div>
-              <div class="drafted-by">Evan Squared</div>
+              <div class="player" title="Deebo Samuel">Deebo Samuel</div>
+              <div class="drafted-by" title="Evan Squared">Evan Squared</div>
               <div class='rank-move'>WR43 &rarr; WR27 &#9650;</div>
-              
+              <div class='bid'>&nbsp;</div>
             </div></td><td>
             <div class="draft-cell" style="background:rgba(178,34,34,0.90); border-color:rgba(178,34,34,1.00);">
               <div class="pick-num">10.4</div>
-              <div class="player">Cooper Kupp</div>
-              <div class="drafted-by">Bad Blood</div>
+              <div class="player" title="Cooper Kupp">Cooper Kupp</div>
+              <div class="drafted-by" title="Bad Blood">Bad Blood</div>
               <div class='rank-move'>WR42 &rarr; WR57 &#9660;</div>
-              
+              <div class='bid'>&nbsp;</div>
             </div></td><td>
             <div class="draft-cell" style="background:rgba(34,139,34,0.41); border-color:rgba(34,139,34,0.66);">
               <div class="pick-num">10.3</div>
-              <div class="player">Jakobi Meyers</div>
-              <div class="drafted-by">For Nabers</div>
+              <div class="player" title="Jakobi Meyers">Jakobi Meyers</div>
+              <div class="drafted-by" title="For Nabers">For Nabers</div>
               <div class='rank-move'>WR41 &rarr; WR35 &#9650;</div>
-              
+              <div class='bid'>&nbsp;</div>
             </div></td><td>
             <div class="draft-cell" style="background:rgba(178,34,34,0.41); border-color:rgba(178,34,34,0.66);">
               <div class="pick-num">10.2</div>
-              <div class="player">Cam Skattebo</div>
-              <div class="drafted-by">HERB YOUR ENTHUSIASM</div>
+              <div class="player" title="Cam Skattebo">Cam Skattebo</div>
+              <div class="drafted-by" title="HERB YOUR ENTHUSIASM">HERB YOUR ENTHUSIASM</div>
               <div class='rank-move'>RB34 &rarr; RB40 &#9660;</div>
-              
+              <div class='bid'>&nbsp;</div>
             </div></td><td>
             <div class="draft-cell" style="background:rgba(34,139,34,0.90); border-color:rgba(34,139,34,1.00);">
               <div class="pick-num">10.1</div>
-              <div class="player">Chris Olave</div>
-              <div class="drafted-by">Cant Find Nico </div>
+              <div class="player" title="Chris Olave">Chris Olave</div>
+              <div class="drafted-by" title="Cant Find Nico ">Cant Find Nico </div>
               <div class='rank-move'>WR40 &rarr; WR6 &#9650;</div>
-              
+              <div class='bid'>&nbsp;</div>
             </div></td></tr><tr><td class='round-label'>11</td><td>
             <div class="draft-cell" style="background:rgba(34,139,34,0.85); border-color:rgba(34,139,34,1.00);">
               <div class="pick-num">11.1</div>
-              <div class="player">Khalil Shakir</div>
-              <div class="drafted-by">CHASEing Greatness</div>
+              <div class="player" title="Khalil Shakir">Khalil Shakir</div>
+              <div class="drafted-by" title="CHASEing Greatness">CHASEing Greatness</div>
               <div class='rank-move'>WR46 &rarr; WR32 &#9650;</div>
-              
+              <div class='bid'>&nbsp;</div>
             </div></td><td>
             <div class="draft-cell" style="background:rgba(34,139,34,0.36); border-color:rgba(34,139,34,0.61);">
               <div class="pick-num">11.2</div>
-              <div class="player">Jordan Addison</div>
-              <div class="drafted-by">Whats Good My Njigba</div>
+              <div class="player" title="Jordan Addison">Jordan Addison</div>
+              <div class="drafted-by" title="Whats Good My Njigba">Whats Good My Njigba</div>
               <div class='rank-move'>WR47 &rarr; WR42 &#9650;</div>
-              
+              <div class='bid'>&nbsp;</div>
             </div></td><td>
             <div class="draft-cell" style="background:rgba(34,139,34,0.90); border-color:rgba(34,139,34,1.00);">
               <div class="pick-num">11.3</div>
-              <div class="player">Javonte Williams</div>
-              <div class="drafted-by">#NoKings </div>
+              <div class="player" title="Javonte Williams">Javonte Williams</div>
+              <div class="drafted-by" title="#NoKings ">#NoKings </div>
               <div class='rank-move'>RB38 &rarr; RB13 &#9650;</div>
-              
+              <div class='bid'>&nbsp;</div>
             </div></td><td>
             <div class="draft-cell" style="background:rgba(178,34,34,0.90); border-color:rgba(178,34,34,1.00);">
               <div class="pick-num">11.4</div>
-              <div class="player">Jayden Reed</div>
-              <div class="drafted-by">BuckO</div>
+              <div class="player" title="Jayden Reed">Jayden Reed</div>
+              <div class="drafted-by" title="BuckO">BuckO</div>
               <div class='rank-move'>WR48 &rarr; WR116 &#9660;</div>
-              
+              <div class='bid'>&nbsp;</div>
             </div></td><td>
             <div class="draft-cell" style="background:rgba(178,34,34,0.90); border-color:rgba(178,34,34,1.00);">
               <div class="pick-num">11.5</div>
-              <div class="player">Tank Bigsby</div>
-              <div class="drafted-by">Uncle Rico</div>
+              <div class="player" title="Tank Bigsby">Tank Bigsby</div>
+              <div class="drafted-by" title="Uncle Rico">Uncle Rico</div>
               <div class='rank-move'>RB39 &rarr; RB66 &#9660;</div>
-              
+              <div class='bid'>&nbsp;</div>
             </div></td><td>
             <div class="draft-cell" style="background:rgba(34,139,34,0.90); border-color:rgba(34,139,34,1.00);">
               <div class="pick-num">11.6</div>
-              <div class="player">Jauan Jennings</div>
-              <div class="drafted-by">Evan Squared</div>
+              <div class="player" title="Jauan Jennings">Jauan Jennings</div>
+              <div class="drafted-by" title="Evan Squared">Evan Squared</div>
               <div class='rank-move'>WR49 &rarr; WR34 &#9650;</div>
-              
+              <div class='bid'>&nbsp;</div>
             </div></td><td>
             <div class="draft-cell" style="background:rgba(178,34,34,0.90); border-color:rgba(178,34,34,1.00);">
               <div class="pick-num">11.7</div>
-              <div class="player">Brian Robinson Jr.</div>
-              <div class="drafted-by">Bad Blood</div>
+              <div class="player" title="Brian Robinson Jr.">Brian Robinson Jr.</div>
+              <div class="drafted-by" title="Bad Blood">Bad Blood</div>
               <div class='rank-move'>RB40 &rarr; RB61 &#9660;</div>
-              
+              <div class='bid'>&nbsp;</div>
             </div></td><td>
             <div class="draft-cell" style="background:#2a3348; border-color:#8a92a8;">
               <div class="pick-num">11.8</div>
-              <div class="player">J.K. Dobbins</div>
-              <div class="drafted-by">For Nabers</div>
+              <div class="player" title="J.K. Dobbins">J.K. Dobbins</div>
+              <div class="drafted-by" title="For Nabers">For Nabers</div>
               <div class='rank-move'>RB41 &rarr; RB42 &#9660;</div>
-              
+              <div class='bid'>&nbsp;</div>
             </div></td><td>
             <div class="draft-cell" style="background:#2a3348; border-color:#8a92a8;">
               <div class="pick-num">11.9</div>
-              <div class="player">Justin Herbert</div>
-              <div class="drafted-by">HERB YOUR ENTHUSIASM</div>
+              <div class="player" title="Justin Herbert">Justin Herbert</div>
+              <div class="drafted-by" title="HERB YOUR ENTHUSIASM">HERB YOUR ENTHUSIASM</div>
               <div class='rank-move'>QB10 &rarr; QB10 &#8211;</div>
-              
+              <div class='bid'>&nbsp;</div>
             </div></td><td>
             <div class="draft-cell" style="background:rgba(178,34,34,0.90); border-color:rgba(178,34,34,1.00);">
               <div class="pick-num">11.10</div>
-              <div class="player">Kyler Murray</div>
-              <div class="drafted-by">Cant Find Nico </div>
+              <div class="player" title="Kyler Murray">Kyler Murray</div>
+              <div class="drafted-by" title="Cant Find Nico ">Cant Find Nico </div>
               <div class='rank-move'>QB11 &rarr; QB38 &#9660;</div>
-              
+              <div class='bid'>&nbsp;</div>
             </div></td></tr><tr><td class='round-label'>12</td><td>
             <div class="draft-cell" style="background:rgba(178,34,34,0.90); border-color:rgba(178,34,34,1.00);">
               <div class="pick-num">12.10</div>
-              <div class="player">Jerome Ford</div>
-              <div class="drafted-by">CHASEing Greatness</div>
+              <div class="player" title="Jerome Ford">Jerome Ford</div>
+              <div class="drafted-by" title="CHASEing Greatness">CHASEing Greatness</div>
               <div class='rank-move'>RB48 &rarr; RB73 &#9660;</div>
-              
+              <div class='bid'>&nbsp;</div>
             </div></td><td>
             <div class="draft-cell" style="background:#2a3348; border-color:#8a92a8;">
               <div class="pick-num">12.9</div>
-              <div class="player">Tyjae Spears</div>
-              <div class="drafted-by">Whats Good My Njigba</div>
+              <div class="player" title="Tyjae Spears">Tyjae Spears</div>
+              <div class="drafted-by" title="Whats Good My Njigba">Whats Good My Njigba</div>
               <div class='rank-move'>RB47 &rarr; RB44 &#9650;</div>
-              
+              <div class='bid'>&nbsp;</div>
             </div></td><td>
             <div class="draft-cell" style="background:rgba(178,34,34,0.90); border-color:rgba(178,34,34,1.00);">
               <div class="pick-num">12.8</div>
-              <div class="player">Jaydon Blue</div>
-              <div class="drafted-by">#NoKings </div>
+              <div class="player" title="Jaydon Blue">Jaydon Blue</div>
+              <div class="drafted-by" title="#NoKings ">#NoKings </div>
               <div class='rank-move'>RB46 &rarr; RB90 &#9660;</div>
-              
+              <div class='bid'>&nbsp;</div>
             </div></td><td>
             <div class="draft-cell" style="background:rgba(178,34,34,0.52); border-color:rgba(178,34,34,0.77);">
               <div class="pick-num">12.7</div>
-              <div class="player">Nick Chubb</div>
-              <div class="drafted-by">BuckO</div>
+              <div class="player" title="Nick Chubb">Nick Chubb</div>
+              <div class="drafted-by" title="BuckO">BuckO</div>
               <div class='rank-move'>RB45 &rarr; RB53 &#9660;</div>
-              
+              <div class='bid'>&nbsp;</div>
             </div></td><td>
             <div class="draft-cell" style="background:rgba(34,139,34,0.90); border-color:rgba(34,139,34,1.00);">
               <div class="pick-num">12.6</div>
-              <div class="player">Quinshon Judkins</div>
-              <div class="drafted-by">Uncle Rico</div>
+              <div class="player" title="Quinshon Judkins">Quinshon Judkins</div>
+              <div class="drafted-by" title="Uncle Rico">Uncle Rico</div>
               <div class='rank-move'>RB44 &rarr; RB25 &#9650;</div>
-              
+              <div class='bid'>&nbsp;</div>
             </div></td><td>
             <div class="draft-cell" style="background:rgba(34,139,34,0.36); border-color:rgba(34,139,34,0.61);">
               <div class="pick-num">12.5</div>
-              <div class="player">Jake Ferguson</div>
-              <div class="drafted-by">Evan Squared</div>
+              <div class="player" title="Jake Ferguson">Jake Ferguson</div>
+              <div class="drafted-by" title="Evan Squared">Evan Squared</div>
               <div class='rank-move'>TE11 &rarr; TE6 &#9650;</div>
-              
+              <div class='bid'>&nbsp;</div>
             </div></td><td>
             <div class="draft-cell" style="background:#2a3348; border-color:#8a92a8;">
               <div class="pick-num">12.4</div>
-              <div class="player">Colston Loveland</div>
-              <div class="drafted-by">Bad Blood</div>
+              <div class="player" title="Colston Loveland">Colston Loveland</div>
+              <div class="drafted-by" title="Bad Blood">Bad Blood</div>
               <div class='rank-move'>TE10 &rarr; TE12 &#9660;</div>
-              
+              <div class='bid'>&nbsp;</div>
             </div></td><td>
             <div class="draft-cell" style="background:rgba(178,34,34,0.90); border-color:rgba(178,34,34,1.00);">
               <div class="pick-num">12.3</div>
-              <div class="player">Braelon Allen</div>
-              <div class="drafted-by">For Nabers</div>
+              <div class="player" title="Braelon Allen">Braelon Allen</div>
+              <div class="drafted-by" title="For Nabers">For Nabers</div>
               <div class='rank-move'>RB43 &rarr; RB97 &#9660;</div>
-              
+              <div class='bid'>&nbsp;</div>
             </div></td><td>
             <div class="draft-cell" style="background:rgba(34,139,34,0.90); border-color:rgba(34,139,34,1.00);">
               <div class="pick-num">12.2</div>
-              <div class="player">Rhamondre Stevenson</div>
-              <div class="drafted-by">HERB YOUR ENTHUSIASM</div>
+              <div class="player" title="Rhamondre Stevenson">Rhamondre Stevenson</div>
+              <div class="drafted-by" title="HERB YOUR ENTHUSIASM">HERB YOUR ENTHUSIASM</div>
               <div class='rank-move'>RB42 &rarr; RB26 &#9650;</div>
-              
+              <div class='bid'>&nbsp;</div>
             </div></td><td>
             <div class="draft-cell" style="background:#2a3348; border-color:#8a92a8;">
               <div class="pick-num">12.1</div>
-              <div class="player">Josh Downs</div>
-              <div class="drafted-by">Cant Find Nico </div>
+              <div class="player" title="Josh Downs">Josh Downs</div>
+              <div class="drafted-by" title="Cant Find Nico ">Cant Find Nico </div>
               <div class='rank-move'>WR50 &rarr; WR47 &#9650;</div>
-              
+              <div class='bid'>&nbsp;</div>
             </div></td></tr><tr><td class='round-label'>13</td><td>
             <div class="draft-cell" style="background:rgba(178,34,34,0.90); border-color:rgba(178,34,34,1.00);">
               <div class="pick-num">13.1</div>
-              <div class="player">Marvin Mims Jr.</div>
-              <div class="drafted-by">CHASEing Greatness</div>
+              <div class="player" title="Marvin Mims Jr.">Marvin Mims Jr.</div>
+              <div class="drafted-by" title="CHASEing Greatness">CHASEing Greatness</div>
               <div class='rank-move'>WR51 &rarr; WR71 &#9660;</div>
-              
+              <div class='bid'>&nbsp;</div>
             </div></td><td>
             <div class="draft-cell" style="background:rgba(178,34,34,0.90); border-color:rgba(178,34,34,1.00);">
               <div class="pick-num">13.2</div>
-              <div class="player">Cedric Tillman</div>
-              <div class="drafted-by">Whats Good My Njigba</div>
+              <div class="player" title="Cedric Tillman">Cedric Tillman</div>
+              <div class="drafted-by" title="Whats Good My Njigba">Whats Good My Njigba</div>
               <div class='rank-move'>WR52 &rarr; WR99 &#9660;</div>
-              
+              <div class='bid'>&nbsp;</div>
             </div></td><td>
             <div class="draft-cell" style="background:rgba(34,139,34,0.52); border-color:rgba(34,139,34,0.77);">
               <div class="pick-num">13.3</div>
-              <div class="player">Tyler Allgeier</div>
-              <div class="drafted-by">#NoKings </div>
+              <div class="player" title="Tyler Allgeier">Tyler Allgeier</div>
+              <div class="drafted-by" title="#NoKings ">#NoKings </div>
               <div class='rank-move'>RB49 &rarr; RB41 &#9650;</div>
-              
+              <div class='bid'>&nbsp;</div>
             </div></td><td>
             <div class="draft-cell" style="background:rgba(178,34,34,0.90); border-color:rgba(178,34,34,1.00);">
               <div class="pick-num">13.4</div>
-              <div class="player">Darnell Mooney</div>
-              <div class="drafted-by">BuckO</div>
+              <div class="player" title="Darnell Mooney">Darnell Mooney</div>
+              <div class="drafted-by" title="BuckO">BuckO</div>
               <div class='rank-move'>WR53 &rarr; WR76 &#9660;</div>
-              
+              <div class='bid'>&nbsp;</div>
             </div></td><td>
             <div class="draft-cell" style="background:rgba(178,34,34,0.30); border-color:rgba(178,34,34,0.55);">
               <div class="pick-num">13.5</div>
-              <div class="player">Dylan Sampson</div>
-              <div class="drafted-by">Uncle Rico</div>
+              <div class="player" title="Dylan Sampson">Dylan Sampson</div>
+              <div class="drafted-by" title="Uncle Rico">Uncle Rico</div>
               <div class='rank-move'>RB50 &rarr; RB54 &#9660;</div>
-              
+              <div class='bid'>&nbsp;</div>
             </div></td><td>
             <div class="draft-cell" style="background:rgba(34,139,34,0.90); border-color:rgba(34,139,34,1.00);">
               <div class="pick-num">13.6</div>
-              <div class="player">Rachaad White</div>
-              <div class="drafted-by">Evan Squared</div>
+              <div class="player" title="Rachaad White">Rachaad White</div>
+              <div class="drafted-by" title="Evan Squared">Evan Squared</div>
               <div class='rank-move'>RB51 &rarr; RB35 &#9650;</div>
-              
+              <div class='bid'>&nbsp;</div>
             </div></td><td>
             <div class="draft-cell" style="background:rgba(178,34,34,0.90); border-color:rgba(178,34,34,1.00);">
               <div class="pick-num">13.7</div>
-              <div class="player">Ollie Gordon II</div>
-              <div class="drafted-by">Bad Blood</div>
+              <div class="player" title="Ollie Gordon II">Ollie Gordon II</div>
+              <div class="drafted-by" title="Bad Blood">Bad Blood</div>
               <div class='rank-move'>RB52 &rarr; RB68 &#9660;</div>
-              
+              <div class='bid'>&nbsp;</div>
             </div></td><td>
             <div class="draft-cell" style="background:rgba(34,139,34,0.90); border-color:rgba(34,139,34,1.00);">
               <div class="pick-num">13.8</div>
-              <div class="player">Keenan Allen</div>
-              <div class="drafted-by">For Nabers</div>
+              <div class="player" title="Keenan Allen">Keenan Allen</div>
+              <div class="drafted-by" title="For Nabers">For Nabers</div>
               <div class='rank-move'>WR54 &rarr; WR30 &#9650;</div>
-              
+              <div class='bid'>&nbsp;</div>
             </div></td><td>
             <div class="draft-cell" style="background:rgba(178,34,34,0.90); border-color:rgba(178,34,34,1.00);">
               <div class="pick-num">13.9</div>
-              <div class="player">Kyle Williams</div>
-              <div class="drafted-by">HERB YOUR ENTHUSIASM</div>
+              <div class="player" title="Kyle Williams">Kyle Williams</div>
+              <div class="drafted-by" title="HERB YOUR ENTHUSIASM">HERB YOUR ENTHUSIASM</div>
               <div class='rank-move'>WR55 &rarr; WR103 &#9660;</div>
-              
+              <div class='bid'>&nbsp;</div>
             </div></td><td>
             <div class="draft-cell" style="background:rgba(34,139,34,0.90); border-color:rgba(34,139,34,1.00);">
               <div class="pick-num">13.10</div>
-              <div class="player">Kareem Hunt</div>
-              <div class="drafted-by">Cant Find Nico </div>
+              <div class="player" title="Kareem Hunt">Kareem Hunt</div>
+              <div class="drafted-by" title="Cant Find Nico ">Cant Find Nico </div>
               <div class='rank-move'>RB53 &rarr; RB33 &#9650;</div>
-              
+              <div class='bid'>&nbsp;</div>
             </div></td></tr><tr><td class='round-label'>14</td><td>
             <div class="draft-cell" style="background:rgba(34,139,34,0.90); border-color:rgba(34,139,34,1.00);">
               <div class="pick-num">14.10</div>
-              <div class="player">Rashid Shaheed</div>
-              <div class="drafted-by">CHASEing Greatness</div>
+              <div class="player" title="Rashid Shaheed">Rashid Shaheed</div>
+              <div class="drafted-by" title="CHASEing Greatness">CHASEing Greatness</div>
               <div class='rank-move'>WR58 &rarr; WR39 &#9650;</div>
-              
+              <div class='bid'>&nbsp;</div>
             </div></td><td>
             <div class="draft-cell" style="background:rgba(178,34,34,0.90); border-color:rgba(178,34,34,1.00);">
               <div class="pick-num">14.9</div>
-              <div class="player">Colts D/ST</div>
-              <div class="drafted-by">Whats Good My Njigba</div>
+              <div class="player" title="Colts D/ST">Colts D/ST</div>
+              <div class="drafted-by" title="Whats Good My Njigba">Whats Good My Njigba</div>
               <div class='rank-move'>D/ST5 &rarr; D/ST22 &#9660;</div>
-              
+              <div class='bid'>&nbsp;</div>
             </div></td><td>
             <div class="draft-cell" style="background:rgba(178,34,34,0.90); border-color:rgba(178,34,34,1.00);">
               <div class="pick-num">14.8</div>
-              <div class="player">Rashod Bateman</div>
-              <div class="drafted-by">#NoKings </div>
+              <div class="player" title="Rashod Bateman">Rashod Bateman</div>
+              <div class="drafted-by" title="#NoKings ">#NoKings </div>
               <div class='rank-move'>WR57 &rarr; WR103 &#9660;</div>
-              
+              <div class='bid'>&nbsp;</div>
             </div></td><td>
             <div class="draft-cell" style="background:rgba(178,34,34,0.41); border-color:rgba(178,34,34,0.66);">
               <div class="pick-num">14.7</div>
-              <div class="player">Dalton Kincaid</div>
-              <div class="drafted-by">BuckO</div>
+              <div class="player" title="Dalton Kincaid">Dalton Kincaid</div>
+              <div class="drafted-by" title="BuckO">BuckO</div>
               <div class='rank-move'>TE12 &rarr; TE18 &#9660;</div>
-              
+              <div class='bid'>&nbsp;</div>
             </div></td><td>
             <div class="draft-cell" style="background:rgba(178,34,34,0.90); border-color:rgba(178,34,34,1.00);">
               <div class="pick-num">14.6</div>
-              <div class="player">Cardinals D/ST</div>
-              <div class="drafted-by">Uncle Rico</div>
+              <div class="player" title="Cardinals D/ST">Cardinals D/ST</div>
+              <div class="drafted-by" title="Uncle Rico">Uncle Rico</div>
               <div class='rank-move'>D/ST4 &rarr; D/ST26 &#9660;</div>
-              
+              <div class='bid'>&nbsp;</div>
             </div></td><td>
             <div class="draft-cell" style="background:#2a3348; border-color:#8a92a8;">
               <div class="pick-num">14.5</div>
-              <div class="player">Brandon Aiyuk</div>
-              <div class="drafted-by">Evan Squared</div>
+              <div class="player" title="Brandon Aiyuk">Brandon Aiyuk</div>
+              <div class="drafted-by" title="Evan Squared">Evan Squared</div>
               <div class='rank-move'>WR56 &rarr; n/a</div>
-              
+              <div class='bid'>&nbsp;</div>
             </div></td><td>
             <div class="draft-cell" style="background:rgba(178,34,34,0.68); border-color:rgba(178,34,34,0.93);">
               <div class="pick-num">14.4</div>
-              <div class="player">Steelers D/ST</div>
-              <div class="drafted-by">Bad Blood</div>
+              <div class="player" title="Steelers D/ST">Steelers D/ST</div>
+              <div class="drafted-by" title="Bad Blood">Bad Blood</div>
               <div class='rank-move'>D/ST3 &rarr; D/ST14 &#9660;</div>
-              
+              <div class='bid'>&nbsp;</div>
             </div></td><td>
             <div class="draft-cell" style="background:#2a3348; border-color:#8a92a8;">
               <div class="pick-num">14.3</div>
-              <div class="player">Broncos D/ST</div>
-              <div class="drafted-by">For Nabers</div>
+              <div class="player" title="Broncos D/ST">Broncos D/ST</div>
+              <div class="drafted-by" title="For Nabers">For Nabers</div>
               <div class='rank-move'>D/ST2 &rarr; D/ST3 &#9660;</div>
-              
+              <div class='bid'>&nbsp;</div>
             </div></td><td>
             <div class="draft-cell" style="background:rgba(178,34,34,0.41); border-color:rgba(178,34,34,0.66);">
               <div class="pick-num">14.2</div>
-              <div class="player">Patriots D/ST</div>
-              <div class="drafted-by">HERB YOUR ENTHUSIASM</div>
+              <div class="player" title="Patriots D/ST">Patriots D/ST</div>
+              <div class="drafted-by" title="HERB YOUR ENTHUSIASM">HERB YOUR ENTHUSIASM</div>
               <div class='rank-move'>D/ST1 &rarr; D/ST7 &#9660;</div>
-              
+              <div class='bid'>&nbsp;</div>
             </div></td><td>
             <div class="draft-cell" style="background:rgba(34,139,34,0.57); border-color:rgba(34,139,34,0.82);">
               <div class="pick-num">14.1</div>
-              <div class="player">Drake Maye</div>
-              <div class="drafted-by">Cant Find Nico </div>
+              <div class="player" title="Drake Maye">Drake Maye</div>
+              <div class="drafted-by" title="Cant Find Nico ">Cant Find Nico </div>
               <div class='rank-move'>QB12 &rarr; QB3 &#9650;</div>
-              
+              <div class='bid'>&nbsp;</div>
             </div></td></tr><tr><td class='round-label'>15</td><td>
             <div class="draft-cell" style="background:rgba(34,139,34,0.30); border-color:rgba(34,139,34,0.55);">
               <div class="pick-num">15.1</div>
-              <div class="player">Texans D/ST</div>
-              <div class="drafted-by">CHASEing Greatness</div>
+              <div class="player" title="Texans D/ST">Texans D/ST</div>
+              <div class="drafted-by" title="CHASEing Greatness">CHASEing Greatness</div>
               <div class='rank-move'>D/ST6 &rarr; D/ST2 &#9650;</div>
-              
+              <div class='bid'>&nbsp;</div>
             </div></td><td>
             <div class="draft-cell" style="background:rgba(34,139,34,0.41); border-color:rgba(34,139,34,0.66);">
               <div class="pick-num">15.2</div>
-              <div class="player">Jared Goff</div>
-              <div class="drafted-by">Whats Good My Njigba</div>
+              <div class="player" title="Jared Goff">Jared Goff</div>
+              <div class="drafted-by" title="Whats Good My Njigba">Whats Good My Njigba</div>
               <div class='rank-move'>QB13 &rarr; QB7 &#9650;</div>
-              
+              <div class='bid'>&nbsp;</div>
             </div></td><td>
             <div class="draft-cell" style="background:rgba(178,34,34,0.90); border-color:rgba(178,34,34,1.00);">
               <div class="pick-num">15.3</div>
-              <div class="player">Commanders D/ST</div>
-              <div class="drafted-by">#NoKings </div>
+              <div class="player" title="Commanders D/ST">Commanders D/ST</div>
+              <div class="drafted-by" title="#NoKings ">#NoKings </div>
               <div class='rank-move'>D/ST7 &rarr; D/ST30 &#9660;</div>
-              
+              <div class='bid'>&nbsp;</div>
             </div></td><td>
             <div class="draft-cell" style="background:#2a3348; border-color:#8a92a8;">
               <div class="pick-num">15.4</div>
-              <div class="player">Eagles D/ST</div>
-              <div class="drafted-by">BuckO</div>
+              <div class="player" title="Eagles D/ST">Eagles D/ST</div>
+              <div class="drafted-by" title="BuckO">BuckO</div>
               <div class='rank-move'>D/ST8 &rarr; D/ST8 &#8211;</div>
-              
+              <div class='bid'>&nbsp;</div>
             </div></td><td>
             <div class="draft-cell" style="background:rgba(34,139,34,0.90); border-color:rgba(34,139,34,1.00);">
               <div class="pick-num">15.5</div>
-              <div class="player">Woody Marks</div>
-              <div class="drafted-by">Uncle Rico</div>
+              <div class="player" title="Woody Marks">Woody Marks</div>
+              <div class="drafted-by" title="Uncle Rico">Uncle Rico</div>
               <div class='rank-move'>RB54 &rarr; RB29 &#9650;</div>
-              
+              <div class='bid'>&nbsp;</div>
             </div></td><td>
             <div class="draft-cell" style="background:rgba(178,34,34,0.74); border-color:rgba(178,34,34,0.99);">
               <div class="pick-num">15.6</div>
-              <div class="player">Packers D/ST</div>
-              <div class="drafted-by">Evan Squared</div>
+              <div class="player" title="Packers D/ST">Packers D/ST</div>
+              <div class="drafted-by" title="Evan Squared">Evan Squared</div>
               <div class='rank-move'>D/ST9 &rarr; D/ST21 &#9660;</div>
-              
+              <div class='bid'>&nbsp;</div>
             </div></td><td>
             <div class="draft-cell" style="background:rgba(178,34,34,0.90); border-color:rgba(178,34,34,1.00);">
               <div class="pick-num">15.7</div>
-              <div class="player">Najee Harris</div>
-              <div class="drafted-by">Bad Blood</div>
+              <div class="player" title="Najee Harris">Najee Harris</div>
+              <div class="drafted-by" title="Bad Blood">Bad Blood</div>
               <div class='rank-move'>RB55 &rarr; RB104 &#9660;</div>
-              
+              <div class='bid'>&nbsp;</div>
             </div></td><td>
             <div class="draft-cell" style="background:rgba(34,139,34,0.90); border-color:rgba(34,139,34,1.00);">
               <div class="pick-num">15.8</div>
-              <div class="player">Rico Dowdle</div>
-              <div class="drafted-by">For Nabers</div>
+              <div class="player" title="Rico Dowdle">Rico Dowdle</div>
+              <div class="drafted-by" title="For Nabers">For Nabers</div>
               <div class='rank-move'>RB56 &rarr; RB19 &#9650;</div>
-              
+              <div class='bid'>&nbsp;</div>
             </div></td><td>
             <div class="draft-cell" style="background:rgba(178,34,34,0.90); border-color:rgba(178,34,34,1.00);">
               <div class="pick-num">15.9</div>
-              <div class="player">Christian Kirk</div>
-              <div class="drafted-by">HERB YOUR ENTHUSIASM</div>
+              <div class="player" title="Christian Kirk">Christian Kirk</div>
+              <div class="drafted-by" title="HERB YOUR ENTHUSIASM">HERB YOUR ENTHUSIASM</div>
               <div class='rank-move'>WR59 &rarr; WR101 &#9660;</div>
-              
+              <div class='bid'>&nbsp;</div>
             </div></td><td>
             <div class="draft-cell" style="background:rgba(34,139,34,0.30); border-color:rgba(34,139,34,0.55);">
               <div class="pick-num">15.10</div>
-              <div class="player">Vikings D/ST</div>
-              <div class="drafted-by">Cant Find Nico </div>
+              <div class="player" title="Vikings D/ST">Vikings D/ST</div>
+              <div class="drafted-by" title="Cant Find Nico ">Cant Find Nico </div>
               <div class='rank-move'>D/ST10 &rarr; D/ST6 &#9650;</div>
-              
+              <div class='bid'>&nbsp;</div>
             </div></td></tr></tbody>
     </table></div>
   </div>
