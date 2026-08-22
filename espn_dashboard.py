@@ -125,11 +125,31 @@ def build_standings_tabs(league, history):
     return "".join(sub_nav), "".join(panels)
 
 
+def _format_single_owner(o):
+    """
+    Extract a single manager's display name from one ESPN owner entry.
+    Prefers firstName + lastName (since ESPN's 'displayName' field is often
+    just the person's chosen username, e.g. "j_souza17") and falls back to
+    displayName only if no first/last name is available. Returns None if
+    nothing usable is found.
+    """
+    if not isinstance(o, dict):
+        return None
+    first = (o.get("firstName") or "").strip()
+    last = (o.get("lastName") or "").strip()
+    combined = f"{first} {last}".strip()
+    if combined:
+        return combined
+    return o.get("displayName") or None
+
+
 def get_owner_name(team):
     """
-    Best-effort extraction of a team's owner's real name from ESPN's raw
-    'owners' data on the Team object. Prefers firstName + lastName, since
-    ESPN's 'displayName' field is often just the person's chosen username
+    Best-effort extraction of a team's manager name(s) from ESPN's raw
+    'owners' data on the Team object. Some teams have co-managers, so this
+    pulls the name for *every* manager listed (joined with ' & ') rather
+    than just the first. Prefers firstName + lastName, since ESPN's
+    'displayName' field is often just the person's chosen username
     (e.g. "j_souza17") rather than their actual name. Falls back to
     displayName only if no first/last name is available. Returns None if
     nothing usable is found, so callers can decide how to render that
@@ -138,16 +158,14 @@ def get_owner_name(team):
     owners = getattr(team, "owners", None) or []
     if not owners:
         return None
-    o = owners[0]
-    if isinstance(o, dict):
-        first = (o.get("firstName") or "").strip()
-        last = (o.get("lastName") or "").strip()
-        combined = f"{first} {last}".strip()
-        if combined:
-            return combined
-        return o.get("displayName") or None
-    return None
-
+    names = []
+    for o in owners:
+        name = _format_single_owner(o)
+        if name:
+            names.append(name)
+    if not names:
+        return None
+    return " & ".join(names)
 
 def team_cell_html(name, owner=None):
     owner_html = f'<div class="owner-name">{html.escape(owner)}</div>' if owner else ""
