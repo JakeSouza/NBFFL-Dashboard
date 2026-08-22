@@ -1,176 +1,44 @@
-
-Claude finished the response
-That means the YEAR secret exists in GitHub but is empty (empty string, not missing) — so os.environ.get("YEAR", 2025) returns "" instead of falling back to the default, and int("") fails.
-
-Two things to fix:
-
-1. Check the secret itself — go to Settings → Secrets and variables → Actions → click YEAR → make sure it actually has a value like 2025 and re-save it. It's easy to accidentally save one blank.
-
-2. Make the script tolerate blank env vars too, so this doesn't bite you again:
-
-
-Ran 2 commands, edited a file, read a file · 1 note
-Ran 2 commands, edited a file, read a file · 1 note
-Replace espn_dashboard.py in your repo with this version, but the real fix is still #1 above — double check YEAR (and while you're there, LEAGUE_ID, ESPN_S2, SWID too) actually have values saved in the repo secrets, since a blank secret was the root cause here.
-
-
-Espn dashboard
-PY 
-in netlify i see this error:
-Page not found
-Looks like you’ve followed a broken link or entered a URL that doesn’t exist on this site.
-If this is your site, and you weren’t expecting a 404 for this path, please visit Netlify’s [“page not found” support guide](https://answers.netlify.com/t/support-guide-i-ve-deployed-my-site-but-i-still-see-page-not-found/125?utm_source=404page&utm_campaign=community_tracking) for troubleshooting tips.
-
-
-Thought for 4s
-Thought for 4s
-That 404 almost always means Netlify can't find an index.html at your site's root — and right now your script outputs fantasy_dashboard.html, not index.html. Netlify (like most static hosts) serves index.html automatically when someone visits your bare domain; anything else needs the exact filename in the URL.
-
-Two ways to fix it — pick whichever's easier:
-
-Option A (recommended): rename the output to index.html
-
-
-Edited 2 files, ran a command, read a file · 1 note
-Edited 2 files, ran a command, read a file · 1 note
-If there's already an old fantasy_dashboard.html committed in the repo, you can delete it — it's harmless either way, just unused.
-
-Option B: instead, check Netlify's publish directory setting — if you'd rather not rename, go to Site settings → Build & deploy → look at "Publish directory." If your repo has the HTML file in a subfolder (like dist/ or public/) but that setting points elsewhere (or vice versa), Netlify will 404 even though the deploy succeeded. Worth a quick look regardless.
-
-After swapping in these two files and pushing (or triggering the Action manually), Netlify should redeploy and your root URL should load the dashboard directly.
-
-
-Espn dashboard
-PY 
-
-Update dashboard
-YML 
-can we make a few change, for the draft dashboard gradient can we not change the color if they are within 3 spots of the original pick, once further away from the 3 spots we can start applying the gradient.
-
-also can we update dashboard auto commit message to include the and time in the commit message
-
-
-Edited 3 files, ran 3 commands, read a file · 2 notes
-Edited 3 files, ran 3 commands, read a file · 2 notes
-Both changes are in:
-
-Draft board: moves of ±3 spots or fewer stay neutral gray now (treated as noise); the green/red gradient only kicks in beyond that, ramping to full intensity at a 15-spot swing. Legend text updated to match.
-Commit message: now reads like Auto-update fantasy dashboard - 2026-08-22 14:03 UTC instead of a plain static message.
-Swap both files into your repo and push (or trigger the Action manually) to see them live.
-
-
-Espn dashboard
-PY 
-
-Update dashboard
-YML 
-Can we also have a match ups page as well, this page will contain the weekly matches, projected scores for the teams, and under each match up could we generate a fun paragraph of the matchup outlook?
-
-
-Ran 10 commands, edited 4 files, viewed a file · 7 notes
-Ran 10 commands, edited 4 files, viewed a file · 7 notes
-New "Matchups" tab (between Standings and Recent Transactions) shows, for the current week:
-
-Each pairing with team names, records, and projected scores side by side
-Bye weeks get their own simple card
-A short outlook paragraph under each matchup, worded around the actual projected point gap — close games get "coin flip" framing, moderate gaps get "favorite, but not a lock" framing, and lopsided ones get "blowout potential" framing
-The outlook text is generated locally from your league's own numbers (no external API calls, so it stays fast and free to regenerate) — it picks from a few varied phrasings per gap-size so it doesn't feel like the same sentence every week, but stays consistent within a given matchup/week if you rerun it.
-
-Swap this file into your repo and push — Netlify will pick it up on the next auto-deploy.
-
-
-Espn dashboard
-PY 
-What could be some fun and unique additions for this page? Things custom for this dashboard that wouldn’t be found inherently on espn fantasy page
-
-
-Thought for 12s
-Thought for 12s
-Some ideas that use data ESPN already gives you but never surfaces on their own site:
-
-Rankings & narrative
-
-Power Rankings — a custom ranking blending points scored, margin of victory, and recent-weeks form, not just win/loss (a 6-1 team that's been lucky looks very different from a 6-1 team that's dominating)
-Luck Index — compare points-for to actual record to flag over/underperforming teams (high scorer with a bad record = "unlucky"; low scorer with wins = "lucky")
-Draft Report Card — you already compute draft-slot vs. current-rank deltas; roll those up per team into a letter grade ("Team X: A-, best value pick was..., biggest bust was...")
-Weekly awards
-
-Highest score, lowest score ("Sunday Toilet Bowl"), closest game, biggest blowout, best waiver-wire pickup of the week — auto-generated blurb for each, similar to the matchup outlooks
-Manager stats
-
-"Most Active GM" — trade count, waiver moves, drops per manager over the season
-Bench points wasted — optimal lineup vs. what was actually started, per team per week
-Fun/flavor
-
-Rivalry tracker — head-to-head history between any two teams across seasons (if you have multiple years of league data)
-A "burn book" section that auto-roasts the week's lowest scorer using the same outlook-generator approach, just with sharper language
-Championship belt — tracks who's held the #1 seed the longest this season
-Prediction accuracy
-
-Track how often each manager beats their own ESPN projection — reveals who's a lineup-optimization savant vs. who's riding luck
-Want me to build any of these next? Power Rankings and Weekly Awards are probably the quickest wins since they reuse data you're already pulling for standings and matchups.
-
-Let’s add power rankings, luck index, draft report card, prediction accuracy, and we have at least 5 years worth of history so we can add historical analyses as well including rivalry tracker
-
-
-Ran a command
-Ran a command
-This is a big feature set — let me build it in pieces, verifying the ESPN library's actual data shapes as I go so nothing breaks on real data.
-
-
-Ran 14 commands, edited 9 files, viewed 3 files · 11 notes
-Ran 14 commands, edited 9 files, viewed 3 files · 11 notes
-please continue and finish creating the above features
-
-
-
-You are out of free messages until 1:30 PM
-please continue and finish creating the above features
-
-
-Claude is AI and can make mistakes. Please double-check responses.
-Espn dashboard · PY
 """
 ESPN Fantasy Football Dashboard Generator
 ==========================================
 Generates a self-contained HTML page showing your league's standings,
 recent transactions, and draft board.
- 
+
 SETUP (one-time)
 -----------------
 1. Install the library:
        pip install espn_api
- 
+
 2. Get your league ID:
    Go to your league on fantasy.espn.com and look at the URL, e.g.
        https://fantasy.espn.com/football/league?leagueId=1234567
    Your league ID is 1234567.
- 
+
 3. Get your espn_s2 and SWID cookies (needed for private leagues):
    - Log into fantasy.espn.com in Chrome
    - Right-click -> Inspect -> Application tab -> Cookies -> fantasy.espn.com
    - Copy the values for "espn_s2" and "SWID" (SWID includes the curly braces)
- 
+
 4. Fill in the CONFIG section below.
- 
+
 USAGE
 -----
     python espn_dashboard.py
- 
+
 This writes "fantasy_dashboard.html" in the same folder. Open it in any
 browser, or upload it somewhere to share with your league. Re-run the
 script any time to refresh the data (e.g. weekly, or set up a scheduled
 task/cron job to regenerate it automatically).
- 
+
 Your espn_s2/SWID values stay on your own machine — they are never sent
 anywhere except directly to ESPN's API.
 """
- 
+
 from espn_api.football import League
 from datetime import datetime
 import html
 import os
- 
+
 # ============ CONFIG ============
 # Values are read from environment variables first (used by the GitHub
 # Actions workflow / GitHub Secrets), falling back to the literals below
@@ -181,7 +49,7 @@ def _env_or_default(name, default):
     """Falls back to default if the env var is missing OR set but blank."""
     value = os.environ.get(name)
     return value if value else default
- 
+
 LEAGUE_ID = int(_env_or_default("LEAGUE_ID", 1234567))
 YEAR = int(_env_or_default("YEAR", 2026))
 ESPN_S2 = _env_or_default("ESPN_S2", "PASTE_ESPN_S2_HERE")
@@ -189,8 +57,8 @@ SWID = _env_or_default("SWID", "PASTE_SWID_HERE")  # looks like {XXXXXXXX-XXXX-X
 OUTPUT_FILE = "index.html"
 RECENT_ACTIVITY_COUNT = 25
 # ==================================================
- 
- 
+
+
 def build_standings_rows(league):
     standings = sorted(league.teams, key=lambda t: (-t.wins, t.losses, -t.points_for))
     rows = []
@@ -208,8 +76,8 @@ def build_standings_rows(league):
           <td>{team.streak_type} {team.streak_length}</td>
         </tr>""")
     return "\n".join(rows)
- 
- 
+
+
 ACTION_LABELS = {
     "FA ADDED": "Free agent add",
     "WAIVER ADDED": "Waiver add",
@@ -217,14 +85,14 @@ ACTION_LABELS = {
     "TRADE_SENT": "Traded away",
     "TRADE_RECEIVED": "Traded for",
 }
- 
- 
+
+
 def build_activity_rows(league):
     try:
         activity = league.recent_activity(size=RECENT_ACTIVITY_COUNT)
     except Exception:
         activity = []
- 
+
     rows = []
     for act in activity:
         date_str = datetime.fromtimestamp(act.date / 1000).strftime("%b %d, %Y")
@@ -243,8 +111,8 @@ def build_activity_rows(league):
     if not rows:
         rows.append("<tr><td colspan='4' class='empty'>No recent activity found.</td></tr>")
     return "\n".join(rows)
- 
- 
+
+
 def fetch_player_rank_data(league):
     """
     Returns a dict: playerId -> {
@@ -256,11 +124,11 @@ def fetch_player_rank_data(league):
     """
     if not league.draft:
         return {}
- 
+
     player_ids = [pick.playerId for pick in league.draft if pick.playerId]
     if not player_ids:
         return {}
- 
+
     # Single batched call for every drafted player's current info
     players = league.player_info(playerId=player_ids)
     if players is None:
@@ -268,7 +136,7 @@ def fetch_player_rank_data(league):
     elif not isinstance(players, list):
         players = [players]
     player_lookup = {p.playerId: p for p in players}
- 
+
     # Walk the draft in actual draft order to work out each player's
     # "positional draft rank" — i.e. he was the Nth RB/WR/etc. taken.
     ordered_picks = sorted(league.draft, key=lambda p: (p.round_num, p.round_pick))
@@ -292,8 +160,8 @@ def fetch_player_rank_data(league):
             "delta": delta,
         }
     return rank_data
- 
- 
+
+
 def delta_color(delta, dead_zone=3, max_delta=15):
     """
     Green the more a player has risen vs. draft slot, red the more they've
@@ -312,8 +180,8 @@ def delta_color(delta, dead_zone=3, max_delta=15):
     bg = f"rgba({r},{g},{b},{intensity:.2f})"
     border = f"rgba({r},{g},{b},{min(intensity + 0.25, 1):.2f})"
     return bg, border
- 
- 
+
+
 def build_matchups(league):
     """Builds the weekly matchups section: projected scores + a generated outlook."""
     week = league.current_week
@@ -321,10 +189,10 @@ def build_matchups(league):
         matchups = league.box_scores(week)
     except Exception:
         matchups = []
- 
+
     if not matchups:
         return "<p class='empty'>No matchup data available for this week yet.</p>", week
- 
+
     cards = []
     for m in matchups:
         if not m.home_team or not m.away_team:
@@ -336,7 +204,7 @@ def build_matchups(league):
                   <div class="team-name">{html.escape(bye_team.team_name)}</div>
                 </div>""")
             continue
- 
+
         home, away = m.home_team, m.away_team
         home_proj = round(m.home_projected, 1)
         away_proj = round(m.away_projected, 1)
@@ -345,7 +213,7 @@ def build_matchups(league):
             else (away, home, away_proj, home_proj)
         )
         outlook = generate_matchup_outlook(favorite, underdog, fav_proj, dog_proj)
- 
+
         cards.append(f"""
         <div class="matchup-card">
           <div class="matchup-teams">
@@ -363,10 +231,10 @@ def build_matchups(league):
           </div>
           <p class="outlook">{html.escape(outlook)}</p>
         </div>""")
- 
+
     return "\n".join(cards), week
- 
- 
+
+
 def generate_matchup_outlook(favorite, underdog, fav_proj, dog_proj):
     """Generates a short, varied narrative blurb for a matchup using
     deterministic-but-varied templates based on the matchup's own numbers
@@ -374,7 +242,7 @@ def generate_matchup_outlook(favorite, underdog, fav_proj, dog_proj):
     gap = round(fav_proj - dog_proj, 1)
     fav_name = favorite.team_name
     dog_name = underdog.team_name
- 
+
     # Pick a template bucket based on projected point gap and each team's
     # current form, seeded by team names + week so it's stable per matchup
     # but still varies week to week and across pairings.
@@ -404,22 +272,22 @@ def generate_matchup_outlook(favorite, underdog, fav_proj, dog_proj):
         f"The numbers aren't kind to {dog_name} here, with {fav_name} projected to win by "
         f"{gap} points. A statement upset would be one for the ages.",
     ]
- 
+
     if gap < 8:
         pool = variants_close
     elif gap < 20:
         pool = variants_moderate
     else:
         pool = variants_blowout
- 
+
     return pool[seed % len(pool)]
     if not league.draft:
         return "<p class='empty'>No draft data available for this league/year yet.</p>"
- 
+
     by_round = {}
     for pick in league.draft:
         by_round.setdefault(pick.round_num, []).append(pick)
- 
+
     sections = []
     for round_num in sorted(by_round):
         picks = sorted(by_round[round_num], key=lambda p: p.round_pick)
@@ -428,7 +296,7 @@ def generate_matchup_outlook(favorite, underdog, fav_proj, dog_proj):
             team_name = html.escape(pick.team.team_name) if pick.team else "Unknown"
             player_name = html.escape(pick.playerName or "—")
             bid = f"<div class='bid'>${pick.bid_amount}</div>" if pick.bid_amount else ""
- 
+
             info = rank_data.get(pick.playerId)
             bg, border = delta_color(info["delta"] if info else None)
             if info and info["delta"] is not None:
@@ -440,7 +308,7 @@ def generate_matchup_outlook(favorite, underdog, fav_proj, dog_proj):
                 rank_line = f"<div class='rank-move'>{info['position']}{info['draft_pos_rank']} &rarr; n/a</div>"
             else:
                 rank_line = ""
- 
+
             cells.append(f"""
             <div class="draft-cell" style="background:{bg}; border-color:{border};">
               <div class="pick-num">{round_num}.{pick.round_pick}</div>
@@ -454,7 +322,7 @@ def generate_matchup_outlook(favorite, underdog, fav_proj, dog_proj):
           <h3>Round {round_num}</h3>
           <div class="draft-grid">{''.join(cells)}</div>
         </div>""")
- 
+
     legend = """
     <div class="legend">
       <span><i class="dot" style="background:rgba(34,139,34,0.7)"></i> Outperforming draft slot (4+ spots)</span>
@@ -462,8 +330,8 @@ def generate_matchup_outlook(favorite, underdog, fav_proj, dog_proj):
       <span><i class="dot" style="background:rgba(178,34,34,0.7)"></i> Underperforming draft slot (4+ spots)</span>
     </div>"""
     return legend + "\n".join(sections)
- 
- 
+
+
 HTML_TEMPLATE = """<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -668,14 +536,14 @@ HTML_TEMPLATE = """<!DOCTYPE html>
   <h1>{league_name}</h1>
   <div class="subtitle">{year} season · updated {updated}</div>
 </header>
- 
+
 <nav>
   <button class="active" onclick="showTab('standings', this)">Standings</button>
   <button onclick="showTab('matchups', this)">Matchups</button>
   <button onclick="showTab('activity', this)">Recent Transactions</button>
   <button onclick="showTab('draft', this)">Draft Board</button>
 </nav>
- 
+
 <section id="standings" class="active">
   <div class="panel">
     <table>
@@ -688,7 +556,7 @@ HTML_TEMPLATE = """<!DOCTYPE html>
     </table>
   </div>
 </section>
- 
+
 <section id="matchups">
   <div class="panel">
     <h2 class="section-title">Week {matchup_week} Matchups</h2>
@@ -697,7 +565,7 @@ HTML_TEMPLATE = """<!DOCTYPE html>
     </div>
   </div>
 </section>
- 
+
 <section id="activity">
   <div class="panel">
     <table>
@@ -710,15 +578,15 @@ HTML_TEMPLATE = """<!DOCTYPE html>
     </table>
   </div>
 </section>
- 
+
 <section id="draft">
   <div class="panel">
     {draft_board}
   </div>
 </section>
- 
+
 <footer>Generated locally from your ESPN league data. Not affiliated with ESPN.</footer>
- 
+
 <script>
 function showTab(id, btn) {{
   document.querySelectorAll('section').forEach(s => s.classList.remove('active'));
@@ -730,20 +598,20 @@ function showTab(id, btn) {{
 </body>
 </html>
 """
- 
- 
+
+
 def main():
     print(f"Connecting to league {LEAGUE_ID} ({YEAR})...")
     league = League(league_id=LEAGUE_ID, year=YEAR, espn_s2=ESPN_S2, swid=SWID)
- 
+
     league_name = getattr(league.settings, "name", "Fantasy Football League")
- 
+
     print("Fetching current player rankings for draft comparison...")
     rank_data = fetch_player_rank_data(league)
- 
+
     print("Building matchup outlooks...")
     matchups_html, matchup_week = build_matchups(league)
- 
+
     html_out = HTML_TEMPLATE.format(
         league_name=html.escape(league_name),
         year=YEAR,
@@ -754,14 +622,12 @@ def main():
         activity_rows=build_activity_rows(league),
         draft_board=build_draft_board(league, rank_data),
     )
- 
+
     with open(OUTPUT_FILE, "w", encoding="utf-8") as f:
         f.write(html_out)
- 
+
     print(f"Done. Open {OUTPUT_FILE} in your browser.")
- 
- 
+
+
 if __name__ == "__main__":
     main()
- 
-You’ve hit your limit for Claude messages. Limits will reset at 1:30 PM. For higher limits, explore our Pro plan.
