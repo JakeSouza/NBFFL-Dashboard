@@ -1,0 +1,2829 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>NBFFL — League Dashboard</title>
+<style>
+  :root {
+    --bg: #0f1420;
+    --panel: #171d2e;
+    --border: #2a3348;
+    --text: #e8ecf4;
+    --muted: #8a92a8;
+    --accent: #ff5a1f;
+    --accent2: #3d8bfd;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    padding: 24px;
+  }
+  header {
+    margin-bottom: 28px;
+  }
+  h1 {
+    margin: 0 0 4px 0;
+    font-size: 28px;
+    letter-spacing: -0.5px;
+  }
+  .subtitle {
+    color: var(--muted);
+    font-size: 14px;
+  }
+  nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px 8px;
+    margin: 20px 0 24px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  nav button {
+    background: none;
+    border: none;
+    color: var(--muted);
+    font-size: 15px;
+    padding: 10px 14px;
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    white-space: nowrap;
+  }
+  nav button.active {
+    color: var(--text);
+    border-bottom-color: var(--accent);
+  }
+  section { display: none; }
+  section.active { display: block; }
+  .panel {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+    overflow-x: auto;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+  }
+  th {
+    text-align: left;
+    color: var(--muted);
+    font-weight: 600;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 8px 10px;
+    border-bottom: 1px solid var(--border);
+  }
+  td {
+    padding: 10px;
+    border-bottom: 1px solid var(--border);
+  }
+  tr:last-child td { border-bottom: none; }
+  .team-cell { display: flex; align-items: center; gap: 8px; font-weight: 600; }
+  .logo { width: 22px; height: 22px; border-radius: 50%; }
+  .action { color: var(--accent2); }
+  .empty { color: var(--muted); text-align: center; padding: 24px; }
+  .draft-round h3 { color: var(--muted); font-size: 13px; text-transform: uppercase; margin: 20px 0 10px 0; }
+  .draft-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 10px;
+  }
+  .draft-cell {
+    background: #1c2438;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 10px;
+    transition: transform 0.1s ease;
+  }
+  .draft-cell:hover { transform: translateY(-2px); }
+  .pick-num { color: var(--accent); font-size: 12px; font-weight: 700; }
+  .player { font-weight: 600; margin: 4px 0 2px 0; font-size: 14px; }
+  .drafted-by { color: var(--muted); font-size: 12px; }
+  .rank-move { font-size: 11px; margin-top: 6px; color: var(--text); opacity: 0.9; }
+  .bid { color: var(--accent2); font-size: 12px; margin-top: 4px; }
+  .legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 18px;
+    font-size: 12px;
+    color: var(--muted);
+    margin-bottom: 16px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--border);
+  }
+  .legend .dot {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    margin-right: 6px;
+    vertical-align: middle;
+  }
+  .section-title {
+    font-size: 15px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin: 0 0 16px 0;
+  }
+  .matchup-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 14px;
+  }
+  .matchup-card {
+    background: #1c2438;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px;
+  }
+  .matchup-card.bye {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    color: var(--muted);
+  }
+  .bye-label {
+    font-size: 11px;
+    letter-spacing: 1px;
+    color: var(--accent);
+    font-weight: 700;
+    margin-bottom: 6px;
+  }
+  .matchup-teams {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+  }
+  .matchup-team {
+    flex: 1;
+    text-align: center;
+  }
+  .matchup-team .team-name {
+    font-weight: 700;
+    font-size: 14px;
+    margin-bottom: 2px;
+  }
+  .matchup-team .team-record {
+    color: var(--muted);
+    font-size: 12px;
+    margin-bottom: 8px;
+  }
+  .matchup-team .proj-score {
+    font-size: 24px;
+    font-weight: 800;
+    color: var(--accent2);
+  }
+  .vs {
+    color: var(--muted);
+    font-size: 13px;
+    font-weight: 600;
+  }
+  .outlook {
+    margin: 14px 0 0 0;
+    padding-top: 12px;
+    border-top: 1px solid var(--border);
+    font-size: 13px;
+    line-height: 1.5;
+    color: var(--text);
+    opacity: 0.9;
+  }
+  .section-note {
+    color: var(--muted);
+    font-size: 12px;
+    margin: -8px 0 16px 0;
+  }
+  .subnav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 16px;
+  }
+  .subtab {
+    background: #1c2438;
+    border: 1px solid var(--border);
+    color: var(--muted);
+    font-size: 13px;
+    padding: 6px 12px;
+    border-radius: 20px;
+    cursor: pointer;
+  }
+  .subtab.active {
+    color: var(--text);
+    border-color: var(--accent);
+    background: rgba(255, 90, 31, 0.12);
+  }
+  .subpanel { display: none; }
+  .subpanel.active { display: block; }
+  .move-up { color: #2fb344; font-weight: 600; }
+  .move-down { color: #e05252; font-weight: 600; }
+  .move-flat { color: var(--muted); }
+  .luck-good { color: #2fb344; font-weight: 600; }
+  .luck-bad { color: #e05252; font-weight: 600; }
+  .report-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 14px;
+  }
+  .report-card {
+    background: #1c2438;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px;
+    position: relative;
+  }
+  .grade-badge {
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    font-size: 15px;
+  }
+  .grade-a { background: rgba(47,179,68,0.2); color: #2fb344; }
+  .grade-b { background: rgba(61,139,253,0.2); color: #3d8bfd; }
+  .grade-c { background: rgba(138,146,168,0.25); color: var(--text); }
+  .grade-d { background: rgba(255,159,28,0.2); color: #ff9f1c; }
+  .grade-f { background: rgba(224,82,82,0.2); color: #e05252; }
+  .report-team { font-weight: 700; font-size: 15px; margin-bottom: 6px; padding-right: 40px; }
+  .report-stat { color: var(--muted); font-size: 12px; margin-bottom: 10px; }
+  .report-line { font-size: 12px; line-height: 1.5; margin-top: 4px; }
+  .report-line.best { color: #2fb344; }
+  .report-line.worst { color: #e05252; }
+  .rivalry-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 14px;
+  }
+  .rivalry-card {
+    background: #1c2438;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px;
+  }
+  .rivalry-meetings {
+    color: var(--muted);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 10px;
+  }
+  .rivalry-matchup {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+  }
+  .rivalry-team { flex: 1; text-align: center; }
+  .rivalry-team .team-name { font-weight: 700; font-size: 13px; }
+  .rivalry-record { color: var(--accent2); font-weight: 700; font-size: 15px; margin: 4px 0 2px 0; }
+  .rivalry-points { color: var(--muted); font-size: 11px; }
+  footer { color: var(--muted); font-size: 12px; margin-top: 24px; text-align: center; }
+</style>
+</head>
+<body>
+<header>
+  <h1>NBFFL</h1>
+  <div class="subtitle">2025 season · updated Aug 22, 2026 05:41 PM</div>
+</header>
+
+<nav>
+  <button class="active" onclick="showTab('standings', this)">Standings</button>
+  <button onclick="showTab('matchups', this)">Matchups</button>
+  <button onclick="showTab('power', this)">Power Rankings</button>
+  <button onclick="showTab('draftgrades', this)">Draft Report Card</button>
+  <button onclick="showTab('predictions', this)">Prediction Accuracy</button>
+  <button onclick="showTab('history', this)">History</button>
+  <button onclick="showTab('activity', this)">Recent Transactions</button>
+  <button onclick="showTab('draft', this)">Draft Board</button>
+</nav>
+
+<section id="standings" class="active">
+  <div class="panel">
+    <div class="subnav"><button class="subtab active" onclick="showSubTab('std-current', this)">Current</button><button class="subtab" onclick="showSubTab('std-2024', this)">2024</button><button class="subtab" onclick="showSubTab('std-2023', this)">2023</button><button class="subtab" onclick="showSubTab('std-2022', this)">2022</button><button class="subtab" onclick="showSubTab('std-2021', this)">2021</button><button class="subtab" onclick="showSubTab('std-2020', this)">2020</button><button class="subtab" onclick="showSubTab('std-2019', this)">2019</button><button class="subtab" onclick="showSubTab('std-2018', this)">2018</button><button class="subtab" onclick="showSubTab('std-alltime', this)">All-Time</button></div>
+    
+    <div id="std-current" class="subpanel active">
+      <table>
+        <thead><tr><th>#</th><th>Team</th><th>Record</th><th>PF</th><th>PA</th><th>Streak</th></tr></thead>
+        <tbody>
+        <tr>
+          <td>1</td>
+          <td class="team-cell">
+            <img src='https://mystique-api.fantasy.espn.com/apis/v1/domains/lm/images/67644bc0-ba58-11f0-afb5-e14f006a2a34' class='logo'>
+            #NoKings 
+          </td>
+          <td>10-4</td>
+          <td>2106.7</td>
+          <td>1932.0</td>
+          <td>LOSS 2</td>
+        </tr>
+
+        <tr>
+          <td>2</td>
+          <td class="team-cell">
+            <img src='https://g.espncdn.com/lm-static/logo-packs/ffl/1stStringAllStars-SportsManias/barkley-01.svg' class='logo'>
+            Evan Squared
+          </td>
+          <td>9-5</td>
+          <td>2052.0</td>
+          <td>1785.5</td>
+          <td>WIN 3</td>
+        </tr>
+
+        <tr>
+          <td>3</td>
+          <td class="team-cell">
+            <img src='https://g.espncdn.com/lm-static/logo-packs/ffl/BoneHeads-ToddDetwiler/BoneHeads-16.svg' class='logo'>
+            Cant Find Nico 
+          </td>
+          <td>8-6</td>
+          <td>1959.0</td>
+          <td>1822.3</td>
+          <td>WIN 1</td>
+        </tr>
+
+        <tr>
+          <td>4</td>
+          <td class="team-cell">
+            <img src='https://mystique-api.fantasy.espn.com/apis/v1/domains/lm/images/84086450-88c6-11f0-89de-d1ac062a5dc6' class='logo'>
+            For Nabers
+          </td>
+          <td>8-6</td>
+          <td>1910.2</td>
+          <td>2038.4</td>
+          <td>LOSS 1</td>
+        </tr>
+
+        <tr>
+          <td>5</td>
+          <td class="team-cell">
+            <img src='https://mystique-api.fantasy.espn.com/apis/v1/domains/lm/images/671b7250-8f6b-11f0-b1c3-bf61c28fbeb9' class='logo'>
+            Whats Good My Njigba
+          </td>
+          <td>8-6</td>
+          <td>1887.7</td>
+          <td>1849.0</td>
+          <td>WIN 1</td>
+        </tr>
+
+        <tr>
+          <td>6</td>
+          <td class="team-cell">
+            <img src='https://mystique-api.fantasy.espn.com/apis/v1/domains/lm/images/a9e443b0-875e-11f0-89de-d1ac062a5dc6' class='logo'>
+            CHASEing Greatness
+          </td>
+          <td>7-7</td>
+          <td>2056.9</td>
+          <td>1836.8</td>
+          <td>WIN 1</td>
+        </tr>
+
+        <tr>
+          <td>7</td>
+          <td class="team-cell">
+            <img src='https://g.espncdn.com/lm-static/logo-packs/ffl/1stStringAllStars-SportsManias/nacua-01.svg' class='logo'>
+            Bad Blood
+          </td>
+          <td>6-8</td>
+          <td>2068.2</td>
+          <td>2089.2</td>
+          <td>LOSS 3</td>
+        </tr>
+
+        <tr>
+          <td>8</td>
+          <td class="team-cell">
+            <img src='https://mystique-api.fantasy.espn.com/apis/v1/domains/lm/images/1492bae0-bab6-11f0-afb5-e14f006a2a34' class='logo'>
+            Uncle Rico
+          </td>
+          <td>6-8</td>
+          <td>1846.5</td>
+          <td>1975.8</td>
+          <td>LOSS 1</td>
+        </tr>
+
+        <tr>
+          <td>9</td>
+          <td class="team-cell">
+            <img src='https://mystique-api.fantasy.espn.com/apis/v1/domains/lm/images/81458e60-ba98-11f0-b1c3-bf61c28fbeb9' class='logo'>
+            HERB YOUR ENTHUSIASM
+          </td>
+          <td>5-9</td>
+          <td>1736.2</td>
+          <td>1972.9</td>
+          <td>LOSS 1</td>
+        </tr>
+
+        <tr>
+          <td>10</td>
+          <td class="team-cell">
+            <img src='https://mystique-api.fantasy.espn.com/apis/v1/domains/lm/images/4cc3b190-8df6-11f0-90f7-112fa0f42e74' class='logo'>
+            BuckO
+          </td>
+          <td>3-11</td>
+          <td>1721.0</td>
+          <td>2042.7</td>
+          <td>WIN 2</td>
+        </tr></tbody>
+      </table>
+    </div>
+        <div id="std-2024" class="subpanel">
+          <table>
+            <thead><tr><th>#</th><th>Team</th><th>Record</th><th>PF</th><th>PA</th></tr></thead>
+            <tbody>
+        <tr>
+          <td>1</td>
+          <td class="team-cell">Get Bucked</td>
+          <td>6-8</td>
+          <td>2198.3</td>
+          <td>2140.0</td>
+        </tr>
+        <tr>
+          <td>2</td>
+          <td class="team-cell">Ceddy TDs </td>
+          <td>10-4</td>
+          <td>2007.1</td>
+          <td>1798.2</td>
+        </tr>
+        <tr>
+          <td>3</td>
+          <td class="team-cell">Philly Special</td>
+          <td>9-5</td>
+          <td>2036.2</td>
+          <td>1961.6</td>
+        </tr>
+        <tr>
+          <td>4</td>
+          <td class="team-cell">Zaydo</td>
+          <td>8-6</td>
+          <td>2017.7</td>
+          <td>2051.2</td>
+        </tr>
+        <tr>
+          <td>5</td>
+          <td class="team-cell">Evan Cubed</td>
+          <td>8-6</td>
+          <td>1887.5</td>
+          <td>1932.0</td>
+        </tr>
+        <tr>
+          <td>6</td>
+          <td class="team-cell">LaPorta Potty</td>
+          <td>8-6</td>
+          <td>2106.6</td>
+          <td>1880.2</td>
+        </tr>
+        <tr>
+          <td>7</td>
+          <td class="team-cell">Should&#x27;ve traded CeeDee</td>
+          <td>6-8</td>
+          <td>1805.2</td>
+          <td>1875.7</td>
+        </tr>
+        <tr>
+          <td>8</td>
+          <td class="team-cell">On to Cincinnati </td>
+          <td>5-9</td>
+          <td>1954.5</td>
+          <td>1926.3</td>
+        </tr>
+        <tr>
+          <td>9</td>
+          <td class="team-cell">Christian McAssCheeks</td>
+          <td>6-8</td>
+          <td>1977.6</td>
+          <td>2065.3</td>
+        </tr>
+        <tr>
+          <td>10</td>
+          <td class="team-cell">....</td>
+          <td>4-10</td>
+          <td>1745.9</td>
+          <td>2106.1</td>
+        </tr></tbody>
+          </table>
+        </div>
+        <div id="std-2023" class="subpanel">
+          <table>
+            <thead><tr><th>#</th><th>Team</th><th>Record</th><th>PF</th><th>PA</th></tr></thead>
+            <tbody>
+        <tr>
+          <td>1</td>
+          <td class="team-cell">Super Kamario Bros </td>
+          <td>10-4</td>
+          <td>2060.1</td>
+          <td>1683.6</td>
+        </tr>
+        <tr>
+          <td>2</td>
+          <td class="team-cell">Hey Nacua</td>
+          <td>6-8</td>
+          <td>1962.6</td>
+          <td>1882.0</td>
+        </tr>
+        <tr>
+          <td>3</td>
+          <td class="team-cell">Lord, I Need You</td>
+          <td>6-8</td>
+          <td>1921.4</td>
+          <td>1962.6</td>
+        </tr>
+        <tr>
+          <td>4</td>
+          <td class="team-cell">The Slim Reaper</td>
+          <td>11-3</td>
+          <td>1939.8</td>
+          <td>1784.8</td>
+        </tr>
+        <tr>
+          <td>5</td>
+          <td class="team-cell">Saquon Deez Nuts</td>
+          <td>9-5</td>
+          <td>1931.6</td>
+          <td>1866.1</td>
+        </tr>
+        <tr>
+          <td>6</td>
+          <td class="team-cell">.....</td>
+          <td>8-6</td>
+          <td>1838.3</td>
+          <td>1970.5</td>
+        </tr>
+        <tr>
+          <td>7</td>
+          <td class="team-cell">See you in &#x27;24</td>
+          <td>4-10</td>
+          <td>1724.7</td>
+          <td>1845.9</td>
+        </tr>
+        <tr>
+          <td>8</td>
+          <td class="team-cell">Keenan Moss</td>
+          <td>5-9</td>
+          <td>1722.3</td>
+          <td>1975.3</td>
+        </tr>
+        <tr>
+          <td>9</td>
+          <td class="team-cell">Please Come Back Jettas</td>
+          <td>5-9</td>
+          <td>1811.2</td>
+          <td>1837.3</td>
+        </tr>
+        <tr>
+          <td>10</td>
+          <td class="team-cell">PhiladelphiaEagles </td>
+          <td>6-8</td>
+          <td>1908.3</td>
+          <td>2012.0</td>
+        </tr></tbody>
+          </table>
+        </div>
+        <div id="std-2022" class="subpanel">
+          <table>
+            <thead><tr><th>#</th><th>Team</th><th>Record</th><th>PF</th><th>PA</th></tr></thead>
+            <tbody>
+        <tr>
+          <td>1</td>
+          <td class="team-cell">Lamarvelous 8</td>
+          <td>10-4</td>
+          <td>2053.8</td>
+          <td>1714.7</td>
+        </tr>
+        <tr>
+          <td>2</td>
+          <td class="team-cell">Trade Me Deebo</td>
+          <td>11-3</td>
+          <td>2091.8</td>
+          <td>1803.0</td>
+        </tr>
+        <tr>
+          <td>3</td>
+          <td class="team-cell">Evans Cubed</td>
+          <td>7-7</td>
+          <td>1901.8</td>
+          <td>1857.0</td>
+        </tr>
+        <tr>
+          <td>4</td>
+          <td class="team-cell">Joe Brrr</td>
+          <td>7-7</td>
+          <td>1907.4</td>
+          <td>1831.4</td>
+        </tr>
+        <tr>
+          <td>5</td>
+          <td class="team-cell">Griddy Gang</td>
+          <td>7-7</td>
+          <td>1879.4</td>
+          <td>1941.2</td>
+        </tr>
+        <tr>
+          <td>6</td>
+          <td class="team-cell">Lets Ride</td>
+          <td>7-7</td>
+          <td>1762.2</td>
+          <td>1947.4</td>
+        </tr>
+        <tr>
+          <td>7</td>
+          <td class="team-cell">Saved by the  Kells</td>
+          <td>5-9</td>
+          <td>1714.3</td>
+          <td>1893.9</td>
+        </tr>
+        <tr>
+          <td>8</td>
+          <td class="team-cell">Staten  Island </td>
+          <td>5-9</td>
+          <td>1756.5</td>
+          <td>1896.5</td>
+        </tr>
+        <tr>
+          <td>9</td>
+          <td class="team-cell">DeeNO .</td>
+          <td>6-8</td>
+          <td>1861.5</td>
+          <td>1906.9</td>
+        </tr>
+        <tr>
+          <td>10</td>
+          <td class="team-cell">Najee Germany</td>
+          <td>5-9</td>
+          <td>1785.2</td>
+          <td>1921.9</td>
+        </tr></tbody>
+          </table>
+        </div>
+        <div id="std-2021" class="subpanel">
+          <table>
+            <thead><tr><th>#</th><th>Team</th><th>Record</th><th>PF</th><th>PA</th></tr></thead>
+            <tbody>
+        <tr>
+          <td>1</td>
+          <td class="team-cell">Bend It Like Beckham</td>
+          <td>7-7</td>
+          <td>1852.9</td>
+          <td>1794.4</td>
+        </tr>
+        <tr>
+          <td>2</td>
+          <td class="team-cell">Dak Attack</td>
+          <td>8-6</td>
+          <td>1966.0</td>
+          <td>1863.1</td>
+        </tr>
+        <tr>
+          <td>3</td>
+          <td class="team-cell">WaiverWireSquad . </td>
+          <td>8-6</td>
+          <td>2103.8</td>
+          <td>1926.8</td>
+        </tr>
+        <tr>
+          <td>4</td>
+          <td class="team-cell">Ekeler Time</td>
+          <td>10-4</td>
+          <td>2002.0</td>
+          <td>1899.1</td>
+        </tr>
+        <tr>
+          <td>5</td>
+          <td class="team-cell">Going  All-En</td>
+          <td>7-7</td>
+          <td>1839.7</td>
+          <td>1852.5</td>
+        </tr>
+        <tr>
+          <td>6</td>
+          <td class="team-cell">Do It For Derrick 👑</td>
+          <td>7-7</td>
+          <td>1873.9</td>
+          <td>1921.9</td>
+        </tr>
+        <tr>
+          <td>7</td>
+          <td class="team-cell">Davante&#x27;s Inferno</td>
+          <td>6-8</td>
+          <td>1943.8</td>
+          <td>2085.2</td>
+        </tr>
+        <tr>
+          <td>8</td>
+          <td class="team-cell">Youre Not The  Bosa Me</td>
+          <td>5-9</td>
+          <td>2041.7</td>
+          <td>2075.2</td>
+        </tr>
+        <tr>
+          <td>9</td>
+          <td class="team-cell">We Suck</td>
+          <td>5-9</td>
+          <td>1928.0</td>
+          <td>1959.0</td>
+        </tr>
+        <tr>
+          <td>10</td>
+          <td class="team-cell">Christ Godwin</td>
+          <td>7-7</td>
+          <td>1833.5</td>
+          <td>2008.2</td>
+        </tr></tbody>
+          </table>
+        </div>
+        <div id="std-2020" class="subpanel">
+          <table>
+            <thead><tr><th>#</th><th>Team</th><th>Record</th><th>PF</th><th>PA</th></tr></thead>
+            <tbody>
+        <tr>
+          <td>1</td>
+          <td class="team-cell">Hey Lynn Jr</td>
+          <td>7-6</td>
+          <td>1792.0</td>
+          <td>1834.5</td>
+        </tr>
+        <tr>
+          <td>2</td>
+          <td class="team-cell">Team Run Lamar Run</td>
+          <td>6-7</td>
+          <td>1797.3</td>
+          <td>1795.5</td>
+        </tr>
+        <tr>
+          <td>3</td>
+          <td class="team-cell">Brady and The Tramps</td>
+          <td>9-4</td>
+          <td>1779.8</td>
+          <td>1633.8</td>
+        </tr>
+        <tr>
+          <td>4</td>
+          <td class="team-cell">Suck My DK </td>
+          <td>9-4</td>
+          <td>1792.9</td>
+          <td>1732.7</td>
+        </tr>
+        <tr>
+          <td>5</td>
+          <td class="team-cell">We Suck</td>
+          <td>7-6</td>
+          <td>1922.8</td>
+          <td>1723.2</td>
+        </tr>
+        <tr>
+          <td>6</td>
+          <td class="team-cell">HEY  MILO</td>
+          <td>7-6</td>
+          <td>1841.7</td>
+          <td>1790.7</td>
+        </tr>
+        <tr>
+          <td>7</td>
+          <td class="team-cell">Gonna Kick Your Koo</td>
+          <td>4-9</td>
+          <td>1637.8</td>
+          <td>1846.6</td>
+        </tr>
+        <tr>
+          <td>8</td>
+          <td class="team-cell">I Dont Wanna  Be Like Mike</td>
+          <td>4-9</td>
+          <td>1722.8</td>
+          <td>1727.5</td>
+        </tr>
+        <tr>
+          <td>9</td>
+          <td class="team-cell">Hot Lockett</td>
+          <td>6-7</td>
+          <td>1767.3</td>
+          <td>1841.0</td>
+        </tr>
+        <tr>
+          <td>10</td>
+          <td class="team-cell">3 Peat</td>
+          <td>6-7</td>
+          <td>1733.4</td>
+          <td>1862.3</td>
+        </tr></tbody>
+          </table>
+        </div>
+        <div id="std-2019" class="subpanel">
+          <table>
+            <thead><tr><th>#</th><th>Team</th><th>Record</th><th>PF</th><th>PA</th></tr></thead>
+            <tbody>
+        <tr>
+          <td>1</td>
+          <td class="team-cell">The Jackson 9</td>
+          <td>9-4</td>
+          <td>1940.9</td>
+          <td>1731.5</td>
+        </tr>
+        <tr>
+          <td>2</td>
+          <td class="team-cell">New England Greatriots</td>
+          <td>9-4</td>
+          <td>1821.2</td>
+          <td>1563.0</td>
+        </tr>
+        <tr>
+          <td>3</td>
+          <td class="team-cell">Horses in the Dak</td>
+          <td>7-6</td>
+          <td>1878.7</td>
+          <td>1842.0</td>
+        </tr>
+        <tr>
+          <td>4</td>
+          <td class="team-cell">Hot Chubb  Time Machine</td>
+          <td>7-6</td>
+          <td>1922.0</td>
+          <td>1818.1</td>
+        </tr>
+        <tr>
+          <td>5</td>
+          <td class="team-cell">King of the  Hill</td>
+          <td>6-7</td>
+          <td>1935.2</td>
+          <td>1855.4</td>
+        </tr>
+        <tr>
+          <td>6</td>
+          <td class="team-cell">Team Jet7</td>
+          <td>7-6</td>
+          <td>1662.0</td>
+          <td>1707.3</td>
+        </tr>
+        <tr>
+          <td>7</td>
+          <td class="team-cell">Juice  World </td>
+          <td>6-7</td>
+          <td>1687.6</td>
+          <td>1768.3</td>
+        </tr>
+        <tr>
+          <td>8</td>
+          <td class="team-cell">Better Than Justin</td>
+          <td>6-7</td>
+          <td>1648.5</td>
+          <td>1802.8</td>
+        </tr>
+        <tr>
+          <td>9</td>
+          <td class="team-cell">Team King brrrrrrrrr</td>
+          <td>3-10</td>
+          <td>1636.8</td>
+          <td>1928.6</td>
+        </tr>
+        <tr>
+          <td>10</td>
+          <td class="team-cell">Fuck AB </td>
+          <td>5-8</td>
+          <td>1657.7</td>
+          <td>1773.4</td>
+        </tr></tbody>
+          </table>
+        </div>
+        <div id="std-2018" class="subpanel">
+          <table>
+            <thead><tr><th>#</th><th>Team</th><th>Record</th><th>PF</th><th>PA</th></tr></thead>
+            <tbody>
+        <tr>
+          <td>1</td>
+          <td class="team-cell">He&#x27;s A BAAAAAAADDD MAN</td>
+          <td>10-3</td>
+          <td>1835.0</td>
+          <td>1569.5</td>
+        </tr>
+        <tr>
+          <td>2</td>
+          <td class="team-cell">Alvin and the Chipmunks</td>
+          <td>8-5</td>
+          <td>1676.7</td>
+          <td>1622.9</td>
+        </tr>
+        <tr>
+          <td>3</td>
+          <td class="team-cell">House Barkley</td>
+          <td>7-6</td>
+          <td>1807.0</td>
+          <td>1737.0</td>
+        </tr>
+        <tr>
+          <td>4</td>
+          <td class="team-cell">We Got Our Hammys Back</td>
+          <td>7-6</td>
+          <td>1620.2</td>
+          <td>1635.0</td>
+        </tr>
+        <tr>
+          <td>5</td>
+          <td class="team-cell">AK- 41</td>
+          <td>7-6</td>
+          <td>1680.8</td>
+          <td>1789.0</td>
+        </tr>
+        <tr>
+          <td>6</td>
+          <td class="team-cell">RIP Cooper</td>
+          <td>7-6</td>
+          <td>1574.3</td>
+          <td>1669.5</td>
+        </tr>
+        <tr>
+          <td>7</td>
+          <td class="team-cell">The Polish Hammer</td>
+          <td>6-7</td>
+          <td>1673.8</td>
+          <td>1723.5</td>
+        </tr>
+        <tr>
+          <td>8</td>
+          <td class="team-cell">We Are Trash, But We Try</td>
+          <td>2-11</td>
+          <td>1606.8</td>
+          <td>1810.5</td>
+        </tr>
+        <tr>
+          <td>9</td>
+          <td class="team-cell">Team King brrrrrrrrr</td>
+          <td>5-8</td>
+          <td>1666.0</td>
+          <td>1530.5</td>
+        </tr>
+        <tr>
+          <td>10</td>
+          <td class="team-cell">MA HOMIES </td>
+          <td>6-7</td>
+          <td>1730.2</td>
+          <td>1783.5</td>
+        </tr></tbody>
+          </table>
+        </div>
+        <div id="std-alltime" class="subpanel">
+          <table>
+            <thead><tr><th>#</th><th>Team</th><th>Record</th><th>Win%</th><th>Total PF</th><th>Seasons</th></tr></thead>
+            <tbody>
+        <tr>
+          <td>1</td>
+          <td class="team-cell">#NoKings </td>
+          <td>65-44</td>
+          <td>59.6%</td>
+          <td>15566.9</td>
+          <td>8</td>
+        </tr>
+        <tr>
+          <td>2</td>
+          <td class="team-cell">Uncle Rico</td>
+          <td>62-47</td>
+          <td>56.9%</td>
+          <td>15247.1</td>
+          <td>8</td>
+        </tr>
+        <tr>
+          <td>3</td>
+          <td class="team-cell">HERB YOUR ENTHUSIASM</td>
+          <td>59-50</td>
+          <td>54.1%</td>
+          <td>14937.2</td>
+          <td>8</td>
+        </tr>
+        <tr>
+          <td>4</td>
+          <td class="team-cell">Cant Find Nico </td>
+          <td>57-52</td>
+          <td>52.3%</td>
+          <td>15178.6</td>
+          <td>8</td>
+        </tr>
+        <tr>
+          <td>5</td>
+          <td class="team-cell">Evan Squared</td>
+          <td>53-56</td>
+          <td>48.6%</td>
+          <td>14825.8</td>
+          <td>8</td>
+        </tr>
+        <tr>
+          <td>6</td>
+          <td class="team-cell">For Nabers</td>
+          <td>52-57</td>
+          <td>47.7%</td>
+          <td>14302.0</td>
+          <td>8</td>
+        </tr>
+        <tr>
+          <td>7</td>
+          <td class="team-cell">Whats Good My Njigba</td>
+          <td>51-58</td>
+          <td>46.8%</td>
+          <td>14504.8</td>
+          <td>8</td>
+        </tr>
+        <tr>
+          <td>8</td>
+          <td class="team-cell">CHASEing Greatness</td>
+          <td>50-59</td>
+          <td>45.9%</td>
+          <td>15019.5</td>
+          <td>8</td>
+        </tr>
+        <tr>
+          <td>9</td>
+          <td class="team-cell">BuckO</td>
+          <td>50-59</td>
+          <td>45.9%</td>
+          <td>14600.3</td>
+          <td>8</td>
+        </tr>
+        <tr>
+          <td>10</td>
+          <td class="team-cell">Bad Blood</td>
+          <td>46-63</td>
+          <td>42.2%</td>
+          <td>14267.7</td>
+          <td>8</td>
+        </tr></tbody>
+          </table>
+        </div>
+  </div>
+</section>
+
+<section id="matchups">
+  <div class="panel">
+    <h2 class="section-title">Week 17 Matchups</h2>
+    <div class="matchup-list">
+      
+        <div class="matchup-card">
+          <div class="matchup-teams">
+            <div class="matchup-team">
+              <div class="team-name">Cant Find Nico </div>
+              <div class="team-record">8-6</div>
+              <div class="proj-score">144.6</div>
+            </div>
+            <div class="vs">@</div>
+            <div class="matchup-team">
+              <div class="team-name">#NoKings </div>
+              <div class="team-record">10-4</div>
+              <div class="proj-score">159.2</div>
+            </div>
+          </div>
+          <p class="outlook">#NoKings  looks like the safer bet against Cant Find Nico  this week, favored by roughly 14.6 points — though fantasy football has a way of humbling favorites.</p>
+        </div>
+
+        <div class="matchup-card">
+          <div class="matchup-teams">
+            <div class="matchup-team">
+              <div class="team-name">For Nabers</div>
+              <div class="team-record">8-6</div>
+              <div class="proj-score">144.9</div>
+            </div>
+            <div class="vs">@</div>
+            <div class="matchup-team">
+              <div class="team-name">Evan Squared</div>
+              <div class="team-record">9-5</div>
+              <div class="proj-score">148.5</div>
+            </div>
+          </div>
+          <p class="outlook">Too close to call. Evan Squared holds a razor-thin projected edge over For Nabers (3.6 points), so bench decisions and Monday night performances could decide it.</p>
+        </div>
+
+        <div class="matchup-card">
+          <div class="matchup-teams">
+            <div class="matchup-team">
+              <div class="team-name">CHASEing Greatness</div>
+              <div class="team-record">7-7</div>
+              <div class="proj-score">144.0</div>
+            </div>
+            <div class="vs">@</div>
+            <div class="matchup-team">
+              <div class="team-name">Whats Good My Njigba</div>
+              <div class="team-record">8-6</div>
+              <div class="proj-score">121.1</div>
+            </div>
+          </div>
+          <p class="outlook">This has blowout potential — CHASEing Greatness is favored by 22.9 points over Whats Good My Njigba. Barring injuries or busts, Whats Good My Njigba is fighting an uphill battle.</p>
+        </div>
+
+        <div class="matchup-card">
+          <div class="matchup-teams">
+            <div class="matchup-team">
+              <div class="team-name">HERB YOUR ENTHUSIASM</div>
+              <div class="team-record">5-9</div>
+              <div class="proj-score">142.3</div>
+            </div>
+            <div class="vs">@</div>
+            <div class="matchup-team">
+              <div class="team-name">Bad Blood</div>
+              <div class="team-record">6-8</div>
+              <div class="proj-score">135.6</div>
+            </div>
+          </div>
+          <p class="outlook">Too close to call. HERB YOUR ENTHUSIASM holds a razor-thin projected edge over Bad Blood (6.7 points), so bench decisions and Monday night performances could decide it.</p>
+        </div>
+
+        <div class="matchup-card">
+          <div class="matchup-teams">
+            <div class="matchup-team">
+              <div class="team-name">BuckO</div>
+              <div class="team-record">3-11</div>
+              <div class="proj-score">113.4</div>
+            </div>
+            <div class="vs">@</div>
+            <div class="matchup-team">
+              <div class="team-name">Uncle Rico</div>
+              <div class="team-record">6-8</div>
+              <div class="proj-score">122.7</div>
+            </div>
+          </div>
+          <p class="outlook">Uncle Rico looks like the safer bet against BuckO this week, favored by roughly 9.3 points — though fantasy football has a way of humbling favorites.</p>
+        </div>
+    </div>
+  </div>
+</section>
+
+<section id="power">
+  <div class="panel">
+    
+    <h2 class="section-title">Power Rankings</h2>
+    <p class="section-note">Blends scoring average, margin of victory, and last-3-week form — not just wins/losses.</p>
+    <table>
+      <thead><tr><th>#</th><th>Team</th><th>Score</th><th>Avg PF</th><th>Avg Margin</th><th>vs Standings</th></tr></thead>
+      <tbody>
+        <tr>
+          <td>1</td>
+          <td class="team-cell">CHASEing Greatness</td>
+          <td>98.5</td>
+          <td>149.8</td>
+          <td>+17.5</td>
+          <td>vs #6 in standings <span class='move-up'>▲ 5</span></td>
+        </tr>
+        <tr>
+          <td>2</td>
+          <td class="team-cell">Cant Find Nico </td>
+          <td>86.5</td>
+          <td>144.7</td>
+          <td>+11.4</td>
+          <td>vs #3 in standings <span class='move-up'>▲ 1</span></td>
+        </tr>
+        <tr>
+          <td>3</td>
+          <td class="team-cell">#NoKings </td>
+          <td>73.8</td>
+          <td>146.4</td>
+          <td>+10.9</td>
+          <td>vs #1 in standings <span class='move-down'>▼ 2</span></td>
+        </tr>
+        <tr>
+          <td>4</td>
+          <td class="team-cell">Bad Blood</td>
+          <td>69.1</td>
+          <td>145.6</td>
+          <td>+1.4</td>
+          <td>vs #7 in standings <span class='move-up'>▲ 3</span></td>
+        </tr>
+        <tr>
+          <td>5</td>
+          <td class="team-cell">For Nabers</td>
+          <td>49.9</td>
+          <td>137.1</td>
+          <td>-6.3</td>
+          <td>vs #4 in standings <span class='move-down'>▼ 1</span></td>
+        </tr>
+        <tr>
+          <td>6</td>
+          <td class="team-cell">Evan Squared</td>
+          <td>43.9</td>
+          <td>136.5</td>
+          <td>+14.8</td>
+          <td>vs #2 in standings <span class='move-down'>▼ 4</span></td>
+        </tr>
+        <tr>
+          <td>7</td>
+          <td class="team-cell">HERB YOUR ENTHUSIASM</td>
+          <td>33.9</td>
+          <td>127.6</td>
+          <td>-7.0</td>
+          <td>vs #9 in standings <span class='move-up'>▲ 2</span></td>
+        </tr>
+        <tr>
+          <td>8</td>
+          <td class="team-cell">Whats Good My Njigba</td>
+          <td>28.3</td>
+          <td>131.0</td>
+          <td>-6.7</td>
+          <td>vs #5 in standings <span class='move-down'>▼ 3</span></td>
+        </tr>
+        <tr>
+          <td>9</td>
+          <td class="team-cell">BuckO</td>
+          <td>17.6</td>
+          <td>125.0</td>
+          <td>-18.4</td>
+          <td>vs #10 in standings <span class='move-up'>▲ 1</span></td>
+        </tr>
+        <tr>
+          <td>10</td>
+          <td class="team-cell">Uncle Rico</td>
+          <td>11.5</td>
+          <td>127.4</td>
+          <td>-17.8</td>
+          <td>vs #8 in standings <span class='move-down'>▼ 2</span></td>
+        </tr></tbody>
+    </table>
+
+    <h2 class="section-title" style="margin-top:28px;">Luck Index</h2>
+    <p class="section-note">Compares each team's real record to an "all-play" record (their score vs. every other team, every week).</p>
+    <table>
+      <thead><tr><th>Team</th><th>Actual Win%</th><th>Expected Win%</th><th>Luck</th><th></th></tr></thead>
+      <tbody>
+        <tr>
+          <td class="team-cell">Whats Good My Njigba</td>
+          <td>57.1%</td>
+          <td>43.8%</td>
+          <td class="luck-good">+13.4%</td>
+          <td>Lucky</td>
+        </tr>
+        <tr>
+          <td class="team-cell">Evan Squared</td>
+          <td>64.3%</td>
+          <td>55.6%</td>
+          <td class="luck-good">+8.7%</td>
+          <td>About Right</td>
+        </tr>
+        <tr>
+          <td class="team-cell">For Nabers</td>
+          <td>57.1%</td>
+          <td>50.3%</td>
+          <td class="luck-good">+6.8%</td>
+          <td>About Right</td>
+        </tr>
+        <tr>
+          <td class="team-cell">#NoKings </td>
+          <td>71.4%</td>
+          <td>65.4%</td>
+          <td class="luck-good">+6.1%</td>
+          <td>About Right</td>
+        </tr>
+        <tr>
+          <td class="team-cell">Uncle Rico</td>
+          <td>42.9%</td>
+          <td>39.2%</td>
+          <td class="luck-good">+3.6%</td>
+          <td>About Right</td>
+        </tr>
+        <tr>
+          <td class="team-cell">HERB YOUR ENTHUSIASM</td>
+          <td>35.7%</td>
+          <td>35.9%</td>
+          <td class="luck-bad">-0.2%</td>
+          <td>About Right</td>
+        </tr>
+        <tr>
+          <td class="team-cell">Cant Find Nico </td>
+          <td>57.1%</td>
+          <td>60.1%</td>
+          <td class="luck-bad">-3.0%</td>
+          <td>About Right</td>
+        </tr>
+        <tr>
+          <td class="team-cell">CHASEing Greatness</td>
+          <td>50.0%</td>
+          <td>58.2%</td>
+          <td class="luck-bad">-8.2%</td>
+          <td>About Right</td>
+        </tr>
+        <tr>
+          <td class="team-cell">BuckO</td>
+          <td>21.4%</td>
+          <td>32.0%</td>
+          <td class="luck-bad">-10.6%</td>
+          <td>About Right</td>
+        </tr>
+        <tr>
+          <td class="team-cell">Bad Blood</td>
+          <td>42.9%</td>
+          <td>59.5%</td>
+          <td class="luck-bad">-16.6%</td>
+          <td>Unlucky</td>
+        </tr></tbody>
+    </table>
+    
+  </div>
+</section>
+
+<section id="draftgrades">
+  <div class="panel">
+    
+    <h2 class="section-title">Draft Report Card</h2>
+    <p class="section-note">Grades based on how each team's picks are trending vs. their draft slot, curved across the league.</p>
+    <div class="report-grid">
+        <div class="report-card">
+          <div class="grade-badge grade-a">A</div>
+          <div class="report-team">Evan Squared</div>
+          <div class="report-stat">Avg draft-slot movement: +1.1 spots</div>
+          <div class="report-line best">
+            Best value: Travis Etienne Jr. (RB, R9.6) — +22 spots
+          </div>
+          <div class="report-line worst">
+            Biggest bust: Chuba Hubbard (RB, R5.6) — -21 spots
+          </div>
+        </div>
+        <div class="report-card">
+          <div class="grade-badge grade-a">A</div>
+          <div class="report-team">Cant Find Nico </div>
+          <div class="report-stat">Avg draft-slot movement: +0.7 spots</div>
+          <div class="report-line best">
+            Best value: Chris Olave (WR, R10.1) — +34 spots
+          </div>
+          <div class="report-line worst">
+            Biggest bust: Isiah Pacheco (RB, R8.1) — -29 spots
+          </div>
+        </div>
+        <div class="report-card">
+          <div class="grade-badge grade-b">B</div>
+          <div class="report-team">CHASEing Greatness</div>
+          <div class="report-stat">Avg draft-slot movement: +0.0 spots</div>
+          <div class="report-line best">
+            Best value: Michael Pittman Jr. (WR, R10.10) — +22 spots
+          </div>
+          <div class="report-line worst">
+            Biggest bust: Ricky Pearsall (WR, R9.1) — -33 spots
+          </div>
+        </div>
+        <div class="report-card">
+          <div class="grade-badge grade-b">B</div>
+          <div class="report-team">Bad Blood</div>
+          <div class="report-stat">Avg draft-slot movement: -5.8 spots</div>
+          <div class="report-line best">
+            Best value: Stefon Diggs (WR, R9.7) — +21 spots
+          </div>
+          <div class="report-line worst">
+            Biggest bust: Najee Harris (RB, R15.7) — -49 spots
+          </div>
+        </div>
+        <div class="report-card">
+          <div class="grade-badge grade-c">C</div>
+          <div class="report-team">Uncle Rico</div>
+          <div class="report-stat">Avg draft-slot movement: -9.3 spots</div>
+          <div class="report-line best">
+            Best value: Woody Marks (RB, R15.5) — +25 spots
+          </div>
+          <div class="report-line worst">
+            Biggest bust: Xavier Worthy (WR, R5.5) — -39 spots
+          </div>
+        </div>
+        <div class="report-card">
+          <div class="grade-badge grade-c">C</div>
+          <div class="report-team">Whats Good My Njigba</div>
+          <div class="report-stat">Avg draft-slot movement: -10.1 spots</div>
+          <div class="report-line best">
+            Best value: Jared Goff (QB, R15.2) — +6 spots
+          </div>
+          <div class="report-line worst">
+            Biggest bust: Cedric Tillman (WR, R13.2) — -47 spots
+          </div>
+        </div>
+        <div class="report-card">
+          <div class="grade-badge grade-d">D</div>
+          <div class="report-team">#NoKings </div>
+          <div class="report-stat">Avg draft-slot movement: -14.9 spots</div>
+          <div class="report-line best">
+            Best value: Zay Flowers (WR, R8.8) — +28 spots
+          </div>
+          <div class="report-line worst">
+            Biggest bust: Tyreek Hill (WR, R3.3) — -91 spots
+          </div>
+        </div>
+        <div class="report-card">
+          <div class="grade-badge grade-d">D</div>
+          <div class="report-team">HERB YOUR ENTHUSIASM</div>
+          <div class="report-stat">Avg draft-slot movement: -19.4 spots</div>
+          <div class="report-line best">
+            Best value: Rhamondre Stevenson (RB, R12.2) — +16 spots
+          </div>
+          <div class="report-line worst">
+            Biggest bust: Mike Evans (WR, R3.9) — -63 spots
+          </div>
+        </div>
+        <div class="report-card">
+          <div class="grade-badge grade-f">F</div>
+          <div class="report-team">For Nabers</div>
+          <div class="report-stat">Avg draft-slot movement: -19.5 spots</div>
+          <div class="report-line best">
+            Best value: Rico Dowdle (RB, R15.8) — +37 spots
+          </div>
+          <div class="report-line worst">
+            Biggest bust: Malik Nabers (WR, R1.8) — -93 spots
+          </div>
+        </div>
+        <div class="report-card">
+          <div class="grade-badge grade-f">F</div>
+          <div class="report-team">BuckO</div>
+          <div class="report-stat">Avg draft-slot movement: -27.8 spots</div>
+          <div class="report-line best">
+            Best value: Josh Allen (QB, R3.4) — +0 spots
+          </div>
+          <div class="report-line worst">
+            Biggest bust: Calvin Ridley (WR, R6.7) — -87 spots
+          </div>
+        </div></div>
+    
+  </div>
+</section>
+
+<section id="predictions">
+  <div class="panel">
+    
+    <h2 class="section-title">Prediction Accuracy</h2>
+    <p class="section-note">How often each team beats ESPN's own weekly score projection, and by how much on average.</p>
+    <table>
+      <thead><tr><th>Team</th><th>Weeks</th><th>Beat Projection</th><th>Avg vs. Projection</th></tr></thead>
+      <tbody>
+        <tr>
+          <td class="team-cell">Evan Squared</td>
+          <td>16</td>
+          <td>56.2%</td>
+          <td class="luck-good">+0.3 pts/wk</td>
+        </tr>
+        <tr>
+          <td class="team-cell">Cant Find Nico </td>
+          <td>16</td>
+          <td>50.0%</td>
+          <td class="luck-bad">-0.4 pts/wk</td>
+        </tr>
+        <tr>
+          <td class="team-cell">CHASEing Greatness</td>
+          <td>16</td>
+          <td>43.8%</td>
+          <td class="luck-good">+3.3 pts/wk</td>
+        </tr>
+        <tr>
+          <td class="team-cell">BuckO</td>
+          <td>16</td>
+          <td>43.8%</td>
+          <td class="luck-bad">-2.8 pts/wk</td>
+        </tr>
+        <tr>
+          <td class="team-cell">HERB YOUR ENTHUSIASM</td>
+          <td>16</td>
+          <td>43.8%</td>
+          <td class="luck-bad">-5.3 pts/wk</td>
+        </tr>
+        <tr>
+          <td class="team-cell">Bad Blood</td>
+          <td>16</td>
+          <td>37.5%</td>
+          <td class="luck-bad">-1.2 pts/wk</td>
+        </tr>
+        <tr>
+          <td class="team-cell">#NoKings </td>
+          <td>16</td>
+          <td>37.5%</td>
+          <td class="luck-bad">-4.1 pts/wk</td>
+        </tr>
+        <tr>
+          <td class="team-cell">Whats Good My Njigba</td>
+          <td>16</td>
+          <td>37.5%</td>
+          <td class="luck-bad">-4.4 pts/wk</td>
+        </tr>
+        <tr>
+          <td class="team-cell">For Nabers</td>
+          <td>16</td>
+          <td>18.8%</td>
+          <td class="luck-bad">-9.3 pts/wk</td>
+        </tr>
+        <tr>
+          <td class="team-cell">Uncle Rico</td>
+          <td>16</td>
+          <td>12.5%</td>
+          <td class="luck-bad">-19.6 pts/wk</td>
+        </tr></tbody>
+    </table>
+    
+  </div>
+</section>
+
+<section id="history">
+  <div class="panel">
+    
+        <h2 class="section-title">League Champions</h2>
+        <table>
+          <thead><tr><th>Season</th><th>Champion</th></tr></thead>
+          <tbody><tr><td>2024</td><td>Get Bucked</td></tr><tr><td>2023</td><td>Super Kamario Bros </td></tr><tr><td>2022</td><td>Lamarvelous 8</td></tr><tr><td>2021</td><td>Bend It Like Beckham</td></tr><tr><td>2020</td><td>Hey Lynn Jr</td></tr><tr><td>2019</td><td>The Jackson 9</td></tr><tr><td>2018</td><td>He&#x27;s A BAAAAAAADDD MAN</td></tr></tbody>
+        </table>
+        <h2 class="section-title" style="margin-top:28px;">Rivalry Tracker</h2>
+        <p class="section-note">All-time head-to-head records across every season fetched.</p>
+        <div class="rivalry-grid">
+            <div class="rivalry-card">
+              <div class="rivalry-meetings">20 all-time meetings</div>
+              <div class="rivalry-matchup">
+                <div class="rivalry-team">
+                  <div class="team-name">#NoKings </div>
+                  <div class="rivalry-record">14-6</div>
+                  <div class="rivalry-points">2961.0 pts total</div>
+                </div>
+                <div class="vs">vs</div>
+                <div class="rivalry-team">
+                  <div class="team-name">Evan Squared</div>
+                  <div class="rivalry-record">6-14</div>
+                  <div class="rivalry-points">2718.2 pts total</div>
+                </div>
+              </div>
+            </div>
+            <div class="rivalry-card">
+              <div class="rivalry-meetings">19 all-time meetings</div>
+              <div class="rivalry-matchup">
+                <div class="rivalry-team">
+                  <div class="team-name">Uncle Rico</div>
+                  <div class="rivalry-record">9-10</div>
+                  <div class="rivalry-points">2559.5 pts total</div>
+                </div>
+                <div class="vs">vs</div>
+                <div class="rivalry-team">
+                  <div class="team-name">For Nabers</div>
+                  <div class="rivalry-record">10-9</div>
+                  <div class="rivalry-points">2582.2 pts total</div>
+                </div>
+              </div>
+            </div>
+            <div class="rivalry-card">
+              <div class="rivalry-meetings">18 all-time meetings</div>
+              <div class="rivalry-matchup">
+                <div class="rivalry-team">
+                  <div class="team-name">CHASEing Greatness</div>
+                  <div class="rivalry-record">12-6</div>
+                  <div class="rivalry-points">2456.0 pts total</div>
+                </div>
+                <div class="vs">vs</div>
+                <div class="rivalry-team">
+                  <div class="team-name">Whats Good My Njigba</div>
+                  <div class="rivalry-record">6-12</div>
+                  <div class="rivalry-points">2318.4 pts total</div>
+                </div>
+              </div>
+            </div>
+            <div class="rivalry-card">
+              <div class="rivalry-meetings">18 all-time meetings</div>
+              <div class="rivalry-matchup">
+                <div class="rivalry-team">
+                  <div class="team-name">Bad Blood</div>
+                  <div class="rivalry-record">10-8</div>
+                  <div class="rivalry-points">2239.4 pts total</div>
+                </div>
+                <div class="vs">vs</div>
+                <div class="rivalry-team">
+                  <div class="team-name">HERB YOUR ENTHUSIASM</div>
+                  <div class="rivalry-record">8-10</div>
+                  <div class="rivalry-points">2196.7 pts total</div>
+                </div>
+              </div>
+            </div>
+            <div class="rivalry-card">
+              <div class="rivalry-meetings">17 all-time meetings</div>
+              <div class="rivalry-matchup">
+                <div class="rivalry-team">
+                  <div class="team-name">CHASEing Greatness</div>
+                  <div class="rivalry-record">9-8</div>
+                  <div class="rivalry-points">2400.9 pts total</div>
+                </div>
+                <div class="vs">vs</div>
+                <div class="rivalry-team">
+                  <div class="team-name">#NoKings </div>
+                  <div class="rivalry-record">8-9</div>
+                  <div class="rivalry-points">2297.0 pts total</div>
+                </div>
+              </div>
+            </div>
+            <div class="rivalry-card">
+              <div class="rivalry-meetings">17 all-time meetings</div>
+              <div class="rivalry-matchup">
+                <div class="rivalry-team">
+                  <div class="team-name">BuckO</div>
+                  <div class="rivalry-record">9-8</div>
+                  <div class="rivalry-points">2333.6 pts total</div>
+                </div>
+                <div class="vs">vs</div>
+                <div class="rivalry-team">
+                  <div class="team-name">HERB YOUR ENTHUSIASM</div>
+                  <div class="rivalry-record">8-9</div>
+                  <div class="rivalry-points">2235.9 pts total</div>
+                </div>
+              </div>
+            </div>
+            <div class="rivalry-card">
+              <div class="rivalry-meetings">17 all-time meetings</div>
+              <div class="rivalry-matchup">
+                <div class="rivalry-team">
+                  <div class="team-name">BuckO</div>
+                  <div class="rivalry-record">9-8</div>
+                  <div class="rivalry-points">2398.3 pts total</div>
+                </div>
+                <div class="vs">vs</div>
+                <div class="rivalry-team">
+                  <div class="team-name">Uncle Rico</div>
+                  <div class="rivalry-record">8-9</div>
+                  <div class="rivalry-points">2171.2 pts total</div>
+                </div>
+              </div>
+            </div>
+            <div class="rivalry-card">
+              <div class="rivalry-meetings">17 all-time meetings</div>
+              <div class="rivalry-matchup">
+                <div class="rivalry-team">
+                  <div class="team-name">BuckO</div>
+                  <div class="rivalry-record">8-9</div>
+                  <div class="rivalry-points">2068.2 pts total</div>
+                </div>
+                <div class="vs">vs</div>
+                <div class="rivalry-team">
+                  <div class="team-name">Cant Find Nico </div>
+                  <div class="rivalry-record">9-8</div>
+                  <div class="rivalry-points">2139.7 pts total</div>
+                </div>
+              </div>
+            </div></div>
+  </div>
+</section>
+
+<section id="activity">
+  <div class="panel">
+    <table>
+      <thead>
+        <tr><th>Date</th><th>Team</th><th>Action</th><th>Player</th></tr>
+      </thead>
+      <tbody>
+        <tr><td colspan='4' class='empty'>No recent activity found.</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section id="draft">
+  <div class="panel">
+    
+    <div class="legend">
+      <span><i class="dot" style="background:rgba(34,139,34,0.7)"></i> Outperforming draft slot (4+ spots)</span>
+      <span><i class="dot" style="background:#2a3348"></i> Within 3 spots of draft slot / no data</span>
+      <span><i class="dot" style="background:rgba(178,34,34,0.7)"></i> Underperforming draft slot (4+ spots)</span>
+    </div>
+        <div class="draft-round">
+          <h3>Round 1</h3>
+          <div class="draft-grid">
+            <div class="draft-cell" style="background:#2a3348; border-color:#8a92a8;">
+              <div class="pick-num">1.1</div>
+              <div class="player">Ja&#x27;Marr Chase</div>
+              <div class="drafted-by">CHASEing Greatness</div>
+              <div class='rank-move'>WR1 &rarr; WR3 ▼</div>
+              
+            </div>
+            <div class="draft-cell" style="background:rgba(178,34,34,0.90); border-color:rgba(178,34,34,1.00);">
+              <div class="pick-num">1.2</div>
+              <div class="player">CeeDee Lamb</div>
+              <div class="drafted-by">Whats Good My Njigba</div>
+              <div class='rank-move'>WR2 &rarr; WR17 ▼</div>
+              
+            </div>
+            <div class="draft-cell" style="background:#2a3348; border-color:#8a92a8;">
+              <div class="pick-num">1.3</div>
+              <div class="player">Bijan Robinson</div>
+              <div class="drafted-by">#NoKings </div>
+              <div class='rank-move'>RB1 &rarr; RB2 ▼</div>
+              
+            </div>
+            <div class="draft-cell" style="background:rgba(178,34,34,0.63); border-color:rgba(178,34,34,0.88);">
+              <div class="pick-num">1.4</div>
+              <div class="player">Saquon Barkley</div>
+              <div class="drafted-by">BuckO</div>
+              <div class='rank-move'>RB2 &rarr; RB12 ▼</div>
+              
+            </div>
+            <div class="draft-cell" style="background:#2a3348; border-color:#8a92a8;">
+              <div class="pick-num">1.5</div>
+              <div class="player">Jahmyr Gibbs</div>
+              <div class="drafted-by">Uncle Rico</div>
+              <div class='rank-move'>RB3 &rarr; RB4 ▼</div>
+              
+            </div>
+            <div class="draft-cell" style="background:rgba(178,34,34,0.90); border-color:rgba(178,34,34,1.00);">
+              <div class="pick-num">1.6</div>
+              <div class="player">Justin Jefferson</div>
+              <div class="drafted-by">Evan Squared</div>
+              <div class='rank-move'>WR3 &rarr; WR22 ▼</div>
+              
+            </div>
+            <div class="draft-cell" style="background:#2a3348; border-color:#8a92a8;">
+              <div class="pick-num">1.7</div>
+              <div class="player">Christian McCaffrey</div>
+              <div class="drafted-by">Bad Blood</div>
+              <div class='rank-move'>RB4 &rarr; RB1 ▲</div>
+              
+            </div>
+            <div class="draft-cell" style="background:rgba(178,34,34,0.90); border-color:rgba(178,34,34,1.00);">
+              <div class="pick-num">1.8</div>
+              <div class="player">Malik Nabers</div>
+              <div class="drafted-by">For Nabers</div>
+              <div class='rank-move'>WR4 &rarr; WR97 ▼</div>
+              
+            </div>
+            <div class="draft-cell" style="background:#2a3348; border-color:#8a92a8;">
+              <div class="pick-num">1.9</div>
+              <div class="player">Amon-Ra St. Brown</div>
+              <div class="drafted-by">HERB YOUR ENTHUSIASM</div>
+              <div class='rank-move'>WR5 &rarr; WR4 ▲</div>
+              
+            </div>
+            <div class="draft-cell" style="background:#2a3348; border-color:#8a92a8;">
+              <div class="pick-num">1.10</div>
+              <div class="player">Derrick Henry</div>
+              <div class="drafted-by">Cant Find Nico </div>
+              <div class='rank-move'>RB5 &rarr; RB7 ▼</div>
+              
+            </div></div>
+        </div>
+
+        <div class="draft-round">
+          <h3>Round 2</h3>
+          <div class="draft-grid">
+            <div class="draft-cell" style="background:#2a3348; border-color:#8a92a8;">
+              <div class="pick-num">2.1</div>
+              <div class="player">Nico Collins</div>
+              <div class="drafted-by">Cant Find Nico </div>
+              <div class='rank-move'>WR6 &rarr; WR8 ▼</div>
+              
+            </div>
+            <div class="draft-cell" style="background:#2a3348; border-color:#8a92a8;">
+              <div class="pick-num">2.2</div>
+              <div class="player">Ashton Jeanty</div>
+              <div class="drafted-by">HERB YOUR ENTHUSIASM</div>
+              <div class='rank-move'>RB6 &rarr; RB9 ▼</div>
+              
+            </div>
+            <div class="draft-cell" style="background:#2a3348; border-color:#8a92a8;">
+              <div class="pick-num">2.3</div>
+              <div class="player">De&#x27;Von Achane</div>
+              <div class="drafted-by">For Nabers</div>
+              <div class='rank-move'>RB7 &rarr; RB6 ▲</div>
+              
+            </div>
+            <div class="draft-cell" style="background:rgba(34,139,34,0.41); border-color:rgba(34,139,34,0.66);">
+              <div class="pick-num">2.4</div>
+              <div class="player">Puka Nacua</div>
+              <div class="drafted-by">Bad Blood</div>
+              <div class='rank-move'>WR7 &rarr; WR1 ▲</div>
+              
+            </div>
+            <div class="draft-cell" style="background:rgba(178,34,34,0.41); border-color:rgba(178,34,34,0.66);">
+              <div class="pick-num">2.5</div>
+              <div class="player">Josh Jacobs</div>
+              <div class="drafted-by">Evan Squared</div>
+              <div class='rank-move'>RB8 &rarr; RB14 ▼</div>
+              
+            </div>
+            <div class="draft-cell" style="background:rgba(178,34,34,0.90); border-color:rgba(178,34,34,1.00);">
+              <div class="pick-num">2.6</div>
+              <div class="player">Brian Thomas Jr.</div>
+              <div class="drafted-by">Uncle Rico</div>
+              <div class='rank-move'>WR8 &rarr; WR45 ▼</div>
+              
+            </div>
+            <div class="draft-cell" style="background:rgba(178,34,34,0.90); border-color:rgba(178,34,34,1.00);">
+              <div class="pick-num">2.7</div>
+              <div class="player">Bucky Irving</div>
+              <div class="drafted-by">BuckO</div>
+              <div class='rank-move'>RB9 &rarr; RB32 ▼</div>
+              
+            </div>
+            <div class="draft-cell" style="background:rgba(34,139,34,0.47); border-color:rgba(34,139,34,0.72);">
+              <div class="pick-num">2.8</div>
+              <div class="player">Jonathan Taylor</div>
+              <div class="drafted-by">#NoKings </div>
+              <div class='rank-move'>RB10 &rarr; RB3 ▲</div>
+              
+            </div>
+            <div class="draft-cell" style="background:rgba(178,34,34,0.63); border-color:rgba(178,34,34,0.88);">
+              <div class="pick-num">2.9</div>
+              <div class="player">Drake London</div>
+              <div class="drafted-by">Whats Good My Njigba</div>
+              <div class='rank-move'>WR9 &rarr; WR19 ▼</div>
+              
+            </div>
+            <div class="draft-cell" style="background:#2a3348; border-color:#8a92a8;">
+              <div class="pick-num">2.10</div>
+              <div class="player">Chase Brown</div>
+              <div class="drafted-by">CHASEing Greatness</div>
+              <div class='rank-move'>RB11 &rarr; RB8 ▲</div>
+              
+            </div></div>
+        </div>
+
+        <div class="draft-round">
+          <h3>Round 3</h3>
+          <div class="draft-grid">
+            <div class="draft-cell" style="background:rgba(178,34,34,0.47); border-color:rgba(178,34,34,0.72);">
+              <div class="pick-num">3.1</div>
+              <div class="player">Brock Bowers</div>
+              <div class="drafted-by">CHASEing Greatness</div>
+              <div class='rank-move'>TE1 &rarr; TE8 ▼</div>
+              
+            </div>
+            <div class="draft-cell" style="background:#2a3348; border-color:#8a92a8;">
+              <div class="pick-num">3.2</div>
+              <div class="player">A.J. Brown</div>
+              <div class="drafted-by">Whats Good My Njigba</div>
+              <div class='rank-move'>WR10 &rarr; WR10 –</div>
+              
+            </div>
+            <div class="draft-cell" style="background:rgba(178,34,34,0.90); border-color:rgba(178,34,34,1.00);">
+              <div class="pick-num">3.3</div>
+              <div class="player">Tyreek Hill</div>
+              <div class="drafted-by">#NoKings </div>
+              <div class='rank-move'>WR11 &rarr; WR102 ▼</div>
+              
+            </div>
+            <div class="draft-cell" style="background:#2a3348; border-color:#8a92a8;">
+              <div class="pick-num">3.4</div>
+              <div class="player">Josh Allen</div>
+              <div class="drafted-by">BuckO</div>
+              <div class='rank-move'>QB1 &rarr; QB1 –</div>
+              
+            </div>
+            <div class="draft-cell" style="background:rgba(178,34,34,0.90); border-color:rgba(178,34,34,1.00);">
+              <div class="pick-num">3.5</div>
+              <div class="player">Lamar Jackson</div>
+              <div class="drafted-by">Uncle Rico</div>
+              <div class='rank-move'>QB2 &rarr; QB21 ▼</div>
+              
+            </div>
+            <div class="draft-cell" style="background:#2a3348; border-color:#8a92a8;">
+              <div class="pick-num">3.6</div>
+              <div class="player">Kyren Williams</div>
+              <div class="drafted-by">Evan Squared</div>
+              <div class='rank-move'>RB12 &rarr; RB11 ▲</div>
+              
+            </div>
+            <div class="draft-cell" style="background:rgba(178,34,34,0.90); border-color:rgba(178,34,34,1.00);">
+              <div class="pick-num">3.7</div>
+              <div class="player">Alvin Kamara</div>
+              <div class="drafted-by">Bad Blood</div>
+              <div class='rank-move'>RB13 &rarr; RB46 ▼</div>
+              
+            </div>
+            <div class="draft-cell" style="background:#2a3348; border-color:#8a92a8;">
+              <div class="pick-num">3.8</div>
+              <div class="player">Trey McBride</div>
+              <div class="drafted-by">For Nabers</div>
+              <div class='rank-move'>TE2 &rarr; TE1 ▲</div>
+              
+            </div>
+            <div class="draft-cell" style="background:rgba(178,34,34,0.90); border-color:rgba(178,34,34,1.00);">
+              <div class="pick-num">3.9</div>
+              <div class="player">Mike Evans</div>
+              <div class="drafted-by">HERB YOUR ENTHUSIASM</div>
+              <div class='rank-move'>WR12 &rarr; WR75 ▼</div>
+              
+            </div>
+            <div class="draft-cell" style="background:rgba(178,34,34,0.90); border-color:rgba(178,34,34,1.00);">
+              <div class="pick-num">3.10</div>
+              <div class="player">Omarion Hampton</div>
+              <div class="drafted-by">Cant Find Nico </div>
+              <div class='rank-move'>RB14 &rarr; RB34 ▼</div>
+              
+            </div></div>
+        </div>
+
+        <div class="draft-round">
+          <h3>Round 4</h3>
+          <div class="draft-grid">
+            <div class="draft-cell" style="background:rgba(178,34,34,0.63); border-color:rgba(178,34,34,0.88);">
+              <div class="pick-num">4.1</div>
+              <div class="player">George Kittle</div>
+              <div class="drafted-by">Cant Find Nico </div>
+              <div class='rank-move'>TE3 &rarr; TE13 ▼</div>
+              
+            </div>
+            <div class="draft-cell" style="background:rgba(178,34,34,0.90); border-color:rgba(178,34,34,1.00);">
+              <div class="pick-num">4.2</div>
+              <div class="player">Ladd McConkey</div>
+              <div class="drafted-by">HERB YOUR ENTHUSIASM</div>
+              <div class='rank-move'>WR13 &rarr; WR29 ▼</div>
+              
+            </div>
+            <div class="draft-cell" style="background:rgba(178,34,34,0.90); border-color:rgba(178,34,34,1.00);">
+              <div class="pick-num">4.3</div>
+              <div class="player">Jayden Daniels</div>
+              <div class="drafted-by">For Nabers</div>
+              <div class='rank-move'>QB3 &rarr; QB34 ▼</div>
+              
+            </div>
+            <div class="draft-cell" style="background:rgba(34,139,34,0.74); border-color:rgba(34,139,34,0.99);">
+              <div class="pick-num">4.4</div>
+              <div class="player">Jaxon Smith-Njigba</div>
+              <div class="drafted-by">Bad Blood</div>
+              <div class='rank-move'>WR14 &rarr; WR2 ▲</div>
+              
+            </div>
+            <div class="draft-cell" style="background:#2a3348; border-color:#8a92a8;">
+              <div class="pick-num">4.5</div>
+              <div class="player">Tee Higgins</div>
+              <div class="drafted-by">Evan Squared</div>
+              <div class='rank-move'>WR15 &rarr; WR14 ▲</div>
+              
+            </div>
+            <div class="draft-cell" style="background:rgba(178,34,34,0.90); border-color:rgba(178,34,34,1.00);">
+              <div class="pick-num">4.6</div>
+              <div class="player">Marvin Harrison Jr.</div>
+              <div class="drafted-by">Uncle Rico</div>
+              <div class='rank-move'>WR16 &rarr; WR49 ▼</div>
+              
+            </div>
+            <div class="draft-cell" style="background:rgba(178,34,34,0.90); border-color:rgba(178,34,34,1.00);">
+              <div class="pick-num">4.7</div>
+              <div class="player">Garrett Wilson</div>
+              <div class="drafted-by">BuckO</div>
+              <div class='rank-move'>WR17 &rarr; WR64 ▼</div>
+              
+            </div>
+            <div class="draft-cell" style="background:rgba(178,34,34,0.90); border-color:rgba(178,34,34,1.00);">
+              <div class="pick-num">4.8</div>
+              <div class="player">Terry McLaurin</div>
+              <div class="drafted-by">#NoKings </div>
+              <div class='rank-move'>WR18 &rarr; WR54 ▼</div>
+              
+            </div>
+            <div class="draft-cell" style="background:rgba(178,34,34,0.47); border-color:rgba(178,34,34,0.72);">
+              <div class="pick-num">4.9</div>
+              <div class="player">Kenneth Walker III</div>
+              <div class="drafted-by">Whats Good My Njigba</div>
+              <div class='rank-move'>RB15 &rarr; RB22 ▼</div>
+              
+            </div>
+            <div class="draft-cell" style="background:rgba(34,139,34,0.68); border-color:rgba(34,139,34,0.93);">
+              <div class="pick-num">4.10</div>
+              <div class="player">James Cook III</div>
+              <div class="drafted-by">CHASEing Greatness</div>
+              <div class='rank-move'>RB16 &rarr; RB5 ▲</div>
+              
+            </div></div>
+        </div>
+
+        <div class="draft-round">
+          <h3>Round 5</h3>
+          <div class="draft-grid">
+            <div class="draft-cell" style="background:rgba(178,34,34,0.36); border-color:rgba(178,34,34,0.61);">
+              <div class="pick-num">5.1</div>
+              <div class="player">Jalen Hurts</div>
+              <div class="drafted-by">CHASEing Greatness</div>
+              <div class='rank-move'>QB4 &rarr; QB9 ▼</div>
+              
+            </div>
+            <div class="draft-cell" style="background:#2a3348; border-color:#8a92a8;">
+              <div class="pick-num">5.2</div>
+              <div class="player">TreVeyon Henderson</div>
+              <div class="drafted-by">Whats Good My Njigba</div>
+              <div class='rank-move'>RB17 &rarr; RB16 ▲</div>
+              
+            </div>
+            <div class="draft-cell" style="background:rgba(178,34,34,0.90); border-color:rgba(178,34,34,1.00);">
+              <div class="pick-num">5.3</div>
+              <div class="player">Joe Burrow</div>
+              <div class="drafted-by">#NoKings </div>
+              <div class='rank-move'>QB5 &rarr; QB30 ▼</div>
+              
+            </div>
+            <div class="draft-cell" style="background:rgba(178,34,34,0.90); border-color:rgba(178,34,34,1.00);">
+              <div class="pick-num">5.4</div>
+              <div class="player">DJ Moore</div>
+              <div class="drafted-by">BuckO</div>
+              <div class='rank-move'>WR19 &rarr; WR36 ▼</div>
+              
+            </div>
+            <div class="draft-cell" style="background:rgba(178,34,34,0.90); border-color:rgba(178,34,34,1.00);">
+              <div class="pick-num">5.5</div>
+              <div class="player">Xavier Worthy</div>
+              <div class="drafted-by">Uncle Rico</div>
+              <div class='rank-move'>WR20 &rarr; WR59 ▼</div>
+              
+            </div>
+            <div class="draft-cell" style="background:rgba(178,34,34,0.90); border-color:rgba(178,34,34,1.00);">
+              <div class="pick-num">5.6</div>
+              <div class="player">Chuba Hubbard</div>
+              <div class="drafted-by">Evan Squared</div>
+              <div class='rank-move'>RB18 &rarr; RB39 ▼</div>
+              
+            </div>
+            <div class="draft-cell" style="background:rgba(34,139,34,0.74); border-color:rgba(34,139,34,0.99);">
+              <div class="pick-num">5.7</div>
+              <div class="player">Jameson Williams</div>
+              <div class="drafted-by">Bad Blood</div>
+              <div class='rank-move'>WR21 &rarr; WR9 ▲</div>
+              
+            </div>
+            <div class="draft-cell" style="background:rgba(34,139,34,0.63); border-color:rgba(34,139,34,0.88);">
+              <div class="pick-num">5.8</div>
+              <div class="player">Courtland Sutton</div>
+              <div class="drafted-by">For Nabers</div>
+              <div class='rank-move'>WR22 &rarr; WR12 ▲</div>
+              
+            </div>
+            <div class="draft-cell" style="background:rgba(178,34,34,0.90); border-color:rgba(178,34,34,1.00);">
+              <div class="pick-num">5.9</div>
+              <div class="player">James Conner</div>
+              <div class="drafted-by">HERB YOUR ENTHUSIASM</div>
+              <div class='rank-move'>RB19 &rarr; RB79 ▼</div>
+              
+            </div>
+            <div class="draft-cell" style="background:rgba(34,139,34,0.36); border-color:rgba(34,139,34,0.61);">
+              <div class="pick-num">5.10</div>
+              <div class="player">Tetairoa McMillan</div>
+              <div class="drafted-by">Cant Find Nico </div>
+              <div class='rank-move'>WR23 &rarr; WR18 ▲</div>
+              
+            </div></div>
+        </div>
+
+        <div class="draft-round">
+          <h3>Round 6</h3>
+          <div class="draft-grid">
+            <div class="draft-cell" style="background:#2a3348; border-color:#8a92a8;">
+              <div class="pick-num">6.1</div>
+              <div class="player">DK Metcalf</div>
+              <div class="drafted-by">Cant Find Nico </div>
+              <div class='rank-move'>WR24 &rarr; WR25 ▼</div>
+              
+            </div>
+            <div class="draft-cell" style="background:#2a3348; border-color:#8a92a8;">
+              <div class="pick-num">6.2</div>
+              <div class="player">RJ Harvey</div>
+              <div class="drafted-by">HERB YOUR ENTHUSIASM</div>
+              <div class='rank-move'>RB20 &rarr; RB21 ▼</div>
+              
+            </div>
+            <div class="draft-cell" style="background:rgba(34,139,34,0.30); border-color:rgba(34,139,34,0.55);">
+              <div class="pick-num">6.3</div>
+              <div class="player">Breece Hall</div>
+              <div class="drafted-by">For Nabers</div>
+              <div class='rank-move'>RB21 &rarr; RB17 ▲</div>
+              
+            </div>
+            <div class="draft-cell" style="background:rgba(178,34,34,0.36); border-color:rgba(178,34,34,0.61);">
+              <div class="pick-num">6.4</div>
+              <div class="player">Patrick Mahomes</div>
+              <div class="drafted-by">Bad Blood</div>
+              <div class='rank-move'>QB6 &rarr; QB11 ▼</div>
+              
+            </div>
+            <div class="draft-cell" style="background:#2a3348; border-color:#8a92a8;">
+              <div class="pick-num">6.5</div>
+              <div class="player">Tony Pollard</div>
+              <div class="drafted-by">Evan Squared</div>
+              <div class='rank-move'>RB22 &rarr; RB23 ▼</div>
+              
+            </div>
+            <div class="draft-cell" style="background:rgba(34,139,34,0.90); border-color:rgba(34,139,34,1.00);">
+              <div class="pick-num">6.6</div>
+              <div class="player">George Pickens</div>
+              <div class="drafted-by">Uncle Rico</div>
+              <div class='rank-move'>WR25 &rarr; WR5 ▲</div>
+              
+            </div>
+            <div class="draft-cell" style="background:rgba(178,34,34,0.90); border-color:rgba(178,34,34,1.00);">
+              <div class="pick-num">6.7</div>
+              <div class="player">Calvin Ridley</div>
+              <div class="drafted-by">BuckO</div>
+              <div class='rank-move'>WR26 &rarr; WR113 ▼</div>
+              
+            </div>
+            <div class="draft-cell" style="background:rgba(34,139,34,0.85); border-color:rgba(34,139,34,1.00);">
+              <div class="pick-num">6.8</div>
+              <div class="player">Davante Adams</div>
+              <div class="drafted-by">#NoKings </div>
+              <div class='rank-move'>WR27 &rarr; WR13 ▲</div>
+              
+            </div>
+            <div class="draft-cell" style="background:rgba(178,34,34,0.74); border-color:rgba(178,34,34,0.99);">
+              <div class="pick-num">6.9</div>
+              <div class="player">Rashee Rice</div>
+              <div class="drafted-by">Whats Good My Njigba</div>
+              <div class='rank-move'>WR28 &rarr; WR40 ▼</div>
+              
+            </div>
+            <div class="draft-cell" style="background:rgba(34,139,34,0.52); border-color:rgba(34,139,34,0.77);">
+              <div class="pick-num">6.10</div>
+              <div class="player">D&#x27;Andre Swift</div>
+              <div class="drafted-by">CHASEing Greatness</div>
+              <div class='rank-move'>RB23 &rarr; RB15 ▲</div>
+              
+            </div></div>
+        </div>
+
+        <div class="draft-round">
+          <h3>Round 7</h3>
+          <div class="draft-grid">
+            <div class="draft-cell" style="background:rgba(34,139,34,0.57); border-color:rgba(34,139,34,0.82);">
+              <div class="pick-num">7.1</div>
+              <div class="player">DeVonta Smith</div>
+              <div class="drafted-by">CHASEing Greatness</div>
+              <div class='rank-move'>WR29 &rarr; WR20 ▲</div>
+              
+            </div>
+            <div class="draft-cell" style="background:#2a3348; border-color:#8a92a8;">
+              <div class="pick-num">7.2</div>
+              <div class="player">Dak Prescott</div>
+              <div class="drafted-by">Whats Good My Njigba</div>
+              <div class='rank-move'>QB7 &rarr; QB4 ▲</div>
+              
+            </div>
+            <div class="draft-cell" style="background:#2a3348; border-color:#8a92a8;">
+              <div class="pick-num">7.3</div>
+              <div class="player">David Montgomery</div>
+              <div class="drafted-by">#NoKings </div>
+              <div class='rank-move'>RB24 &rarr; RB27 ▼</div>
+              
+            </div>
+            <div class="draft-cell" style="background:rgba(178,34,34,0.90); border-color:rgba(178,34,34,1.00);">
+              <div class="pick-num">7.4</div>
+              <div class="player">Jerry Jeudy</div>
+              <div class="drafted-by">BuckO</div>
+              <div class='rank-move'>WR30 &rarr; WR50 ▼</div>
+              
+            </div>
+            <div class="draft-cell" style="background:rgba(178,34,34,0.90); border-color:rgba(178,34,34,1.00);">
+              <div class="pick-num">7.5</div>
+              <div class="player">Aaron Jones Sr.</div>
+              <div class="drafted-by">Uncle Rico</div>
+              <div class='rank-move'>RB25 &rarr; RB43 ▼</div>
+              
+            </div>
+            <div class="draft-cell" style="background:#2a3348; border-color:#8a92a8;">
+              <div class="pick-num">7.6</div>
+              <div class="player">Bo Nix</div>
+              <div class="drafted-by">Evan Squared</div>
+              <div class='rank-move'>QB8 &rarr; QB8 –</div>
+              
+            </div>
+            <div class="draft-cell" style="background:#2a3348; border-color:#8a92a8;">
+              <div class="pick-num">7.7</div>
+              <div class="player">Travis Kelce</div>
+              <div class="drafted-by">Bad Blood</div>
+              <div class='rank-move'>TE4 &rarr; TE3 ▲</div>
+              
+            </div>
+            <div class="draft-cell" style="background:rgba(178,34,34,0.90); border-color:rgba(178,34,34,1.00);">
+              <div class="pick-num">7.8</div>
+              <div class="player">Travis Hunter</div>
+              <div class="drafted-by">For Nabers</div>
+              <div class='rank-move'>WR31 &rarr; WR94 ▼</div>
+              
+            </div>
+            <div class="draft-cell" style="background:#2a3348; border-color:#8a92a8;">
+              <div class="pick-num">7.9</div>
+              <div class="player">Baker Mayfield</div>
+              <div class="drafted-by">HERB YOUR ENTHUSIASM</div>
+              <div class='rank-move'>QB9 &rarr; QB12 ▼</div>
+              
+            </div>
+            <div class="draft-cell" style="background:rgba(34,139,34,0.68); border-color:rgba(34,139,34,0.93);">
+              <div class="pick-num">7.10</div>
+              <div class="player">Emeka Egbuka</div>
+              <div class="drafted-by">Cant Find Nico </div>
+              <div class='rank-move'>WR32 &rarr; WR21 ▲</div>
+              
+            </div></div>
+        </div>
+
+        <div class="draft-round">
+          <h3>Round 8</h3>
+          <div class="draft-grid">
+            <div class="draft-cell" style="background:rgba(178,34,34,0.90); border-color:rgba(178,34,34,1.00);">
+              <div class="pick-num">8.1</div>
+              <div class="player">Isiah Pacheco</div>
+              <div class="drafted-by">Cant Find Nico </div>
+              <div class='rank-move'>RB26 &rarr; RB55 ▼</div>
+              
+            </div>
+            <div class="draft-cell" style="background:rgba(178,34,34,0.90); border-color:rgba(178,34,34,1.00);">
+              <div class="pick-num">8.2</div>
+              <div class="player">T.J. Hockenson</div>
+              <div class="drafted-by">HERB YOUR ENTHUSIASM</div>
+              <div class='rank-move'>TE5 &rarr; TE26 ▼</div>
+              
+            </div>
+            <div class="draft-cell" style="background:rgba(178,34,34,0.90); border-color:rgba(178,34,34,1.00);">
+              <div class="pick-num">8.3</div>
+              <div class="player">Kaleb Johnson</div>
+              <div class="drafted-by">For Nabers</div>
+              <div class='rank-move'>RB27 &rarr; RB107 ▼</div>
+              
+            </div>
+            <div class="draft-cell" style="background:rgba(34,139,34,0.63); border-color:rgba(34,139,34,0.88);">
+              <div class="pick-num">8.4</div>
+              <div class="player">Jaylen Waddle</div>
+              <div class="drafted-by">Bad Blood</div>
+              <div class='rank-move'>WR33 &rarr; WR23 ▲</div>
+              
+            </div>
+            <div class="draft-cell" style="background:#2a3348; border-color:#8a92a8;">
+              <div class="pick-num">8.5</div>
+              <div class="player">Jacory Croskey-Merritt</div>
+              <div class="drafted-by">Evan Squared</div>
+              <div class='rank-move'>RB28 &rarr; RB30 ▼</div>
+              
+            </div>
+            <div class="draft-cell" style="background:rgba(178,34,34,0.47); border-color:rgba(178,34,34,0.72);">
+              <div class="pick-num">8.6</div>
+              <div class="player">Rome Odunze</div>
+              <div class="drafted-by">Uncle Rico</div>
+              <div class='rank-move'>WR34 &rarr; WR41 ▼</div>
+              
+            </div>
+            <div class="draft-cell" style="background:rgba(178,34,34,0.90); border-color:rgba(178,34,34,1.00);">
+              <div class="pick-num">8.7</div>
+              <div class="player">Sam LaPorta</div>
+              <div class="drafted-by">BuckO</div>
+              <div class='rank-move'>TE6 &rarr; TE27 ▼</div>
+              
+            </div>
+            <div class="draft-cell" style="background:rgba(34,139,34,0.90); border-color:rgba(34,139,34,1.00);">
+              <div class="pick-num">8.8</div>
+              <div class="player">Zay Flowers</div>
+              <div class="drafted-by">#NoKings </div>
+              <div class='rank-move'>WR35 &rarr; WR7 ▲</div>
+              
+            </div>
+            <div class="draft-cell" style="background:rgba(34,139,34,0.36); border-color:rgba(34,139,34,0.61);">
+              <div class="pick-num">8.9</div>
+              <div class="player">Zach Charbonnet</div>
+              <div class="drafted-by">Whats Good My Njigba</div>
+              <div class='rank-move'>RB29 &rarr; RB24 ▲</div>
+              
+            </div>
+            <div class="draft-cell" style="background:#2a3348; border-color:#8a92a8;">
+              <div class="pick-num">8.10</div>
+              <div class="player">Tyrone Tracy Jr.</div>
+              <div class="drafted-by">CHASEing Greatness</div>
+              <div class='rank-move'>RB30 &rarr; RB28 ▲</div>
+              
+            </div></div>
+        </div>
+
+        <div class="draft-round">
+          <h3>Round 9</h3>
+          <div class="draft-grid">
+            <div class="draft-cell" style="background:rgba(178,34,34,0.90); border-color:rgba(178,34,34,1.00);">
+              <div class="pick-num">9.1</div>
+              <div class="player">Ricky Pearsall</div>
+              <div class="drafted-by">CHASEing Greatness</div>
+              <div class='rank-move'>WR36 &rarr; WR69 ▼</div>
+              
+            </div>
+            <div class="draft-cell" style="background:rgba(178,34,34,0.90); border-color:rgba(178,34,34,1.00);">
+              <div class="pick-num">9.2</div>
+              <div class="player">David Njoku</div>
+              <div class="drafted-by">Whats Good My Njigba</div>
+              <div class='rank-move'>TE7 &rarr; TE34 ▼</div>
+              
+            </div>
+            <div class="draft-cell" style="background:rgba(178,34,34,0.90); border-color:rgba(178,34,34,1.00);">
+              <div class="pick-num">9.3</div>
+              <div class="player">Evan Engram</div>
+              <div class="drafted-by">#NoKings </div>
+              <div class='rank-move'>TE8 &rarr; TE29 ▼</div>
+              
+            </div>
+            <div class="draft-cell" style="background:rgba(178,34,34,0.90); border-color:rgba(178,34,34,1.00);">
+              <div class="pick-num">9.4</div>
+              <div class="player">Austin Ekeler</div>
+              <div class="drafted-by">BuckO</div>
+              <div class='rank-move'>RB31 &rarr; RB101 ▼</div>
+              
+            </div>
+            <div class="draft-cell" style="background:rgba(34,139,34,0.30); border-color:rgba(34,139,34,0.55);">
+              <div class="pick-num">9.5</div>
+              <div class="player">Tyler Warren</div>
+              <div class="drafted-by">Uncle Rico</div>
+              <div class='rank-move'>TE9 &rarr; TE5 ▲</div>
+              
+            </div>
+            <div class="draft-cell" style="background:rgba(34,139,34,0.90); border-color:rgba(34,139,34,1.00);">
+              <div class="pick-num">9.6</div>
+              <div class="player">Travis Etienne Jr.</div>
+              <div class="drafted-by">Evan Squared</div>
+              <div class='rank-move'>RB32 &rarr; RB10 ▲</div>
+              
+            </div>
+            <div class="draft-cell" style="background:rgba(34,139,34,0.90); border-color:rgba(34,139,34,1.00);">
+              <div class="pick-num">9.7</div>
+              <div class="player">Stefon Diggs</div>
+              <div class="drafted-by">Bad Blood</div>
+              <div class='rank-move'>WR37 &rarr; WR16 ▲</div>
+              
+            </div>
+            <div class="draft-cell" style="background:rgba(178,34,34,0.90); border-color:rgba(178,34,34,1.00);">
+              <div class="pick-num">9.8</div>
+              <div class="player">Matthew Golden</div>
+              <div class="drafted-by">For Nabers</div>
+              <div class='rank-move'>WR38 &rarr; WR90 ▼</div>
+              
+            </div>
+            <div class="draft-cell" style="background:rgba(178,34,34,0.90); border-color:rgba(178,34,34,1.00);">
+              <div class="pick-num">9.9</div>
+              <div class="player">Chris Godwin Jr.</div>
+              <div class="drafted-by">HERB YOUR ENTHUSIASM</div>
+              <div class='rank-move'>WR39 &rarr; WR78 ▼</div>
+              
+            </div>
+            <div class="draft-cell" style="background:rgba(34,139,34,0.90); border-color:rgba(34,139,34,1.00);">
+              <div class="pick-num">9.10</div>
+              <div class="player">Jaylen Warren</div>
+              <div class="drafted-by">Cant Find Nico </div>
+              <div class='rank-move'>RB33 &rarr; RB18 ▲</div>
+              
+            </div></div>
+        </div>
+
+        <div class="draft-round">
+          <h3>Round 10</h3>
+          <div class="draft-grid">
+            <div class="draft-cell" style="background:rgba(34,139,34,0.90); border-color:rgba(34,139,34,1.00);">
+              <div class="pick-num">10.1</div>
+              <div class="player">Chris Olave</div>
+              <div class="drafted-by">Cant Find Nico </div>
+              <div class='rank-move'>WR40 &rarr; WR6 ▲</div>
+              
+            </div>
+            <div class="draft-cell" style="background:rgba(178,34,34,0.41); border-color:rgba(178,34,34,0.66);">
+              <div class="pick-num">10.2</div>
+              <div class="player">Cam Skattebo</div>
+              <div class="drafted-by">HERB YOUR ENTHUSIASM</div>
+              <div class='rank-move'>RB34 &rarr; RB40 ▼</div>
+              
+            </div>
+            <div class="draft-cell" style="background:rgba(34,139,34,0.41); border-color:rgba(34,139,34,0.66);">
+              <div class="pick-num">10.3</div>
+              <div class="player">Jakobi Meyers</div>
+              <div class="drafted-by">For Nabers</div>
+              <div class='rank-move'>WR41 &rarr; WR35 ▲</div>
+              
+            </div>
+            <div class="draft-cell" style="background:rgba(178,34,34,0.90); border-color:rgba(178,34,34,1.00);">
+              <div class="pick-num">10.4</div>
+              <div class="player">Cooper Kupp</div>
+              <div class="drafted-by">Bad Blood</div>
+              <div class='rank-move'>WR42 &rarr; WR57 ▼</div>
+              
+            </div>
+            <div class="draft-cell" style="background:rgba(34,139,34,0.90); border-color:rgba(34,139,34,1.00);">
+              <div class="pick-num">10.5</div>
+              <div class="player">Deebo Samuel</div>
+              <div class="drafted-by">Evan Squared</div>
+              <div class='rank-move'>WR43 &rarr; WR27 ▲</div>
+              
+            </div>
+            <div class="draft-cell" style="background:#2a3348; border-color:#8a92a8;">
+              <div class="pick-num">10.6</div>
+              <div class="player">Jordan Mason</div>
+              <div class="drafted-by">Uncle Rico</div>
+              <div class='rank-move'>RB35 &rarr; RB36 ▼</div>
+              
+            </div>
+            <div class="draft-cell" style="background:rgba(178,34,34,0.90); border-color:rgba(178,34,34,1.00);">
+              <div class="pick-num">10.7</div>
+              <div class="player">Keon Coleman</div>
+              <div class="drafted-by">BuckO</div>
+              <div class='rank-move'>WR44 &rarr; WR61 ▼</div>
+              
+            </div>
+            <div class="draft-cell" style="background:#2a3348; border-color:#8a92a8;">
+              <div class="pick-num">10.8</div>
+              <div class="player">Joe Mixon</div>
+              <div class="drafted-by">#NoKings </div>
+              <div class='rank-move'>RB36 &rarr; n/a</div>
+              
+            </div>
+            <div class="draft-cell" style="background:rgba(178,34,34,0.90); border-color:rgba(178,34,34,1.00);">
+              <div class="pick-num">10.9</div>
+              <div class="player">Trey Benson</div>
+              <div class="drafted-by">Whats Good My Njigba</div>
+              <div class='rank-move'>RB37 &rarr; RB76 ▼</div>
+              
+            </div>
+            <div class="draft-cell" style="background:rgba(34,139,34,0.90); border-color:rgba(34,139,34,1.00);">
+              <div class="pick-num">10.10</div>
+              <div class="player">Michael Pittman Jr.</div>
+              <div class="drafted-by">CHASEing Greatness</div>
+              <div class='rank-move'>WR45 &rarr; WR23 ▲</div>
+              
+            </div></div>
+        </div>
+
+        <div class="draft-round">
+          <h3>Round 11</h3>
+          <div class="draft-grid">
+            <div class="draft-cell" style="background:rgba(34,139,34,0.85); border-color:rgba(34,139,34,1.00);">
+              <div class="pick-num">11.1</div>
+              <div class="player">Khalil Shakir</div>
+              <div class="drafted-by">CHASEing Greatness</div>
+              <div class='rank-move'>WR46 &rarr; WR32 ▲</div>
+              
+            </div>
+            <div class="draft-cell" style="background:rgba(34,139,34,0.36); border-color:rgba(34,139,34,0.61);">
+              <div class="pick-num">11.2</div>
+              <div class="player">Jordan Addison</div>
+              <div class="drafted-by">Whats Good My Njigba</div>
+              <div class='rank-move'>WR47 &rarr; WR42 ▲</div>
+              
+            </div>
+            <div class="draft-cell" style="background:rgba(34,139,34,0.90); border-color:rgba(34,139,34,1.00);">
+              <div class="pick-num">11.3</div>
+              <div class="player">Javonte Williams</div>
+              <div class="drafted-by">#NoKings </div>
+              <div class='rank-move'>RB38 &rarr; RB13 ▲</div>
+              
+            </div>
+            <div class="draft-cell" style="background:rgba(178,34,34,0.90); border-color:rgba(178,34,34,1.00);">
+              <div class="pick-num">11.4</div>
+              <div class="player">Jayden Reed</div>
+              <div class="drafted-by">BuckO</div>
+              <div class='rank-move'>WR48 &rarr; WR116 ▼</div>
+              
+            </div>
+            <div class="draft-cell" style="background:rgba(178,34,34,0.90); border-color:rgba(178,34,34,1.00);">
+              <div class="pick-num">11.5</div>
+              <div class="player">Tank Bigsby</div>
+              <div class="drafted-by">Uncle Rico</div>
+              <div class='rank-move'>RB39 &rarr; RB66 ▼</div>
+              
+            </div>
+            <div class="draft-cell" style="background:rgba(34,139,34,0.90); border-color:rgba(34,139,34,1.00);">
+              <div class="pick-num">11.6</div>
+              <div class="player">Jauan Jennings</div>
+              <div class="drafted-by">Evan Squared</div>
+              <div class='rank-move'>WR49 &rarr; WR34 ▲</div>
+              
+            </div>
+            <div class="draft-cell" style="background:rgba(178,34,34,0.90); border-color:rgba(178,34,34,1.00);">
+              <div class="pick-num">11.7</div>
+              <div class="player">Brian Robinson Jr.</div>
+              <div class="drafted-by">Bad Blood</div>
+              <div class='rank-move'>RB40 &rarr; RB61 ▼</div>
+              
+            </div>
+            <div class="draft-cell" style="background:#2a3348; border-color:#8a92a8;">
+              <div class="pick-num">11.8</div>
+              <div class="player">J.K. Dobbins</div>
+              <div class="drafted-by">For Nabers</div>
+              <div class='rank-move'>RB41 &rarr; RB42 ▼</div>
+              
+            </div>
+            <div class="draft-cell" style="background:#2a3348; border-color:#8a92a8;">
+              <div class="pick-num">11.9</div>
+              <div class="player">Justin Herbert</div>
+              <div class="drafted-by">HERB YOUR ENTHUSIASM</div>
+              <div class='rank-move'>QB10 &rarr; QB10 –</div>
+              
+            </div>
+            <div class="draft-cell" style="background:rgba(178,34,34,0.90); border-color:rgba(178,34,34,1.00);">
+              <div class="pick-num">11.10</div>
+              <div class="player">Kyler Murray</div>
+              <div class="drafted-by">Cant Find Nico </div>
+              <div class='rank-move'>QB11 &rarr; QB38 ▼</div>
+              
+            </div></div>
+        </div>
+
+        <div class="draft-round">
+          <h3>Round 12</h3>
+          <div class="draft-grid">
+            <div class="draft-cell" style="background:#2a3348; border-color:#8a92a8;">
+              <div class="pick-num">12.1</div>
+              <div class="player">Josh Downs</div>
+              <div class="drafted-by">Cant Find Nico </div>
+              <div class='rank-move'>WR50 &rarr; WR47 ▲</div>
+              
+            </div>
+            <div class="draft-cell" style="background:rgba(34,139,34,0.90); border-color:rgba(34,139,34,1.00);">
+              <div class="pick-num">12.2</div>
+              <div class="player">Rhamondre Stevenson</div>
+              <div class="drafted-by">HERB YOUR ENTHUSIASM</div>
+              <div class='rank-move'>RB42 &rarr; RB26 ▲</div>
+              
+            </div>
+            <div class="draft-cell" style="background:rgba(178,34,34,0.90); border-color:rgba(178,34,34,1.00);">
+              <div class="pick-num">12.3</div>
+              <div class="player">Braelon Allen</div>
+              <div class="drafted-by">For Nabers</div>
+              <div class='rank-move'>RB43 &rarr; RB97 ▼</div>
+              
+            </div>
+            <div class="draft-cell" style="background:#2a3348; border-color:#8a92a8;">
+              <div class="pick-num">12.4</div>
+              <div class="player">Colston Loveland</div>
+              <div class="drafted-by">Bad Blood</div>
+              <div class='rank-move'>TE10 &rarr; TE12 ▼</div>
+              
+            </div>
+            <div class="draft-cell" style="background:rgba(34,139,34,0.36); border-color:rgba(34,139,34,0.61);">
+              <div class="pick-num">12.5</div>
+              <div class="player">Jake Ferguson</div>
+              <div class="drafted-by">Evan Squared</div>
+              <div class='rank-move'>TE11 &rarr; TE6 ▲</div>
+              
+            </div>
+            <div class="draft-cell" style="background:rgba(34,139,34,0.90); border-color:rgba(34,139,34,1.00);">
+              <div class="pick-num">12.6</div>
+              <div class="player">Quinshon Judkins</div>
+              <div class="drafted-by">Uncle Rico</div>
+              <div class='rank-move'>RB44 &rarr; RB25 ▲</div>
+              
+            </div>
+            <div class="draft-cell" style="background:rgba(178,34,34,0.52); border-color:rgba(178,34,34,0.77);">
+              <div class="pick-num">12.7</div>
+              <div class="player">Nick Chubb</div>
+              <div class="drafted-by">BuckO</div>
+              <div class='rank-move'>RB45 &rarr; RB53 ▼</div>
+              
+            </div>
+            <div class="draft-cell" style="background:rgba(178,34,34,0.90); border-color:rgba(178,34,34,1.00);">
+              <div class="pick-num">12.8</div>
+              <div class="player">Jaydon Blue</div>
+              <div class="drafted-by">#NoKings </div>
+              <div class='rank-move'>RB46 &rarr; RB90 ▼</div>
+              
+            </div>
+            <div class="draft-cell" style="background:#2a3348; border-color:#8a92a8;">
+              <div class="pick-num">12.9</div>
+              <div class="player">Tyjae Spears</div>
+              <div class="drafted-by">Whats Good My Njigba</div>
+              <div class='rank-move'>RB47 &rarr; RB44 ▲</div>
+              
+            </div>
+            <div class="draft-cell" style="background:rgba(178,34,34,0.90); border-color:rgba(178,34,34,1.00);">
+              <div class="pick-num">12.10</div>
+              <div class="player">Jerome Ford</div>
+              <div class="drafted-by">CHASEing Greatness</div>
+              <div class='rank-move'>RB48 &rarr; RB73 ▼</div>
+              
+            </div></div>
+        </div>
+
+        <div class="draft-round">
+          <h3>Round 13</h3>
+          <div class="draft-grid">
+            <div class="draft-cell" style="background:rgba(178,34,34,0.90); border-color:rgba(178,34,34,1.00);">
+              <div class="pick-num">13.1</div>
+              <div class="player">Marvin Mims Jr.</div>
+              <div class="drafted-by">CHASEing Greatness</div>
+              <div class='rank-move'>WR51 &rarr; WR71 ▼</div>
+              
+            </div>
+            <div class="draft-cell" style="background:rgba(178,34,34,0.90); border-color:rgba(178,34,34,1.00);">
+              <div class="pick-num">13.2</div>
+              <div class="player">Cedric Tillman</div>
+              <div class="drafted-by">Whats Good My Njigba</div>
+              <div class='rank-move'>WR52 &rarr; WR99 ▼</div>
+              
+            </div>
+            <div class="draft-cell" style="background:rgba(34,139,34,0.52); border-color:rgba(34,139,34,0.77);">
+              <div class="pick-num">13.3</div>
+              <div class="player">Tyler Allgeier</div>
+              <div class="drafted-by">#NoKings </div>
+              <div class='rank-move'>RB49 &rarr; RB41 ▲</div>
+              
+            </div>
+            <div class="draft-cell" style="background:rgba(178,34,34,0.90); border-color:rgba(178,34,34,1.00);">
+              <div class="pick-num">13.4</div>
+              <div class="player">Darnell Mooney</div>
+              <div class="drafted-by">BuckO</div>
+              <div class='rank-move'>WR53 &rarr; WR76 ▼</div>
+              
+            </div>
+            <div class="draft-cell" style="background:rgba(178,34,34,0.30); border-color:rgba(178,34,34,0.55);">
+              <div class="pick-num">13.5</div>
+              <div class="player">Dylan Sampson</div>
+              <div class="drafted-by">Uncle Rico</div>
+              <div class='rank-move'>RB50 &rarr; RB54 ▼</div>
+              
+            </div>
+            <div class="draft-cell" style="background:rgba(34,139,34,0.90); border-color:rgba(34,139,34,1.00);">
+              <div class="pick-num">13.6</div>
+              <div class="player">Rachaad White</div>
+              <div class="drafted-by">Evan Squared</div>
+              <div class='rank-move'>RB51 &rarr; RB35 ▲</div>
+              
+            </div>
+            <div class="draft-cell" style="background:rgba(178,34,34,0.90); border-color:rgba(178,34,34,1.00);">
+              <div class="pick-num">13.7</div>
+              <div class="player">Ollie Gordon II</div>
+              <div class="drafted-by">Bad Blood</div>
+              <div class='rank-move'>RB52 &rarr; RB68 ▼</div>
+              
+            </div>
+            <div class="draft-cell" style="background:rgba(34,139,34,0.90); border-color:rgba(34,139,34,1.00);">
+              <div class="pick-num">13.8</div>
+              <div class="player">Keenan Allen</div>
+              <div class="drafted-by">For Nabers</div>
+              <div class='rank-move'>WR54 &rarr; WR30 ▲</div>
+              
+            </div>
+            <div class="draft-cell" style="background:rgba(178,34,34,0.90); border-color:rgba(178,34,34,1.00);">
+              <div class="pick-num">13.9</div>
+              <div class="player">Kyle Williams</div>
+              <div class="drafted-by">HERB YOUR ENTHUSIASM</div>
+              <div class='rank-move'>WR55 &rarr; WR103 ▼</div>
+              
+            </div>
+            <div class="draft-cell" style="background:rgba(34,139,34,0.90); border-color:rgba(34,139,34,1.00);">
+              <div class="pick-num">13.10</div>
+              <div class="player">Kareem Hunt</div>
+              <div class="drafted-by">Cant Find Nico </div>
+              <div class='rank-move'>RB53 &rarr; RB33 ▲</div>
+              
+            </div></div>
+        </div>
+
+        <div class="draft-round">
+          <h3>Round 14</h3>
+          <div class="draft-grid">
+            <div class="draft-cell" style="background:rgba(34,139,34,0.57); border-color:rgba(34,139,34,0.82);">
+              <div class="pick-num">14.1</div>
+              <div class="player">Drake Maye</div>
+              <div class="drafted-by">Cant Find Nico </div>
+              <div class='rank-move'>QB12 &rarr; QB3 ▲</div>
+              
+            </div>
+            <div class="draft-cell" style="background:rgba(178,34,34,0.41); border-color:rgba(178,34,34,0.66);">
+              <div class="pick-num">14.2</div>
+              <div class="player">Patriots D/ST</div>
+              <div class="drafted-by">HERB YOUR ENTHUSIASM</div>
+              <div class='rank-move'>D/ST1 &rarr; D/ST7 ▼</div>
+              
+            </div>
+            <div class="draft-cell" style="background:#2a3348; border-color:#8a92a8;">
+              <div class="pick-num">14.3</div>
+              <div class="player">Broncos D/ST</div>
+              <div class="drafted-by">For Nabers</div>
+              <div class='rank-move'>D/ST2 &rarr; D/ST3 ▼</div>
+              
+            </div>
+            <div class="draft-cell" style="background:rgba(178,34,34,0.68); border-color:rgba(178,34,34,0.93);">
+              <div class="pick-num">14.4</div>
+              <div class="player">Steelers D/ST</div>
+              <div class="drafted-by">Bad Blood</div>
+              <div class='rank-move'>D/ST3 &rarr; D/ST14 ▼</div>
+              
+            </div>
+            <div class="draft-cell" style="background:#2a3348; border-color:#8a92a8;">
+              <div class="pick-num">14.5</div>
+              <div class="player">Brandon Aiyuk</div>
+              <div class="drafted-by">Evan Squared</div>
+              <div class='rank-move'>WR56 &rarr; n/a</div>
+              
+            </div>
+            <div class="draft-cell" style="background:rgba(178,34,34,0.90); border-color:rgba(178,34,34,1.00);">
+              <div class="pick-num">14.6</div>
+              <div class="player">Cardinals D/ST</div>
+              <div class="drafted-by">Uncle Rico</div>
+              <div class='rank-move'>D/ST4 &rarr; D/ST26 ▼</div>
+              
+            </div>
+            <div class="draft-cell" style="background:rgba(178,34,34,0.41); border-color:rgba(178,34,34,0.66);">
+              <div class="pick-num">14.7</div>
+              <div class="player">Dalton Kincaid</div>
+              <div class="drafted-by">BuckO</div>
+              <div class='rank-move'>TE12 &rarr; TE18 ▼</div>
+              
+            </div>
+            <div class="draft-cell" style="background:rgba(178,34,34,0.90); border-color:rgba(178,34,34,1.00);">
+              <div class="pick-num">14.8</div>
+              <div class="player">Rashod Bateman</div>
+              <div class="drafted-by">#NoKings </div>
+              <div class='rank-move'>WR57 &rarr; WR103 ▼</div>
+              
+            </div>
+            <div class="draft-cell" style="background:rgba(178,34,34,0.90); border-color:rgba(178,34,34,1.00);">
+              <div class="pick-num">14.9</div>
+              <div class="player">Colts D/ST</div>
+              <div class="drafted-by">Whats Good My Njigba</div>
+              <div class='rank-move'>D/ST5 &rarr; D/ST22 ▼</div>
+              
+            </div>
+            <div class="draft-cell" style="background:rgba(34,139,34,0.90); border-color:rgba(34,139,34,1.00);">
+              <div class="pick-num">14.10</div>
+              <div class="player">Rashid Shaheed</div>
+              <div class="drafted-by">CHASEing Greatness</div>
+              <div class='rank-move'>WR58 &rarr; WR39 ▲</div>
+              
+            </div></div>
+        </div>
+
+        <div class="draft-round">
+          <h3>Round 15</h3>
+          <div class="draft-grid">
+            <div class="draft-cell" style="background:rgba(34,139,34,0.30); border-color:rgba(34,139,34,0.55);">
+              <div class="pick-num">15.1</div>
+              <div class="player">Texans D/ST</div>
+              <div class="drafted-by">CHASEing Greatness</div>
+              <div class='rank-move'>D/ST6 &rarr; D/ST2 ▲</div>
+              
+            </div>
+            <div class="draft-cell" style="background:rgba(34,139,34,0.41); border-color:rgba(34,139,34,0.66);">
+              <div class="pick-num">15.2</div>
+              <div class="player">Jared Goff</div>
+              <div class="drafted-by">Whats Good My Njigba</div>
+              <div class='rank-move'>QB13 &rarr; QB7 ▲</div>
+              
+            </div>
+            <div class="draft-cell" style="background:rgba(178,34,34,0.90); border-color:rgba(178,34,34,1.00);">
+              <div class="pick-num">15.3</div>
+              <div class="player">Commanders D/ST</div>
+              <div class="drafted-by">#NoKings </div>
+              <div class='rank-move'>D/ST7 &rarr; D/ST30 ▼</div>
+              
+            </div>
+            <div class="draft-cell" style="background:#2a3348; border-color:#8a92a8;">
+              <div class="pick-num">15.4</div>
+              <div class="player">Eagles D/ST</div>
+              <div class="drafted-by">BuckO</div>
+              <div class='rank-move'>D/ST8 &rarr; D/ST8 –</div>
+              
+            </div>
+            <div class="draft-cell" style="background:rgba(34,139,34,0.90); border-color:rgba(34,139,34,1.00);">
+              <div class="pick-num">15.5</div>
+              <div class="player">Woody Marks</div>
+              <div class="drafted-by">Uncle Rico</div>
+              <div class='rank-move'>RB54 &rarr; RB29 ▲</div>
+              
+            </div>
+            <div class="draft-cell" style="background:rgba(178,34,34,0.74); border-color:rgba(178,34,34,0.99);">
+              <div class="pick-num">15.6</div>
+              <div class="player">Packers D/ST</div>
+              <div class="drafted-by">Evan Squared</div>
+              <div class='rank-move'>D/ST9 &rarr; D/ST21 ▼</div>
+              
+            </div>
+            <div class="draft-cell" style="background:rgba(178,34,34,0.90); border-color:rgba(178,34,34,1.00);">
+              <div class="pick-num">15.7</div>
+              <div class="player">Najee Harris</div>
+              <div class="drafted-by">Bad Blood</div>
+              <div class='rank-move'>RB55 &rarr; RB104 ▼</div>
+              
+            </div>
+            <div class="draft-cell" style="background:rgba(34,139,34,0.90); border-color:rgba(34,139,34,1.00);">
+              <div class="pick-num">15.8</div>
+              <div class="player">Rico Dowdle</div>
+              <div class="drafted-by">For Nabers</div>
+              <div class='rank-move'>RB56 &rarr; RB19 ▲</div>
+              
+            </div>
+            <div class="draft-cell" style="background:rgba(178,34,34,0.90); border-color:rgba(178,34,34,1.00);">
+              <div class="pick-num">15.9</div>
+              <div class="player">Christian Kirk</div>
+              <div class="drafted-by">HERB YOUR ENTHUSIASM</div>
+              <div class='rank-move'>WR59 &rarr; WR101 ▼</div>
+              
+            </div>
+            <div class="draft-cell" style="background:rgba(34,139,34,0.30); border-color:rgba(34,139,34,0.55);">
+              <div class="pick-num">15.10</div>
+              <div class="player">Vikings D/ST</div>
+              <div class="drafted-by">Cant Find Nico </div>
+              <div class='rank-move'>D/ST10 &rarr; D/ST6 ▲</div>
+              
+            </div></div>
+        </div>
+  </div>
+</section>
+
+<footer>Generated locally from your ESPN league data. Not affiliated with ESPN.</footer>
+
+<script>
+function showTab(id, btn) {
+  document.querySelectorAll(':scope > section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  btn.classList.add('active');
+}
+function showSubTab(id, btn) {
+  const panel = document.getElementById(id);
+  const container = btn.closest('.panel');
+  container.querySelectorAll('.subpanel').forEach(p => p.classList.remove('active'));
+  container.querySelectorAll('.subtab').forEach(b => b.classList.remove('active'));
+  panel.classList.add('active');
+  btn.classList.add('active');
+}
+</script>
+</body>
+</html>
