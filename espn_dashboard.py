@@ -955,7 +955,10 @@ def build_draft_board(league, rank_data):
     def render_pick(pick, round_num):
         team_name = html.escape(pick.team.team_name) if pick.team else "Unknown"
         player_name = html.escape(pick.playerName or "—")
-        bid = f"<div class='bid'>${pick.bid_amount}</div>" if pick.bid_amount else ""
+        # Always render a bid line (blank when not applicable) so every
+        # cell has the same number of stacked elements — that, plus the
+        # fixed CSS heights below, is what keeps all boxes uniform.
+        bid = f"<div class='bid'>${pick.bid_amount}</div>" if pick.bid_amount else "<div class='bid'>&nbsp;</div>"
 
         info = rank_data.get(pick.playerId)
         bg, border = delta_color(info["delta"] if info else None)
@@ -967,13 +970,13 @@ def build_draft_board(league, rank_data):
         elif info:
             rank_line = f"<div class='rank-move'>{info['position']}{info['draft_pos_rank']} &rarr; n/a</div>"
         else:
-            rank_line = ""
+            rank_line = "<div class='rank-move'>&nbsp;</div>"
 
         return f"""
             <div class="draft-cell" style="background:{bg}; border-color:{border};">
               <div class="pick-num">{round_num}.{pick.round_pick}</div>
-              <div class="player">{player_name}</div>
-              <div class="drafted-by">{team_name}</div>
+              <div class="player" title="{player_name}">{player_name}</div>
+              <div class="drafted-by" title="{team_name}">{team_name}</div>
               {rank_line}
               {bid}
             </div>"""
@@ -1115,6 +1118,9 @@ HTML_TEMPLATE = """<!DOCTYPE html>
     border-radius: 8px;
     padding: 10px;
     transition: transform 0.1s ease;
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
   }}
   .draft-cell:hover {{ transform: translateY(-2px); }}
   .draft-board-wrap {{ overflow-x: auto; margin-top: 8px; }}
@@ -1122,11 +1128,20 @@ HTML_TEMPLATE = """<!DOCTYPE html>
   .draft-board th {{ color: var(--muted); font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.3px; padding: 4px 6px; text-align: center; vertical-align: bottom; min-width: 124px; max-width: 140px; }}
   .draft-board td {{ vertical-align: top; padding: 0; min-width: 124px; max-width: 140px; }}
   .draft-board .round-label {{ color: var(--accent); font-weight: 700; font-size: 13px; text-align: center; min-width: 28px; width: 28px; }}
-  .draft-board .draft-cell {{ width: 100%; min-width: 0; box-sizing: border-box; }}
-  .pick-num {{ color: var(--accent); font-size: 12px; font-weight: 700; }}
-  .player {{ font-weight: 600; margin: 4px 0 2px 0; font-size: 14px; }}
-  .drafted-by {{ color: var(--muted); font-size: 12px; }}
-  .rank-move {{ font-size: 11px; margin-top: 6px; color: var(--text); opacity: 0.9; }}
+  .draft-board .draft-cell {{ width: 100%; min-width: 0; height: 112px; margin-bottom: 6px; }}
+  .draft-board .draft-cell:last-child {{ margin-bottom: 0; }}
+  .pick-num {{ color: var(--accent); font-size: 12px; font-weight: 700; flex-shrink: 0; }}
+  .player {{
+    font-weight: 600; margin: 4px 0 2px 0; font-size: 14px;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    flex-shrink: 0;
+  }}
+  .drafted-by {{
+    color: var(--muted); font-size: 12px;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    flex-shrink: 0;
+  }}
+  .rank-move {{ font-size: 11px; margin-top: 6px; color: var(--text); opacity: 0.9; flex-shrink: 0; }}
   .bid {{ color: var(--accent2); font-size: 12px; margin-top: 4px; }}
   .legend {{
     display: flex;
