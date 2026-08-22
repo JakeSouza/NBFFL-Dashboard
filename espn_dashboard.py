@@ -127,22 +127,25 @@ def build_standings_tabs(league, history):
 
 def get_owner_name(team):
     """
-    Best-effort extraction of a team's owner display name from ESPN's raw
-    'owners' data on the Team object. Returns None if unavailable so callers
-    can decide how to render that (rather than showing a fake placeholder).
+    Best-effort extraction of a team's owner's real name from ESPN's raw
+    'owners' data on the Team object. Prefers firstName + lastName, since
+    ESPN's 'displayName' field is often just the person's chosen username
+    (e.g. "j_souza17") rather than their actual name. Falls back to
+    displayName only if no first/last name is available. Returns None if
+    nothing usable is found, so callers can decide how to render that
+    (rather than showing a fake placeholder).
     """
     owners = getattr(team, "owners", None) or []
     if not owners:
         return None
     o = owners[0]
     if isinstance(o, dict):
-        name = o.get("displayName")
-        if name:
-            return name
-        first = o.get("firstName", "") or ""
-        last = o.get("lastName", "") or ""
+        first = (o.get("firstName") or "").strip()
+        last = (o.get("lastName") or "").strip()
         combined = f"{first} {last}".strip()
-        return combined or None
+        if combined:
+            return combined
+        return o.get("displayName") or None
     return None
 
 
