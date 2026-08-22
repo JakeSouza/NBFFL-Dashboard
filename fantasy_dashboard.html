@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>NBFFL — League Dashboard</title>
+<style>
+  :root {
+    --bg: #0f1420;
+    --panel: #171d2e;
+    --border: #2a3348;
+    --text: #e8ecf4;
+    --muted: #8a92a8;
+    --accent: #ff5a1f;
+    --accent2: #3d8bfd;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    padding: 24px;
+  }
+  header {
+    margin-bottom: 28px;
+  }
+  h1 {
+    margin: 0 0 4px 0;
+    font-size: 28px;
+    letter-spacing: -0.5px;
+  }
+  .subtitle {
+    color: var(--muted);
+    font-size: 14px;
+  }
+  nav {
+    display: flex;
+    gap: 8px;
+    margin: 20px 0 24px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  nav button {
+    background: none;
+    border: none;
+    color: var(--muted);
+    font-size: 15px;
+    padding: 10px 16px;
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+  }
+  nav button.active {
+    color: var(--text);
+    border-bottom-color: var(--accent);
+  }
+  section { display: none; }
+  section.active { display: block; }
+  .panel {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+    overflow-x: auto;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+  }
+  th {
+    text-align: left;
+    color: var(--muted);
+    font-weight: 600;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 8px 10px;
+    border-bottom: 1px solid var(--border);
+  }
+  td {
+    padding: 10px;
+    border-bottom: 1px solid var(--border);
+  }
+  tr:last-child td { border-bottom: none; }
+  .team-cell { display: flex; align-items: center; gap: 8px; font-weight: 600; }
+  .logo { width: 22px; height: 22px; border-radius: 50%; }
+  .action { color: var(--accent2); }
+  .empty { color: var(--muted); text-align: center; padding: 24px; }
+  .draft-round h3 { color: var(--muted); font-size: 13px; text-transform: uppercase; margin: 20px 0 10px 0; }
+  .draft-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 10px;
+  }
+  .draft-cell {
+    background: #1c2438;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 10px;
+    transition: transform 0.1s ease;
+  }
+  .draft-cell:hover { transform: translateY(-2px); }
+  .pick-num { color: var(--accent); font-size: 12px; font-weight: 700; }
+  .player { font-weight: 600; margin: 4px 0 2px 0; font-size: 14px; }
+  .drafted-by { color: var(--muted); font-size: 12px; }
+  .rank-move { font-size: 11px; margin-top: 6px; color: var(--text); opacity: 0.9; }
+  .bid { color: var(--accent2); font-size: 12px; margin-top: 4px; }
+  .legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 18px;
+    font-size: 12px;
+    color: var(--muted);
+    margin-bottom: 16px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--border);
+  }
+  .legend .dot {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    margin-right: 6px;
+    vertical-align: middle;
+  }
+  footer { color: var(--muted); font-size: 12px; margin-top: 24px; text-align: center; }
+</style>
+</head>
+<body>
+<header>
+  <h1>NBFFL</h1>
+  <div class="subtitle">2026 season · updated Aug 22, 2026 09:27 AM</div>
+</header>
+
+<nav>
+  <button class="active" onclick="showTab('standings', this)">Standings</button>
+  <button onclick="showTab('activity', this)">Recent Transactions</button>
+  <button onclick="showTab('draft', this)">Draft Board</button>
+</nav>
+
+<section id="standings" class="active">
+  <div class="panel">
+    <table>
+      <thead>
+        <tr><th>#</th><th>Team</th><th>Record</th><th>PF</th><th>PA</th><th>Streak</th></tr>
+      </thead>
+      <tbody>
+        
+        <tr>
+          <td>1</td>
+          <td class="team-cell">
+            <img src='https://mystique-api.fantasy.espn.com/apis/v1/domains/lm/images/a9e443b0-875e-11f0-89de-d1ac062a5dc6' class='logo'>
+            CHASEing Greatness
+          </td>
+          <td>0-0</td>
+          <td>0.0</td>
+          <td>0.0</td>
+          <td>NONE 0</td>
+        </tr>
+
+        <tr>
+          <td>2</td>
+          <td class="team-cell">
+            <img src='https://mystique-api.fantasy.espn.com/apis/v1/domains/lm/images/4cc3b190-8df6-11f0-90f7-112fa0f42e74' class='logo'>
+            BuckO
+          </td>
+          <td>0-0</td>
+          <td>0.0</td>
+          <td>0.0</td>
+          <td>NONE 0</td>
+        </tr>
+
+        <tr>
+          <td>3</td>
+          <td class="team-cell">
+            <img src='https://mystique-api.fantasy.espn.com/apis/v1/domains/lm/images/1492bae0-bab6-11f0-afb5-e14f006a2a34' class='logo'>
+            Uncle Rico
+          </td>
+          <td>0-0</td>
+          <td>0.0</td>
+          <td>0.0</td>
+          <td>NONE 0</td>
+        </tr>
+
+        <tr>
+          <td>4</td>
+          <td class="team-cell">
+            <img src='https://g.espncdn.com/lm-static/logo-packs/ffl/1stStringAllStars-SportsManias/barkley-01.svg' class='logo'>
+            Evan Squared
+          </td>
+          <td>0-0</td>
+          <td>0.0</td>
+          <td>0.0</td>
+          <td>NONE 0</td>
+        </tr>
+
+        <tr>
+          <td>5</td>
+          <td class="team-cell">
+            <img src='https://mystique-api.fantasy.espn.com/apis/v1/domains/lm/images/84086450-88c6-11f0-89de-d1ac062a5dc6' class='logo'>
+            For Nabers
+          </td>
+          <td>0-0</td>
+          <td>0.0</td>
+          <td>0.0</td>
+          <td>NONE 0</td>
+        </tr>
+
+        <tr>
+          <td>6</td>
+          <td class="team-cell">
+            <img src='https://mystique-api.fantasy.espn.com/apis/v1/domains/lm/images/81458e60-ba98-11f0-b1c3-bf61c28fbeb9' class='logo'>
+            HERB YOUR ENTHUSIASM
+          </td>
+          <td>0-0</td>
+          <td>0.0</td>
+          <td>0.0</td>
+          <td>NONE 0</td>
+        </tr>
+
+        <tr>
+          <td>7</td>
+          <td class="team-cell">
+            <img src='https://g.espncdn.com/lm-static/logo-packs/ffl/BoneHeads-ToddDetwiler/BoneHeads-16.svg' class='logo'>
+            Cant Find Nico 
+          </td>
+          <td>0-0</td>
+          <td>0.0</td>
+          <td>0.0</td>
+          <td>NONE 0</td>
+        </tr>
+
+        <tr>
+          <td>8</td>
+          <td class="team-cell">
+            <img src='https://g.espncdn.com/lm-static/logo-packs/ffl/1stStringAllStars-SportsManias/nacua-01.svg' class='logo'>
+            Bad Blood
+          </td>
+          <td>0-0</td>
+          <td>0.0</td>
+          <td>0.0</td>
+          <td>NONE 0</td>
+        </tr>
+
+        <tr>
+          <td>9</td>
+          <td class="team-cell">
+            <img src='https://mystique-api.fantasy.espn.com/apis/v1/domains/lm/images/67644bc0-ba58-11f0-afb5-e14f006a2a34' class='logo'>
+            #NoKings 
+          </td>
+          <td>0-0</td>
+          <td>0.0</td>
+          <td>0.0</td>
+          <td>NONE 0</td>
+        </tr>
+
+        <tr>
+          <td>10</td>
+          <td class="team-cell">
+            <img src='https://mystique-api.fantasy.espn.com/apis/v1/domains/lm/images/671b7250-8f6b-11f0-b1c3-bf61c28fbeb9' class='logo'>
+            Whats Good My Njigba
+          </td>
+          <td>0-0</td>
+          <td>0.0</td>
+          <td>0.0</td>
+          <td>NONE 0</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section id="activity">
+  <div class="panel">
+    <table>
+      <thead>
+        <tr><th>Date</th><th>Team</th><th>Action</th><th>Player</th></tr>
+      </thead>
+      <tbody>
+        <tr><td colspan='4' class='empty'>No recent activity found.</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section id="draft">
+  <div class="panel">
+    <p class='empty'>No draft data available for this league/year yet.</p>
+  </div>
+</section>
+
+<footer>Generated locally from your ESPN league data. Not affiliated with ESPN.</footer>
+
+<script>
+function showTab(id, btn) {
+  document.querySelectorAll('section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  btn.classList.add('active');
+}
+</script>
+</body>
+</html>
