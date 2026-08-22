@@ -87,7 +87,7 @@ def build_standings_tabs(league, history):
         rows = "".join(f"""
         <tr>
           <td>{s['rank']}</td>
-          <td class="team-cell">{html.escape(s['name'])}</td>
+          <td class="team-cell">{team_cell_html(s['name'], s.get('owner'))}</td>
           <td>{s['wins']}-{s['losses']}{f"-{s['ties']}" if s['ties'] else ""}</td>
           <td>{s['points_for']:.1f}</td>
           <td>{s['points_against']:.1f}</td>
@@ -107,7 +107,7 @@ def build_standings_tabs(league, history):
         rows = "".join(f"""
         <tr>
           <td>{i}</td>
-          <td class="team-cell">{html.escape(e['name'])}</td>
+          <td class="team-cell">{team_cell_html(e['name'], e.get('owner'))}</td>
           <td>{e['wins']}-{e['losses']}{f"-{e['ties']}" if e['ties'] else ""}</td>
           <td>{e['win_pct'] * 100:.1f}%</td>
           <td>{e['points_for']:.1f}</td>
@@ -125,16 +125,45 @@ def build_standings_tabs(league, history):
     return "".join(sub_nav), "".join(panels)
 
 
+def get_owner_name(team):
+    """
+    Best-effort extraction of a team's owner display name from ESPN's raw
+    'owners' data on the Team object. Returns None if unavailable so callers
+    can decide how to render that (rather than showing a fake placeholder).
+    """
+    owners = getattr(team, "owners", None) or []
+    if not owners:
+        return None
+    o = owners[0]
+    if isinstance(o, dict):
+        name = o.get("displayName")
+        if name:
+            return name
+        first = o.get("firstName", "") or ""
+        last = o.get("lastName", "") or ""
+        combined = f"{first} {last}".strip()
+        return combined or None
+    return None
+
+
+def team_cell_html(name, owner=None):
+    owner_html = f'<div class="owner-name">{html.escape(owner)}</div>' if owner else ""
+    return f'<div class="team-name-main">{html.escape(name)}</div>{owner_html}'
+
+
 def build_standings_rows(league):
     standings = sorted(league.teams, key=lambda t: (-t.wins, t.losses, -t.points_for))
     rows = []
     for rank, team in enumerate(standings, start=1):
+        logo = f"<img src='{html.escape(team.logo_url)}' class='logo'>" if team.logo_url else ""
         rows.append(f"""
         <tr>
           <td>{rank}</td>
           <td class="team-cell">
-            {"<img src='" + html.escape(team.logo_url) + "' class='logo'>" if team.logo_url else ""}
-            {html.escape(team.team_name)}
+            <div class="team-cell-inner">
+              {logo}
+              {team_cell_html(team.team_name, get_owner_name(team))}
+            </div>
           </td>
           <td>{team.wins}-{team.losses}{f"-{team.ties}" if team.ties else ""}</td>
           <td>{team.points_for:.1f}</td>
@@ -468,12 +497,12 @@ def fetch_historical_data(current_league, start_year, end_year):
     Walks each season from start_year..end_year (inclusive), fetching a
     League() instance for every year except the current one (already have
     that). Extracts:
-      - champions: list of (year, team_name) for completed seasons
+      - champions: list of (year, team_name, owner_name) for completed seasons
       - head_to_head: {frozenset({id_a, id_b}): {'meetings', 'wins': {}, 'points': {}}}
-      - name_by_id: best-known display name for each team_id encountered
-      - season_standings: {year: [ {team_id, name, wins, losses, ties,
+      - name_by_id / owner_by_id: best-known display name/owner for each team_id
+      - season_standings: {year: [ {team_id, name, owner, wins, losses, ties,
         points_for, points_against, rank}, ... ]} sorted best-to-worst
-      - all_time: {team_id: {name, wins, losses, ties, points_for,
+      - all_time: {team_id: {name, owner, wins, losses, ties, points_for,
         points_against, seasons}} accumulated across every fetched year
 
     Any year that fails to fetch (league didn't exist yet, network hiccup,
@@ -482,6 +511,7 @@ def fetch_historical_data(current_league, start_year, end_year):
     champions = []
     head_to_head = {}
     name_by_id = {t.team_id: t.team_name for t in current_league.teams}
+    owner_by_id = {t.team_id: get_owner_name(t) for t in current_league.teams}
     season_standings = {}
     all_time = {}
 
@@ -501,11 +531,14 @@ def fetch_historical_data(current_league, start_year, end_year):
 
         for team in lg.teams:
             name_by_id[team.team_id] = team.team_name
+            owner = get_owner_name(team)
+            if owner:
+                owner_by_id[team.team_id] = owner
 
         if year != current_league.year:
             finished = [t for t in lg.teams if getattr(t, "final_standing", 0) == 1]
             if finished:
-                champions.append((year, finished[0].team_name))
+                champions.append((year, finished[0].team_name, get_owner_name(finished[0])))
 
         # Per-season standings: use final_standing for completed seasons
         # (reliable once the season wrapped), fall back to win/loss/PF sort
@@ -518,6 +551,7 @@ def fetch_historical_data(current_league, start_year, end_year):
         season_standings[year] = [{
             "team_id": t.team_id,
             "name": t.team_name,
+            "owner": get_owner_name(t),
             "wins": t.wins, "losses": t.losses, "ties": t.ties,
             "points_for": t.points_for, "points_against": t.points_against,
             "rank": i + 1,
@@ -525,10 +559,13 @@ def fetch_historical_data(current_league, start_year, end_year):
 
         for t in lg.teams:
             entry = all_time.setdefault(t.team_id, {
-                "name": t.team_name, "wins": 0, "losses": 0, "ties": 0,
+                "name": t.team_name, "owner": None, "wins": 0, "losses": 0, "ties": 0,
                 "points_for": 0.0, "points_against": 0.0, "seasons": 0,
             })
             entry["name"] = t.team_name  # keep most recent name
+            owner = get_owner_name(t)
+            if owner:
+                entry["owner"] = owner
             entry["wins"] += t.wins
             entry["losses"] += t.losses
             entry["ties"] += t.ties
@@ -565,6 +602,7 @@ def fetch_historical_data(current_league, start_year, end_year):
         "champions": champions,
         "head_to_head": head_to_head,
         "name_by_id": name_by_id,
+        "owner_by_id": owner_by_id,
         "season_standings": season_standings,
         "all_time": all_time,
     }
@@ -577,8 +615,8 @@ def build_history_section(history, current_year, top_rivalries=8):
 
     if champions:
         champ_rows = "".join(
-            f"<tr><td>{year}</td><td>{html.escape(name)}</td></tr>"
-            for year, name in champions
+            f"<tr><td>{year}</td><td class='team-cell'>{team_cell_html(name, owner)}</td></tr>"
+            for year, name, owner in champions
         )
         champions_html = f"""
         <h2 class="section-title">League Champions</h2>
@@ -686,7 +724,7 @@ def build_prediction_accuracy_section(league):
         diff_class = "luck-good" if r["avg_diff"] > 0 else ("luck-bad" if r["avg_diff"] < 0 else "")
         rows.append(f"""
         <tr>
-          <td class="team-cell">{html.escape(r['team'].team_name)}</td>
+          <td class="team-cell">{team_cell_html(r['team'].team_name, get_owner_name(r['team']))}</td>
           <td>{r['played']}</td>
           <td>{r['beat_pct']}%</td>
           <td class="{diff_class}">{r['avg_diff']:+.1f} pts/wk</td>
@@ -968,8 +1006,11 @@ HTML_TEMPLATE = """<!DOCTYPE html>
     border-bottom: 1px solid var(--border);
   }}
   tr:last-child td {{ border-bottom: none; }}
-  .team-cell {{ display: flex; align-items: center; gap: 8px; font-weight: 600; }}
-  .logo {{ width: 22px; height: 22px; border-radius: 50%; }}
+  .team-cell {{ font-weight: 600; }}
+  .team-cell-inner {{ display: flex; align-items: center; gap: 8px; }}
+  .team-name-main {{ font-weight: 600; }}
+  .owner-name {{ color: var(--muted); font-weight: 400; font-size: 11px; margin-top: 2px; }}
+  .logo {{ width: 22px; height: 22px; border-radius: 50%; flex-shrink: 0; }}
   .action {{ color: var(--accent2); }}
   .empty {{ color: var(--muted); text-align: center; padding: 24px; }}
   .draft-round h3 {{ color: var(--muted); font-size: 13px; text-transform: uppercase; margin: 20px 0 10px 0; }}
@@ -1259,7 +1300,7 @@ HTML_TEMPLATE = """<!DOCTYPE html>
 
 <script>
 function showTab(id, btn) {{
-  document.querySelectorAll(':scope > section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('body > section').forEach(s => s.classList.remove('active'));
   document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
   document.getElementById(id).classList.add('active');
   btn.classList.add('active');
