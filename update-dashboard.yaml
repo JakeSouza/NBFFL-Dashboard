@@ -1,0 +1,58 @@
+# Save this file to: .github/workflows/update-dashboard.yml
+# in your repo (create the .github/workflows/ folders if they don't exist).
+#
+# It runs the dashboard script daily, and if the HTML changed, commits and
+# pushes it — which triggers Netlify's normal auto-deploy on push.
+#
+# SETUP:
+# 1. In your GitHub repo, go to Settings -> Secrets and variables -> Actions
+# 2. Add these repository secrets:
+#      LEAGUE_ID   -> your ESPN league ID
+#      YEAR        -> e.g. 2026
+#      ESPN_S2     -> your espn_s2 cookie value
+#      SWID        -> your SWID cookie value (including the curly braces)
+# 3. Commit this file to your repo. It will start running on the schedule
+#    below, and you can also trigger it manually from the Actions tab.
+
+name: Update Fantasy Dashboard
+
+on:
+  schedule:
+    # Runs daily at 09:00 UTC. Adjust as you like — cron is in UTC, not
+    # your local time. https://crontab.guru is handy for editing this.
+    - cron: "0 9 * * *"
+  workflow_dispatch: {}  # lets you click "Run workflow" manually in the Actions tab
+
+permissions:
+  contents: write  # needed so the workflow can push the updated HTML back
+
+jobs:
+  update-dashboard:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install espn_api
+
+      - name: Generate dashboard
+        env:
+          LEAGUE_ID: ${{ secrets.LEAGUE_ID }}
+          YEAR: ${{ secrets.YEAR }}
+          ESPN_S2: ${{ secrets.ESPN_S2 }}
+          SWID: ${{ secrets.SWID }}
+        run: python espn_dashboard.py
+
+      - name: Commit and push if changed
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add fantasy_dashboard.html
+          git diff --staged --quiet || git commit -m "Auto-update fantasy dashboard"
+          git push

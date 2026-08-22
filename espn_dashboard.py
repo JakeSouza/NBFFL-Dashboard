@@ -37,12 +37,18 @@ anywhere except directly to ESPN's API.
 from espn_api.football import League
 from datetime import datetime
 import html
+import os
 
-# ============ CONFIG — fill these in ============
-LEAGUE_ID = 346071          # your league ID
-YEAR = 2026                  # season year
-ESPN_S2 = "AECUl%2BRdjokB4Cn7XxQWzuG8alImghIZGdVS8ToFF99w2HQXlTPzl2PXIV0ioHuuRlZMt65FvvB5RAP4xSdQ2M1yyh%2BQNxwyrw%2FHFK7%2BzqG0ZogmYvLDA5%2BMESQeaakScPQNm3JGTVHfFnwuOeFa5VrQfmLLc%2BghKjQjys5zdTnHGeg9b3Om6O9OLQnWki0U9WEIrnaNbAaoiCRyuHBhy%2B9vCS%2FAONlaGIm%2BfUDMMYSJnDPPct2pvH7K7QGIzO80VMM%2FmVl3PKkSpjOt3vurK6Q5"
-SWID = "{93138344-9679-4446-9383-449679044607}"     # looks like {XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX}
+# ============ CONFIG ============
+# Values are read from environment variables first (used by the GitHub
+# Actions workflow / GitHub Secrets), falling back to the literals below
+# for local runs. If running locally, you can either fill in the literals
+# below OR set the same-named environment variables instead — never commit
+# real ESPN_S2/SWID values to a public repo.
+LEAGUE_ID = int(os.environ.get("LEAGUE_ID", 1234567))
+YEAR = int(os.environ.get("YEAR", 2025))
+ESPN_S2 = os.environ.get("ESPN_S2", "PASTE_ESPN_S2_HERE")
+SWID = os.environ.get("SWID", "PASTE_SWID_HERE")  # looks like {XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX}
 OUTPUT_FILE = "fantasy_dashboard.html"
 RECENT_ACTIVITY_COUNT = 25
 # ==================================================
