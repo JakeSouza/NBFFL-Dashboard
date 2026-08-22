@@ -7,12 +7,20 @@
 # SETUP:
 # 1. In your GitHub repo, go to Settings -> Secrets and variables -> Actions
 # 2. Add these repository secrets:
-#      LEAGUE_ID   -> your ESPN league ID
-#      YEAR        -> e.g. 2026
-#      ESPN_S2     -> your espn_s2 cookie value
-#      SWID        -> your SWID cookie value (including the curly braces)
+#      LEAGUE_ID          -> your ESPN league ID
+#      YEAR               -> e.g. 2026
+#      ESPN_S2            -> your espn_s2 cookie value
+#      SWID               -> your SWID cookie value (including the curly braces)
+#      HISTORY_START_YEAR -> optional, defaults to 2018. Set this if your
+#                             league started later, or to limit how many
+#                             past seasons get fetched (fewer = faster runs).
 # 3. Commit this file to your repo. It will start running on the schedule
 #    below, and you can also trigger it manually from the Actions tab.
+#
+# Note: fetching many seasons of history (draft, rosters, schedules) makes
+# each run take longer than a single-season dashboard would. The 20-minute
+# timeout below should comfortably cover a decade of history; raise it if
+# you have an unusually large league or roster.
 
 name: Update Fantasy Dashboard
 
@@ -29,6 +37,7 @@ permissions:
 jobs:
   update-dashboard:
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     steps:
       - name: Check out repo
         uses: actions/checkout@v4
@@ -47,6 +56,7 @@ jobs:
           YEAR: ${{ secrets.YEAR }}
           ESPN_S2: ${{ secrets.ESPN_S2 }}
           SWID: ${{ secrets.SWID }}
+          HISTORY_START_YEAR: ${{ secrets.HISTORY_START_YEAR }}
         run: python espn_dashboard.py
 
       - name: Commit and push if changed
@@ -54,5 +64,5 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add index.html
-          git diff --staged --quiet || git commit -m "Auto-update fantasy dashboard"
+          git diff --staged --quiet || git commit -m "Auto-update fantasy dashboard - $(date -u '+%Y-%m-%d %H:%M UTC')"
           git push
