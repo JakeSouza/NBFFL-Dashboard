@@ -30,7 +30,7 @@ browser, or upload it somewhere to share with your league. Re-run the
 script any time to refresh the data (e.g. weekly, or set up a scheduled
 task/cron job to regenerate it automatically).
 
-Your espn_s2/SWID values stay on your own machine â they are never sent
+Your espn_s2/SWID values stay on your own machine — they are never sent
 anywhere except directly to ESPN's API.
 """
 
@@ -43,7 +43,7 @@ import os
 # Values are read from environment variables first (used by the GitHub
 # Actions workflow / GitHub Secrets), falling back to the literals below
 # for local runs. If running locally, you can either fill in the literals
-# below OR set the same-named environment variables instead â never commit
+# below OR set the same-named environment variables instead — never commit
 # real ESPN_S2/SWID values to a public repo.
 def _env_or_default(name, default):
     """Falls back to default if the env var is missing OR set but blank."""
@@ -56,7 +56,7 @@ ESPN_S2 = _env_or_default("ESPN_S2", "PASTE_ESPN_S2_HERE")
 SWID = _env_or_default("SWID", "PASTE_SWID_HERE")  # looks like {XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX}
 OUTPUT_FILE = "index.html"
 RECENT_ACTIVITY_COUNT = 25
-# The league's first season â used as the default start point for the
+# The league's first season — used as the default start point for the
 # History tab, all-time standings, and rivalry tracker. Override with the
 # HISTORY_START_YEAR env var/secret if you only want a partial history.
 HISTORY_START_YEAR = int(_env_or_default("HISTORY_START_YEAR", 2018))
@@ -172,17 +172,8 @@ def team_cell_html(name, owner=None):
     return f'<div class="team-name-main">{html.escape(name)}</div>{owner_html}'
 
 
-def sort_teams_by_record(teams):
-    """Best-to-worst: most wins, then fewest losses, then most points for.
-    Shared by the current-season standings and every historical season so all
-    Standings tabs stay consistently ordered by record (not by ESPN's
-    post-playoff 'final_standing', which would put a lower-seed champion above
-    a team with a better regular-season record)."""
-    return sorted(teams, key=lambda t: (-t.wins, t.losses, -t.points_for))
-
-
 def build_standings_rows(league):
-    standings = sort_teams_by_record(league.teams)
+    standings = sorted(league.teams, key=lambda t: (-t.wins, t.losses, -t.points_for))
     rows = []
     for rank, team in enumerate(standings, start=1):
         logo = f"<img src='{html.escape(team.logo_url)}' class='logo'>" if team.logo_url else ""
@@ -263,7 +254,7 @@ def fetch_player_rank_data(league):
     player_lookup = {p.playerId: p for p in players}
 
     # Walk the draft in actual draft order to work out each player's
-    # "positional draft rank" â i.e. he was the Nth RB/WR/etc. taken.
+    # "positional draft rank" — i.e. he was the Nth RB/WR/etc. taken.
     ordered_picks = sorted(league.draft, key=lambda p: (p.round_num, p.round_pick))
     position_counters = {}
     rank_data = {}
@@ -363,7 +354,7 @@ def build_matchups(league):
 def generate_matchup_outlook(favorite, underdog, fav_proj, dog_proj):
     """Generates a short, varied narrative blurb for a matchup using
     deterministic-but-varied templates based on the matchup's own numbers
-    (no external calls â keeps this fast and free to regenerate)."""
+    (no external calls — keeps this fast and free to regenerate)."""
     gap = round(fav_proj - dog_proj, 1)
     fav_name = favorite.team_name
     dog_name = underdog.team_name
@@ -374,7 +365,7 @@ def generate_matchup_outlook(favorite, underdog, fav_proj, dog_proj):
     seed = sum(ord(c) for c in (fav_name + dog_name)) + int(fav_proj * 10)
     variants_close = [
         f"This one's a coin flip. {fav_name} is given the slimmest of edges over {dog_name}, "
-        f"projected to win by just {gap} points â a single big play could flip this.",
+        f"projected to win by just {gap} points — a single big play could flip this.",
         f"{fav_name} and {dog_name} are neck and neck heading in, separated by only {gap} "
         f"projected points. Expect this to come down to the last game on the board.",
         f"Too close to call. {fav_name} holds a razor-thin projected edge over {dog_name} "
@@ -386,13 +377,13 @@ def generate_matchup_outlook(favorite, underdog, fav_proj, dog_proj):
         f"On paper, {fav_name} has the edge here, out-projecting {dog_name} by {gap} points. "
         f"{dog_name} isn't out of it, but they're chasing points from the jump.",
         f"{fav_name} looks like the safer bet against {dog_name} this week, favored by roughly "
-        f"{gap} points â though fantasy football has a way of humbling favorites.",
+        f"{gap} points — though fantasy football has a way of humbling favorites.",
     ]
     variants_blowout = [
         f"{fav_name} is projected to run away with this one, out-scoring {dog_name} by a "
         f"lopsided {gap} points. {dog_name} will need a near-perfect week and some help from "
         f"the projections being wrong.",
-        f"This has blowout potential â {fav_name} is favored by {gap} points over {dog_name}. "
+        f"This has blowout potential — {fav_name} is favored by {gap} points over {dog_name}. "
         f"Barring injuries or busts, {dog_name} is fighting an uphill battle.",
         f"The numbers aren't kind to {dog_name} here, with {fav_name} projected to win by "
         f"{gap} points. A statement upset would be one for the ages.",
@@ -422,7 +413,7 @@ def compute_power_rankings(league):
     """
     Blends season scoring average, average margin of victory, and recent-form
     (last 3 completed weeks) into a single composite score per team. This is
-    NOT the same as the win/loss standings â it's meant to surface teams that
+    NOT the same as the win/loss standings — it's meant to surface teams that
     are playing better/worse than their record suggests.
     """
     completed = _completed_week_indices(league)
@@ -570,13 +561,14 @@ def fetch_historical_data(current_league, start_year, end_year):
             if finished:
                 champions.append((year, finished[0].team_name, get_owner_name(finished[0])))
 
-        # Order every season (current and historical) best-to-worst by record,
-        # then points for â the same key the Current tab uses. We deliberately
-        # do NOT use ESPN's 'final_standing' here: that reflects post-playoff
-        # seeding, so a lower-seed champion would sort above a team with a much
-        # better regular-season record, making the visible W-L column look
-        # out of order.
-        ordered = sort_teams_by_record(lg.teams)
+        # Per-season standings: use final_standing for completed seasons
+        # (reliable once the season wrapped), fall back to win/loss/PF sort
+        # for the in-progress current season.
+        is_completed = year != current_league.year
+        if is_completed and all(getattr(t, "final_standing", 0) for t in lg.teams):
+            ordered = sorted(lg.teams, key=lambda t: t.final_standing)
+        else:
+            ordered = sorted(lg.teams, key=lambda t: (-t.wins, t.losses, -t.points_for))
         season_standings[year] = [{
             "team_id": t.team_id,
             "name": t.team_name,
@@ -830,10 +822,10 @@ def build_draft_report_card(league, rank_data):
           <div class="report-team">{html.escape(entry['team'].team_name)}</div>
           <div class="report-stat">Avg draft-slot movement: {entry['avg_delta']:+.1f} spots</div>
           <div class="report-line best">
-            Best value: {html.escape(str(best['player']))} ({best['position']}, R{best['round']}.{best['pick']}) â {best['delta']:+d} spots
+            Best value: {html.escape(str(best['player']))} ({best['position']}, R{best['round']}.{best['pick']}) — {best['delta']:+d} spots
           </div>
           <div class="report-line worst">
-            Biggest bust: {html.escape(str(worst['player']))} ({worst['position']}, R{worst['round']}.{worst['pick']}) â {worst['delta']:+d} spots
+            Biggest bust: {html.escape(str(worst['player']))} ({worst['position']}, R{worst['round']}.{worst['pick']}) — {worst['delta']:+d} spots
           </div>
         </div>""")
 
@@ -854,11 +846,11 @@ def build_power_rankings_section(league):
     power_rows = []
     for r in power:
         if r["rank_delta"] > 0:
-            move = f"<span class='move-up'>â² {r['rank_delta']}</span>"
+            move = f"<span class='move-up'>▲ {r['rank_delta']}</span>"
         elif r["rank_delta"] < 0:
-            move = f"<span class='move-down'>â¼ {abs(r['rank_delta'])}</span>"
+            move = f"<span class='move-down'>▼ {abs(r['rank_delta'])}</span>"
         else:
-            move = "<span class='move-flat'>â</span>"
+            move = "<span class='move-flat'>–</span>"
         power_rows.append(f"""
         <tr>
           <td>{r['power_rank']}</td>
@@ -883,7 +875,7 @@ def build_power_rankings_section(league):
 
     return f"""
     <h2 class="section-title">Power Rankings</h2>
-    <p class="section-note">Blends scoring average, margin of victory, and last-3-week form â not just wins/losses.</p>
+    <p class="section-note">Blends scoring average, margin of victory, and last-3-week form — not just wins/losses.</p>
     <table>
       <thead><tr><th>#</th><th>Team</th><th>Score</th><th>Avg PF</th><th>Avg Margin</th><th>vs Standings</th></tr></thead>
       <tbody>{"".join(power_rows)}</tbody>
@@ -899,47 +891,122 @@ def build_power_rankings_section(league):
 
 
 def build_draft_board(league, rank_data):
+    """
+    Renders the draft board as a rigid column-per-team table.
+
+    Each draft slot (1..N) gets its own column, labeled with the team that
+    owned that slot in round 1. Every team keeps its column across all
+    rounds, so the snake order is visible: round 1 fills left-to-right,
+    round 2 fills right-to-left, etc. Picks acquired via trade land in the
+    picking team's own column (stacking if a team makes two picks in one
+    round), which preserves the "who drafted whom" story without breaking
+    the grid.
+    """
     if not league.draft:
         return "<p class='empty'>No draft data available for this league/year yet.</p>"
 
+    # Group picks by round, kept in round-pick order within each round.
     by_round = {}
     for pick in league.draft:
         by_round.setdefault(pick.round_num, []).append(pick)
 
-    sections = []
-    for round_num in sorted(by_round):
-        picks = sorted(by_round[round_num], key=lambda p: p.round_pick)
-        cells = []
-        for pick in picks:
-            team_name = html.escape(pick.team.team_name) if pick.team else "Unknown"
-            player_name = html.escape(pick.playerName or "â")
-            bid = f"<div class='bid'>${pick.bid_amount}</div>" if pick.bid_amount else ""
+    rounds = sorted(by_round)
+    if not rounds:
+        return "<p class='empty'>No draft data available for this league/year yet.</p>"
 
-            info = rank_data.get(pick.playerId)
-            bg, border = delta_color(info["delta"] if info else None)
-            if info and info["delta"] is not None:
-                pos = info["position"]
-                arrow = "â²" if info["delta"] > 0 else ("â¼" if info["delta"] < 0 else "â")
-                rank_line = (f"<div class='rank-move'>{pos}{info['draft_pos_rank']} "
-                             f"&rarr; {pos}{info['current_pos_rank']} {arrow}</div>")
-            elif info:
-                rank_line = f"<div class='rank-move'>{info['position']}{info['draft_pos_rank']} &rarr; n/a</div>"
-            else:
-                rank_line = ""
+    # Column count = number of teams (one column per draft slot). Fall back
+    # to the round-1 pick count if league.teams isn't populated yet.
+    n_cols = len(league.teams) if league.teams else len(by_round.get(rounds[0], []))
+    n_cols = max(n_cols, 1)
 
-            cells.append(f"""
+    def snake_slot(pick):
+        """Natural draft slot for a pick based on snake-draft order."""
+        if pick.round_num % 2 == 1:
+            return pick.round_pick          # odd rounds: 1..N left-to-right
+        return n_cols - pick.round_pick + 1  # even rounds: N..1 right-to-left
+
+    # Map each team (by id) to its natural column. Derived from the first
+    # round that has picks: for each pick in that round, the team's natural
+    # slot is the snake-derived slot for that pick (round 1: 1..N, round 2:
+    # N..1, etc.), so this stays correct even if the draft data is missing
+    # round 1. We also capture a display label for every column from that
+    # same round; slots with no owning team fall back to "Slot N".
+    first_round = rounds[0]
+    slot_by_team = {}
+    slot_label = {}
+    for pick in sorted(by_round.get(first_round, []), key=lambda p: p.round_pick):
+        if pick.team:
+            s = snake_slot(pick)
+            slot_by_team[pick.team.team_id] = s
+            slot_label[s] = pick.team.team_name
+    for s in range(1, n_cols + 1):
+        slot_label.setdefault(s, f"Slot {s}")
+
+    def slot_for(pick):
+        """
+        Column a pick belongs in: the picking team's own column when known
+        (handles traded picks landing in the acquiring team's column),
+        otherwise the snake-derived slot as a defensive fallback.
+        """
+        if pick.team and pick.team.team_id in slot_by_team:
+            return slot_by_team[pick.team.team_id]
+        return snake_slot(pick)
+
+    def render_pick(pick, round_num):
+        team_name = html.escape(pick.team.team_name) if pick.team else "Unknown"
+        player_name = html.escape(pick.playerName or "—")
+        bid = f"<div class='bid'>${pick.bid_amount}</div>" if pick.bid_amount else ""
+
+        info = rank_data.get(pick.playerId)
+        bg, border = delta_color(info["delta"] if info else None)
+        if info and info["delta"] is not None:
+            pos = info["position"]
+            arrow = "&#9650;" if info["delta"] > 0 else ("&#9660;" if info["delta"] < 0 else "&#8211;")
+            rank_line = (f"<div class='rank-move'>{pos}{info['draft_pos_rank']} "
+                         f"&rarr; {pos}{info['current_pos_rank']} {arrow}</div>")
+        elif info:
+            rank_line = f"<div class='rank-move'>{info['position']}{info['draft_pos_rank']} &rarr; n/a</div>"
+        else:
+            rank_line = ""
+
+        return f"""
             <div class="draft-cell" style="background:{bg}; border-color:{border};">
               <div class="pick-num">{round_num}.{pick.round_pick}</div>
               <div class="player">{player_name}</div>
               <div class="drafted-by">{team_name}</div>
               {rank_line}
               {bid}
-            </div>""")
-        sections.append(f"""
-        <div class="draft-round">
-          <h3>Round {round_num}</h3>
-          <div class="draft-grid">{''.join(cells)}</div>
-        </div>""")
+            </div>"""
+
+    # Bucket each pick into [round][slot]; a slot can hold multiple picks
+    # when a team makes more than one pick in a round via trades.
+    round_picks = {r: {s: [] for s in range(1, n_cols + 1)} for r in rounds}
+    for round_num in rounds:
+        for pick in sorted(by_round[round_num], key=lambda p: p.round_pick):
+            slot = slot_for(pick)
+            if slot < 1 or slot > n_cols:
+                slot = snake_slot(pick)
+            round_picks[round_num][slot].append(render_pick(pick, round_num))
+
+    # Header row: round-label corner cell + one labeled column per slot.
+    header_cells = "<th class='round-label'>Rd</th>" + "".join(
+        f"<th>{html.escape(slot_label.get(s, f'Slot {s}'))}</th>"
+        for s in range(1, n_cols + 1)
+    )
+
+    # One body row per round, led by a round-number label cell.
+    body_rows = []
+    for round_num in rounds:
+        cells = [f"<td class='round-label'>{round_num}</td>"]
+        for s in range(1, n_cols + 1):
+            cells.append(f"<td>{''.join(round_picks[round_num][s])}</td>")
+        body_rows.append(f"<tr>{''.join(cells)}</tr>")
+
+    table = f"""
+    <table class="draft-board">
+      <thead><tr>{header_cells}</tr></thead>
+      <tbody>{''.join(body_rows)}</tbody>
+    </table>"""
 
     legend = """
     <div class="legend">
@@ -947,14 +1014,14 @@ def build_draft_board(league, rank_data):
       <span><i class="dot" style="background:#2a3348"></i> Within 3 spots of draft slot / no data</span>
       <span><i class="dot" style="background:rgba(178,34,34,0.7)"></i> Underperforming draft slot (4+ spots)</span>
     </div>"""
-    return legend + "\n".join(sections)
+    return f'<div class="draft-board-wrap">{legend}{table}</div>'
 
 
 HTML_TEMPLATE = """<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>{league_name} â League Dashboard</title>
+<title>{league_name} — League Dashboard</title>
 <style>
   :root {{
     --bg: #0f1420;
@@ -1042,12 +1109,6 @@ HTML_TEMPLATE = """<!DOCTYPE html>
   .logo {{ width: 22px; height: 22px; border-radius: 50%; flex-shrink: 0; }}
   .action {{ color: var(--accent2); }}
   .empty {{ color: var(--muted); text-align: center; padding: 24px; }}
-  .draft-round h3 {{ color: var(--muted); font-size: 13px; text-transform: uppercase; margin: 20px 0 10px 0; }}
-  .draft-grid {{
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-    gap: 10px;
-  }}
   .draft-cell {{
     background: #1c2438;
     border: 1px solid var(--border);
@@ -1056,6 +1117,12 @@ HTML_TEMPLATE = """<!DOCTYPE html>
     transition: transform 0.1s ease;
   }}
   .draft-cell:hover {{ transform: translateY(-2px); }}
+  .draft-board-wrap {{ overflow-x: auto; margin-top: 8px; }}
+  .draft-board {{ border-collapse: separate; border-spacing: 6px; width: max-content; }}
+  .draft-board th {{ color: var(--muted); font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.3px; padding: 4px 6px; text-align: center; vertical-align: bottom; min-width: 124px; max-width: 140px; }}
+  .draft-board td {{ vertical-align: top; padding: 0; min-width: 124px; max-width: 140px; }}
+  .draft-board .round-label {{ color: var(--accent); font-weight: 700; font-size: 13px; text-align: center; min-width: 28px; width: 28px; }}
+  .draft-board .draft-cell {{ width: 100%; min-width: 0; box-sizing: border-box; }}
   .pick-num {{ color: var(--accent); font-size: 12px; font-weight: 700; }}
   .player {{ font-weight: 600; margin: 4px 0 2px 0; font-size: 14px; }}
   .drafted-by {{ color: var(--muted); font-size: 12px; }}
@@ -1252,7 +1319,7 @@ HTML_TEMPLATE = """<!DOCTYPE html>
 <body>
 <header>
   <h1>{league_name}</h1>
-  <div class="subtitle">{year} season Â· updated {updated}</div>
+  <div class="subtitle">{year} season · updated {updated}</div>
 </header>
 
 <nav>
