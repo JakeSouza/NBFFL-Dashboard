@@ -561,14 +561,14 @@ def fetch_historical_data(current_league, start_year, end_year):
             if finished:
                 champions.append((year, finished[0].team_name, get_owner_name(finished[0])))
 
-        # Per-season standings: use final_standing for completed seasons
-        # (reliable once the season wrapped), fall back to win/loss/PF sort
-        # for the in-progress current season.
-        is_completed = year != current_league.year
-        if is_completed and all(getattr(t, "final_standing", 0) for t in lg.teams):
-            ordered = sorted(lg.teams, key=lambda t: t.final_standing)
-        else:
-            ordered = sorted(lg.teams, key=lambda t: (-t.wins, t.losses, -t.points_for))
+        # Per-season standings: always sort by actual regular-season record
+        # (wins, then fewest losses, then points-for as a tiebreaker) — not
+        # by ESPN's final_standing, which reflects PLAYOFF results and can
+        # rank a team below one it out-won during the season (e.g. a #1
+        # seed that lost early vs. a lower seed that made a title run).
+        # The League Champions section already shows playoff winners
+        # separately, so this table stays a true win-loss standings.
+        ordered = sorted(lg.teams, key=lambda t: (-t.wins, t.losses, -t.points_for))
         season_standings[year] = [{
             "team_id": t.team_id,
             "name": t.team_name,
