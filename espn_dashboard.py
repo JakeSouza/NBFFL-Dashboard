@@ -400,8 +400,22 @@ def generate_matchup_outlook(favorite, underdog, fav_proj, dog_proj):
 
 
 def _completed_week_indices(league):
-    """Index positions (0-based) of weeks that have a decided outcome for at least one team."""
+    """
+    Index positions (0-based) of REGULAR SEASON weeks that have a decided
+    outcome for at least one team. Deliberately excludes playoff weeks:
+    once playoffs start, not every team has a real matchup each week
+    (some are eliminated, some get a bye, brackets split into
+    championship/consolation groups), so the "compare your score against
+    every other team this week" methodology used by Power Rankings and the
+    Luck Index would be comparing against a shrinking, non-representative
+    slice of the league rather than the full field. Capping at
+    league.settings.reg_season_count keeps every computed week apples-to-
+    apples across the whole league.
+    """
+    reg_season_weeks = getattr(getattr(league, "settings", None), "reg_season_count", None)
     max_len = max((len(t.outcomes) for t in league.teams), default=0)
+    if reg_season_weeks:
+        max_len = min(max_len, reg_season_weeks)
     completed = []
     for i in range(max_len):
         if any(i < len(t.outcomes) and t.outcomes[i] in ("W", "L", "T") for t in league.teams):
@@ -471,6 +485,16 @@ def compute_luck_index(league):
     team's score that week (not just their actual opponent) to get an
     expected win rate. Comparing that to their real win rate shows who's
     over/under-performing their scoring.
+
+    Both sides of that comparison MUST cover the exact same set of weeks or
+    the "luck" delta is meaningless. _completed_week_indices() already
+    restricts 'completed' to the regular season. actual_pct is computed
+    the same way — directly from each team's outcomes over those same
+    weeks — rather than from team.wins/team.losses/team.ties, since ESPN's
+    API labels those fields "overall" and they can include playoff-bracket
+    results in leagues that count playoff games toward the record. Using
+    the season-long total there while expected_pct only covers the regular
+    season would silently compare two different samples.
     """
     completed = _completed_week_indices(league)
     teams = league.teams
@@ -484,8 +508,9 @@ def compute_luck_index(league):
         if n < 2:
             continue
         for tid, score in week_scores.items():
-            beat = sum(1 for other_id, other_score in week_scores.items() if other_id != tid and score > other_score)
-            all_play_pct[tid].append(beat / (n - 1))
+            wins = sum(1 for oid, oscore in week_scores.items() if oid != tid and score > oscore)
+            ties = sum(1 for oid, oscore in week_scores.items() if oid != tid and score == oscore)
+            all_play_pct[tid].append((wins + 0.5 * ties) / (n - 1))
 
     results = []
     for team in teams:
@@ -493,8 +518,15 @@ def compute_luck_index(league):
         if not pct_list:
             continue
         expected_pct = sum(pct_list) / len(pct_list)
-        games = team.wins + team.losses + team.ties
-        actual_pct = (team.wins + 0.5 * team.ties) / games if games else 0
+
+        # Actual record over the SAME weeks used above — not team.wins/losses.
+        reg_outcomes = [team.outcomes[i] for i in completed if i < len(team.outcomes)]
+        w = reg_outcomes.count("W")
+        l = reg_outcomes.count("L")
+        t_ = reg_outcomes.count("T")
+        games = w + l + t_
+        actual_pct = (w + 0.5 * t_) / games if games else 0
+
         luck = actual_pct - expected_pct
         if luck > 0.12:
             label = "Lucky"
