@@ -172,11 +172,32 @@ def team_cell_html(name, owner=None):
     return f'<div class="team-name-main">{html.escape(name)}</div>{owner_html}'
 
 
+def team_logo_html(team):
+    """
+    Renders a team's ESPN logo defensively. Real-world ESPN logo URLs can:
+    - be protocol-relative ("//g.espncdn.com/...") which some contexts
+      don't resolve correctly without an explicit scheme
+    - occasionally 403/404 (stale URL, hotlink protection, or a team that
+      never set a custom logo) — onerror hides the broken-image icon
+      instead of showing a broken box
+    - not be perfectly square — object-fit keeps the circular crop clean
+    Returns "" if the team has no logo_url at all (nothing ESPN gave us to
+    render).
+    """
+    url = (getattr(team, "logo_url", "") or "").strip()
+    if not url:
+        return ""
+    if url.startswith("//"):
+        url = "https:" + url
+    return (f"<img src='{html.escape(url)}' class='logo' loading='lazy' "
+            f"referrerpolicy='no-referrer' onerror=\"this.style.display='none'\">")
+
+
 def build_standings_rows(league):
     standings = sorted(league.teams, key=lambda t: (-t.wins, t.losses, -t.points_for))
     rows = []
     for rank, team in enumerate(standings, start=1):
-        logo = f"<img src='{html.escape(team.logo_url)}' class='logo'>" if team.logo_url else ""
+        logo = team_logo_html(team)
         rows.append(f"""
         <tr>
           <td>{rank}</td>
@@ -528,19 +549,46 @@ def compute_luck_index(league):
         actual_pct = (w + 0.5 * t_) / games if games else 0
 
         luck = actual_pct - expected_pct
-        if luck > 0.12:
-            label = "Lucky"
-        elif luck < -0.12:
-            label = "Unlucky"
-        else:
-            label = "About Right"
         results.append({
             "team": team,
             "actual_pct": round(actual_pct * 100, 1),
             "expected_pct": round(expected_pct * 100, 1),
             "luck": round(luck * 100, 1),
-            "label": label,
         })
+
+    # Label relative to this league's own spread rather than a fixed
+    # +/-12% cutoff. A fixed threshold looks fine for a big, high-variance
+    # league but with a typical 10-12 team league over a single season the
+    # actual spread of luck values is usually much narrower than that, so
+    # nearly everyone landed in "About Right" regardless of how lucky/
+    # unlucky they actually were relative to their own league-mates.
+    # Instead, rank teams by luck and label the top/bottom quarter (by
+    # count) as Lucky/Unlucky — always proportional to the number of teams,
+    # whatever the raw spread of values happens to be this season.
+    n = len(results)
+    if n >= 4:
+        by_luck = sorted(results, key=lambda r: -r["luck"])
+        cutoff = max(1, round(n * 0.25))
+        lucky_ids = {r["team"].team_id for r in by_luck[:cutoff]}
+        unlucky_ids = {r["team"].team_id for r in by_luck[-cutoff:]}
+        for r in results:
+            tid = r["team"].team_id
+            if tid in lucky_ids and r["luck"] > 0:
+                r["label"] = "Lucky"
+            elif tid in unlucky_ids and r["luck"] < 0:
+                r["label"] = "Unlucky"
+            else:
+                r["label"] = "About Right"
+    else:
+        # Too few teams for quartile ranking to mean anything — fall back
+        # to a fixed threshold.
+        for r in results:
+            if r["luck"] > 12:
+                r["label"] = "Lucky"
+            elif r["luck"] < -12:
+                r["label"] = "Unlucky"
+            else:
+                r["label"] = "About Right"
     results.sort(key=lambda r: -r["luck"])
     return results
 
@@ -728,12 +776,28 @@ def build_history_section(history, current_year, top_rivalries=8):
 def compute_prediction_accuracy(league):
     """
     Compares each team's actual weekly score to ESPN's own projection for
-    that week, across all completed weeks this season. Reveals who
-    consistently outplays projections vs. who underperforms them.
+    that week. Reveals who consistently outplays projections vs. who
+    underperforms them.
+
+    The projection itself checks out: espn_api sources it from that
+    specific week's pre-game starter-only projection (not a live-
+    recalculated value), matching the same starters-only scope as the
+    actual score — an apples-to-apples comparison.
+
+    Restricted to regular-season weeks only, for the same reason Power
+    Rankings and the Luck Index are: playoff weeks have byes, a
+    championship/consolation split, and sometimes less effort from
+    eliminated teams, all of which would distort "beat projection %"
+    without reflecting real forecasting accuracy.
     """
     results_by_team = {t.team_id: {"team": t, "played": 0, "beat": 0, "diffs": []} for t in league.teams}
 
-    for week in range(1, league.current_week):
+    reg_season_weeks = getattr(getattr(league, "settings", None), "reg_season_count", None)
+    last_week = league.current_week - 1
+    if reg_season_weeks:
+        last_week = min(last_week, reg_season_weeks)
+
+    for week in range(1, last_week + 1):
         try:
             matchups = league.box_scores(week)
         except Exception:
@@ -1056,6 +1120,7 @@ HTML_TEMPLATE = """<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>{league_name} — League Dashboard</title>
 <style>
   :root {{
@@ -1141,7 +1206,7 @@ HTML_TEMPLATE = """<!DOCTYPE html>
   .team-cell-inner {{ display: flex; align-items: center; gap: 8px; }}
   .team-name-main {{ font-weight: 600; }}
   .owner-name {{ color: var(--muted); font-weight: 400; font-size: 11px; margin-top: 2px; }}
-  .logo {{ width: 22px; height: 22px; border-radius: 50%; flex-shrink: 0; }}
+  .logo {{ width: 22px; height: 22px; border-radius: 50%; flex-shrink: 0; object-fit: cover; background: #1c2438; }}
   .action {{ color: var(--accent2); }}
   .empty {{ color: var(--muted); text-align: center; padding: 24px; }}
   .draft-cell {{
@@ -1361,6 +1426,49 @@ HTML_TEMPLATE = """<!DOCTYPE html>
   .rivalry-record {{ color: var(--accent2); font-weight: 700; font-size: 15px; margin: 4px 0 2px 0; }}
   .rivalry-points {{ color: var(--muted); font-size: 11px; }}
   footer {{ color: var(--muted); font-size: 12px; margin-top: 24px; text-align: center; }}
+
+  /* ---------- Mobile / small-screen adjustments ---------- */
+  @media (max-width: 640px) {{
+    body {{ padding: 12px; }}
+    h1 {{ font-size: 21px; }}
+    .subtitle {{ font-size: 12px; }}
+    .panel {{ padding: 12px; border-radius: 10px; }}
+
+    /* Tab bar becomes a single horizontally-scrolling row instead of
+       wrapping to multiple lines, which eats a lot of vertical space on
+       a phone and is a less familiar pattern than swipeable tabs. */
+    nav {{
+      flex-wrap: nowrap;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+    }}
+    nav::-webkit-scrollbar {{ display: none; }}
+    nav button {{
+      padding: 10px 12px;
+      font-size: 14px;
+      min-height: 44px; /* comfortable touch target */
+    }}
+
+    table {{ font-size: 12.5px; }}
+    th, td {{ padding: 7px 8px; }}
+    .logo {{ width: 18px; height: 18px; }}
+
+    /* Card grids: allow a single, full-width column on narrow phones
+       instead of the wider desktop minimum, and tighten the gap. */
+    .matchup-list, .report-grid, .rivalry-grid {{
+      grid-template-columns: 1fr;
+      gap: 10px;
+    }}
+    .matchup-team .proj-score {{ font-size: 20px; }}
+
+    .subnav {{ gap: 4px; }}
+    .subtab {{ padding: 5px 10px; font-size: 12px; }}
+
+    .draft-board th, .draft-board td {{ min-width: 96px; max-width: 108px; }}
+    .draft-board .draft-cell {{ height: 100px; padding: 8px; }}
+    .grade-badge {{ width: 28px; height: 28px; font-size: 13px; }}
+  }}
 </style>
 </head>
 <body>
@@ -1371,13 +1479,12 @@ HTML_TEMPLATE = """<!DOCTYPE html>
 
 <nav>
   <button class="active" onclick="showTab('standings', this)">Standings</button>
-  <button onclick="showTab('matchups', this)">Matchups</button>
   <button onclick="showTab('power', this)">Power Rankings</button>
-  <button onclick="showTab('draftgrades', this)">Draft Report Card</button>
-  <button onclick="showTab('predictions', this)">Prediction Accuracy</button>
-  <button onclick="showTab('history', this)">History</button>
+  <button onclick="showTab('matchups', this)">Matchups</button>
   <button onclick="showTab('activity', this)">Recent Transactions</button>
-  <button onclick="showTab('draft', this)">Draft Board</button>
+  <button onclick="showTab('predictions', this)">Prediction Accuracy</button>
+  <button onclick="showTab('draft', this)">Draft Analysis</button>
+  <button onclick="showTab('history', this)">History</button>
 </nav>
 
 <section id="standings" class="active">
@@ -1387,36 +1494,18 @@ HTML_TEMPLATE = """<!DOCTYPE html>
   </div>
 </section>
 
-<section id="matchups">
-  <div class="panel">
-    <h2 class="section-title">Week {matchup_week} Matchups</h2>
-    <div class="matchup-list">
-      {matchups}
-    </div>
-  </div>
-</section>
-
 <section id="power">
   <div class="panel">
     {power_rankings}
   </div>
 </section>
 
-<section id="draftgrades">
+<section id="matchups">
   <div class="panel">
-    {draft_report_card}
-  </div>
-</section>
-
-<section id="predictions">
-  <div class="panel">
-    {prediction_accuracy}
-  </div>
-</section>
-
-<section id="history">
-  <div class="panel">
-    {history_section}
+    <h2 class="section-title">Week {matchup_week} Matchups</h2>
+    <div class="matchup-list">
+      {matchups}
+    </div>
   </div>
 </section>
 
@@ -1433,9 +1522,23 @@ HTML_TEMPLATE = """<!DOCTYPE html>
   </div>
 </section>
 
+<section id="predictions">
+  <div class="panel">
+    {prediction_accuracy}
+  </div>
+</section>
+
 <section id="draft">
   <div class="panel">
+    {draft_report_card}
+    <h2 class="section-title" style="margin-top:28px;">Draft Board</h2>
     {draft_board}
+  </div>
+</section>
+
+<section id="history">
+  <div class="panel">
+    {history_section}
   </div>
 </section>
 
