@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>NBFFL — League Dashboard</title>
 <style>
   :root {
@@ -87,7 +88,7 @@
   .team-cell-inner { display: flex; align-items: center; gap: 8px; }
   .team-name-main { font-weight: 600; }
   .owner-name { color: var(--muted); font-weight: 400; font-size: 11px; margin-top: 2px; }
-  .logo { width: 22px; height: 22px; border-radius: 50%; flex-shrink: 0; }
+  .logo { width: 22px; height: 22px; border-radius: 50%; flex-shrink: 0; object-fit: cover; background: #1c2438; }
   .action { color: var(--accent2); }
   .empty { color: var(--muted); text-align: center; padding: 24px; }
   .draft-cell {
@@ -307,23 +308,65 @@
   .rivalry-record { color: var(--accent2); font-weight: 700; font-size: 15px; margin: 4px 0 2px 0; }
   .rivalry-points { color: var(--muted); font-size: 11px; }
   footer { color: var(--muted); font-size: 12px; margin-top: 24px; text-align: center; }
+
+  /* ---------- Mobile / small-screen adjustments ---------- */
+  @media (max-width: 640px) {
+    body { padding: 12px; }
+    h1 { font-size: 21px; }
+    .subtitle { font-size: 12px; }
+    .panel { padding: 12px; border-radius: 10px; }
+
+    /* Tab bar becomes a single horizontally-scrolling row instead of
+       wrapping to multiple lines, which eats a lot of vertical space on
+       a phone and is a less familiar pattern than swipeable tabs. */
+    nav {
+      flex-wrap: nowrap;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+    }
+    nav::-webkit-scrollbar { display: none; }
+    nav button {
+      padding: 10px 12px;
+      font-size: 14px;
+      min-height: 44px; /* comfortable touch target */
+    }
+
+    table { font-size: 12.5px; }
+    th, td { padding: 7px 8px; }
+    .logo { width: 18px; height: 18px; }
+
+    /* Card grids: allow a single, full-width column on narrow phones
+       instead of the wider desktop minimum, and tighten the gap. */
+    .matchup-list, .report-grid, .rivalry-grid {
+      grid-template-columns: 1fr;
+      gap: 10px;
+    }
+    .matchup-team .proj-score { font-size: 20px; }
+
+    .subnav { gap: 4px; }
+    .subtab { padding: 5px 10px; font-size: 12px; }
+
+    .draft-board th, .draft-board td { min-width: 96px; max-width: 108px; }
+    .draft-board .draft-cell { height: 100px; padding: 8px; }
+    .grade-badge { width: 28px; height: 28px; font-size: 13px; }
+  }
 </style>
 </head>
 <body>
 <header>
   <h1>NBFFL</h1>
-  <div class="subtitle">2026 season · updated Aug 23, 2026 08:28 PM</div>
+  <div class="subtitle">2026 season · updated Aug 23, 2026 11:58 PM</div>
 </header>
 
 <nav>
   <button class="active" onclick="showTab('standings', this)">Standings</button>
-  <button onclick="showTab('matchups', this)">Matchups</button>
   <button onclick="showTab('power', this)">Power Rankings</button>
-  <button onclick="showTab('draftgrades', this)">Draft Report Card</button>
-  <button onclick="showTab('predictions', this)">Prediction Accuracy</button>
-  <button onclick="showTab('history', this)">History</button>
+  <button onclick="showTab('matchups', this)">Matchups</button>
   <button onclick="showTab('activity', this)">Recent Transactions</button>
-  <button onclick="showTab('draft', this)">Draft Board</button>
+  <button onclick="showTab('predictions', this)">Prediction Accuracy</button>
+  <button onclick="showTab('draft', this)">Draft Analysis</button>
+  <button onclick="showTab('history', this)">History</button>
 </nav>
 
 <section id="standings" class="active">
@@ -338,7 +381,7 @@
           <td>1</td>
           <td class="team-cell">
             <div class="team-cell-inner">
-              <img src='https://mystique-api.fantasy.espn.com/apis/v1/domains/lm/images/a9e443b0-875e-11f0-89de-d1ac062a5dc6' class='logo'>
+              <img src='https://mystique-api.fantasy.espn.com/apis/v1/domains/lm/images/a9e443b0-875e-11f0-89de-d1ac062a5dc6' class='logo' loading='lazy' referrerpolicy='no-referrer' onerror="this.style.display='none'">
               <div class="team-name-main">CHASEing Greatness</div><div class="owner-name">Nathan Da Silva</div>
             </div>
           </td>
@@ -352,7 +395,7 @@
           <td>2</td>
           <td class="team-cell">
             <div class="team-cell-inner">
-              <img src='https://mystique-api.fantasy.espn.com/apis/v1/domains/lm/images/4cc3b190-8df6-11f0-90f7-112fa0f42e74' class='logo'>
+              <img src='https://mystique-api.fantasy.espn.com/apis/v1/domains/lm/images/4cc3b190-8df6-11f0-90f7-112fa0f42e74' class='logo' loading='lazy' referrerpolicy='no-referrer' onerror="this.style.display='none'">
               <div class="team-name-main">BuckO</div><div class="owner-name">matt eires</div>
             </div>
           </td>
@@ -366,7 +409,7 @@
           <td>3</td>
           <td class="team-cell">
             <div class="team-cell-inner">
-              <img src='https://mystique-api.fantasy.espn.com/apis/v1/domains/lm/images/1492bae0-bab6-11f0-afb5-e14f006a2a34' class='logo'>
+              <img src='https://mystique-api.fantasy.espn.com/apis/v1/domains/lm/images/e075d580-9f43-11f1-a6f4-1fb3ad51851a' class='logo' loading='lazy' referrerpolicy='no-referrer' onerror="this.style.display='none'">
               <div class="team-name-main">Price Is Right</div><div class="owner-name">cam correia</div>
             </div>
           </td>
@@ -380,7 +423,7 @@
           <td>4</td>
           <td class="team-cell">
             <div class="team-cell-inner">
-              <img src='https://g.espncdn.com/lm-static/logo-packs/ffl/1stStringAllStars-SportsManias/barkley-01.svg' class='logo'>
+              <img src='https://g.espncdn.com/lm-static/logo-packs/ffl/1stStringAllStars-SportsManias/barkley-01.svg' class='logo' loading='lazy' referrerpolicy='no-referrer' onerror="this.style.display='none'">
               <div class="team-name-main">Evan Squared</div><div class="owner-name">Evan deLacy &amp; Evan Carneiro</div>
             </div>
           </td>
@@ -394,7 +437,7 @@
           <td>5</td>
           <td class="team-cell">
             <div class="team-cell-inner">
-              <img src='https://mystique-api.fantasy.espn.com/apis/v1/domains/lm/images/84086450-88c6-11f0-89de-d1ac062a5dc6' class='logo'>
+              <img src='https://mystique-api.fantasy.espn.com/apis/v1/domains/lm/images/84086450-88c6-11f0-89de-d1ac062a5dc6' class='logo' loading='lazy' referrerpolicy='no-referrer' onerror="this.style.display='none'">
               <div class="team-name-main">Jake London</div><div class="owner-name">jake souza</div>
             </div>
           </td>
@@ -408,7 +451,7 @@
           <td>6</td>
           <td class="team-cell">
             <div class="team-cell-inner">
-              <img src='https://mystique-api.fantasy.espn.com/apis/v1/domains/lm/images/81458e60-ba98-11f0-b1c3-bf61c28fbeb9' class='logo'>
+              <img src='https://mystique-api.fantasy.espn.com/apis/v1/domains/lm/images/81458e60-ba98-11f0-b1c3-bf61c28fbeb9' class='logo' loading='lazy' referrerpolicy='no-referrer' onerror="this.style.display='none'">
               <div class="team-name-main">HERB YOUR ENTHUSIASM</div><div class="owner-name">Joshua Pires</div>
             </div>
           </td>
@@ -422,7 +465,7 @@
           <td>7</td>
           <td class="team-cell">
             <div class="team-cell-inner">
-              <img src='https://g.espncdn.com/lm-static/logo-packs/ffl/BoneHeads-ToddDetwiler/BoneHeads-16.svg' class='logo'>
+              <img src='https://g.espncdn.com/lm-static/logo-packs/ffl/BoneHeads-ToddDetwiler/BoneHeads-16.svg' class='logo' loading='lazy' referrerpolicy='no-referrer' onerror="this.style.display='none'">
               <div class="team-name-main">Cant Find Nico </div><div class="owner-name">Brenden Sylvia</div>
             </div>
           </td>
@@ -436,7 +479,7 @@
           <td>8</td>
           <td class="team-cell">
             <div class="team-cell-inner">
-              <img src='https://g.espncdn.com/lm-static/logo-packs/ffl/1stStringAllStars-SportsManias/chase-01.svg' class='logo'>
+              <img src='https://g.espncdn.com/lm-static/logo-packs/ffl/1stStringAllStars-SportsManias/chase-01.svg' class='logo' loading='lazy' referrerpolicy='no-referrer' onerror="this.style.display='none'">
               <div class="team-name-main">Bad Blood</div><div class="owner-name">bryce rudolph &amp; Bryce Rudolph</div>
             </div>
           </td>
@@ -450,7 +493,7 @@
           <td>9</td>
           <td class="team-cell">
             <div class="team-cell-inner">
-              <img src='https://mystique-api.fantasy.espn.com/apis/v1/domains/lm/images/67644bc0-ba58-11f0-afb5-e14f006a2a34' class='logo'>
+              <img src='https://mystique-api.fantasy.espn.com/apis/v1/domains/lm/images/67644bc0-ba58-11f0-afb5-e14f006a2a34' class='logo' loading='lazy' referrerpolicy='no-referrer' onerror="this.style.display='none'">
               <div class="team-name-main">#NoKings </div><div class="owner-name">Nate Vieira &amp; Tony Melo</div>
             </div>
           </td>
@@ -464,7 +507,7 @@
           <td>10</td>
           <td class="team-cell">
             <div class="team-cell-inner">
-              <img src='https://mystique-api.fantasy.espn.com/apis/v1/domains/lm/images/671b7250-8f6b-11f0-b1c3-bf61c28fbeb9' class='logo'>
+              <img src='https://mystique-api.fantasy.espn.com/apis/v1/domains/lm/images/671b7250-8f6b-11f0-b1c3-bf61c28fbeb9' class='logo' loading='lazy' referrerpolicy='no-referrer' onerror="this.style.display='none'">
               <div class="team-name-main">Time To Cook</div><div class="owner-name">Justin Silveira</div>
             </div>
           </td>
@@ -1172,6 +1215,12 @@
   </div>
 </section>
 
+<section id="power">
+  <div class="panel">
+    <p class='empty'>Not enough completed weeks yet to compute power rankings.</p>
+  </div>
+</section>
+
 <section id="matchups">
   <div class="panel">
     <h2 class="section-title">Week 1 Matchups</h2>
@@ -1216,7 +1265,7 @@
             <div class="matchup-team">
               <div class="team-name">Jake London</div>
               <div class="team-record">0-0</div>
-              <div class="proj-score">140.8</div>
+              <div class="proj-score">129.0</div>
             </div>
             <div class="vs">@</div>
             <div class="matchup-team">
@@ -1225,7 +1274,7 @@
               <div class="proj-score">145.6</div>
             </div>
           </div>
-          <p class="outlook">This one&#x27;s a coin flip. #NoKings  is given the slimmest of edges over Jake London, projected to win by just 4.8 points — a single big play could flip this.</p>
+          <p class="outlook">#NoKings  enters as the favorite over Jake London, projected to win by about 16.6 points. Not a lock, but Jake London will need some breakout performances to keep pace.</p>
         </div>
 
         <div class="matchup-card">
@@ -1265,166 +1314,6 @@
   </div>
 </section>
 
-<section id="power">
-  <div class="panel">
-    <p class='empty'>Not enough completed weeks yet to compute power rankings.</p>
-  </div>
-</section>
-
-<section id="draftgrades">
-  <div class="panel">
-    <p class='empty'>Not enough draft ranking data yet to grade teams.</p>
-  </div>
-</section>
-
-<section id="predictions">
-  <div class="panel">
-    <p class='empty'>No completed weeks with projection data yet this season.</p>
-  </div>
-</section>
-
-<section id="history">
-  <div class="panel">
-    
-        <h2 class="section-title">League Champions</h2>
-        <table>
-          <thead><tr><th>Season</th><th>Champion</th></tr></thead>
-          <tbody><tr><td>2025</td><td class='team-cell'><div class="team-name-main">Cant Find Nico </div><div class="owner-name">Brenden Sylvia</div></td></tr><tr><td>2024</td><td class='team-cell'><div class="team-name-main">Get Bucked</div><div class="owner-name">cam correia</div></td></tr><tr><td>2023</td><td class='team-cell'><div class="team-name-main">Super Kamario Bros </div><div class="owner-name">Nate Vieira &amp; Tony Melo</div></td></tr><tr><td>2022</td><td class='team-cell'><div class="team-name-main">Lamarvelous 8</div><div class="owner-name">Nathan Da Silva</div></td></tr><tr><td>2021</td><td class='team-cell'><div class="team-name-main">Bend It Like Beckham</div><div class="owner-name">matt eires</div></td></tr><tr><td>2020</td><td class='team-cell'><div class="team-name-main">Hey Lynn Jr</div><div class="owner-name">matt eires</div></td></tr><tr><td>2019</td><td class='team-cell'><div class="team-name-main">The Jackson 9</div><div class="owner-name">cam correia</div></td></tr><tr><td>2018</td><td class='team-cell'><div class="team-name-main">He&#x27;s A BAAAAAAADDD MAN</div><div class="owner-name">cam correia</div></td></tr></tbody>
-        </table>
-        <h2 class="section-title" style="margin-top:28px;">Rivalry Tracker</h2>
-        <p class="section-note">All-time head-to-head records across every season fetched.</p>
-        <div class="rivalry-grid">
-            <div class="rivalry-card">
-              <div class="rivalry-meetings">20 all-time meetings</div>
-              <div class="rivalry-matchup">
-                <div class="rivalry-team">
-                  <div class="team-name">#NoKings </div>
-                  <div class="rivalry-record">14-6</div>
-                  <div class="rivalry-points">2961.0 pts total</div>
-                </div>
-                <div class="vs">vs</div>
-                <div class="rivalry-team">
-                  <div class="team-name">Evan Squared</div>
-                  <div class="rivalry-record">6-14</div>
-                  <div class="rivalry-points">2718.2 pts total</div>
-                </div>
-              </div>
-            </div>
-            <div class="rivalry-card">
-              <div class="rivalry-meetings">19 all-time meetings</div>
-              <div class="rivalry-matchup">
-                <div class="rivalry-team">
-                  <div class="team-name">Price Is Right</div>
-                  <div class="rivalry-record">9-10</div>
-                  <div class="rivalry-points">2559.5 pts total</div>
-                </div>
-                <div class="vs">vs</div>
-                <div class="rivalry-team">
-                  <div class="team-name">Jake London</div>
-                  <div class="rivalry-record">10-9</div>
-                  <div class="rivalry-points">2582.2 pts total</div>
-                </div>
-              </div>
-            </div>
-            <div class="rivalry-card">
-              <div class="rivalry-meetings">18 all-time meetings</div>
-              <div class="rivalry-matchup">
-                <div class="rivalry-team">
-                  <div class="team-name">CHASEing Greatness</div>
-                  <div class="rivalry-record">12-6</div>
-                  <div class="rivalry-points">2456.0 pts total</div>
-                </div>
-                <div class="vs">vs</div>
-                <div class="rivalry-team">
-                  <div class="team-name">Time To Cook</div>
-                  <div class="rivalry-record">6-12</div>
-                  <div class="rivalry-points">2318.4 pts total</div>
-                </div>
-              </div>
-            </div>
-            <div class="rivalry-card">
-              <div class="rivalry-meetings">18 all-time meetings</div>
-              <div class="rivalry-matchup">
-                <div class="rivalry-team">
-                  <div class="team-name">Bad Blood</div>
-                  <div class="rivalry-record">10-8</div>
-                  <div class="rivalry-points">2239.4 pts total</div>
-                </div>
-                <div class="vs">vs</div>
-                <div class="rivalry-team">
-                  <div class="team-name">HERB YOUR ENTHUSIASM</div>
-                  <div class="rivalry-record">8-10</div>
-                  <div class="rivalry-points">2196.7 pts total</div>
-                </div>
-              </div>
-            </div>
-            <div class="rivalry-card">
-              <div class="rivalry-meetings">17 all-time meetings</div>
-              <div class="rivalry-matchup">
-                <div class="rivalry-team">
-                  <div class="team-name">CHASEing Greatness</div>
-                  <div class="rivalry-record">9-8</div>
-                  <div class="rivalry-points">2400.9 pts total</div>
-                </div>
-                <div class="vs">vs</div>
-                <div class="rivalry-team">
-                  <div class="team-name">#NoKings </div>
-                  <div class="rivalry-record">8-9</div>
-                  <div class="rivalry-points">2297.0 pts total</div>
-                </div>
-              </div>
-            </div>
-            <div class="rivalry-card">
-              <div class="rivalry-meetings">17 all-time meetings</div>
-              <div class="rivalry-matchup">
-                <div class="rivalry-team">
-                  <div class="team-name">BuckO</div>
-                  <div class="rivalry-record">9-8</div>
-                  <div class="rivalry-points">2333.6 pts total</div>
-                </div>
-                <div class="vs">vs</div>
-                <div class="rivalry-team">
-                  <div class="team-name">HERB YOUR ENTHUSIASM</div>
-                  <div class="rivalry-record">8-9</div>
-                  <div class="rivalry-points">2235.9 pts total</div>
-                </div>
-              </div>
-            </div>
-            <div class="rivalry-card">
-              <div class="rivalry-meetings">17 all-time meetings</div>
-              <div class="rivalry-matchup">
-                <div class="rivalry-team">
-                  <div class="team-name">BuckO</div>
-                  <div class="rivalry-record">9-8</div>
-                  <div class="rivalry-points">2398.3 pts total</div>
-                </div>
-                <div class="vs">vs</div>
-                <div class="rivalry-team">
-                  <div class="team-name">Price Is Right</div>
-                  <div class="rivalry-record">8-9</div>
-                  <div class="rivalry-points">2171.2 pts total</div>
-                </div>
-              </div>
-            </div>
-            <div class="rivalry-card">
-              <div class="rivalry-meetings">17 all-time meetings</div>
-              <div class="rivalry-matchup">
-                <div class="rivalry-team">
-                  <div class="team-name">BuckO</div>
-                  <div class="rivalry-record">8-9</div>
-                  <div class="rivalry-points">2068.2 pts total</div>
-                </div>
-                <div class="vs">vs</div>
-                <div class="rivalry-team">
-                  <div class="team-name">Cant Find Nico </div>
-                  <div class="rivalry-record">9-8</div>
-                  <div class="rivalry-points">2139.7 pts total</div>
-                </div>
-              </div>
-            </div></div>
-  </div>
-</section>
-
 <section id="activity">
   <div class="panel">
     <table>
@@ -1438,8 +1327,16 @@
   </div>
 </section>
 
+<section id="predictions">
+  <div class="panel">
+    <p class='empty'>No completed weeks with projection data yet this season.</p>
+  </div>
+</section>
+
 <section id="draft">
   <div class="panel">
+    <p class='empty'>Not enough draft ranking data yet to grade teams.</p>
+    <h2 class="section-title" style="margin-top:28px;">Draft Board</h2>
     <div class="draft-board-wrap">
     <div class="legend">
       <span><i class="dot" style="background:rgba(34,139,34,0.7)"></i> Outperforming draft slot (4+ spots)</span>
@@ -2500,6 +2397,148 @@
               <div class='bid'>&nbsp;</div>
             </div></td></tr></tbody>
     </table></div>
+  </div>
+</section>
+
+<section id="history">
+  <div class="panel">
+    
+        <h2 class="section-title">League Champions</h2>
+        <table>
+          <thead><tr><th>Season</th><th>Champion</th></tr></thead>
+          <tbody><tr><td>2025</td><td class='team-cell'><div class="team-name-main">Cant Find Nico </div><div class="owner-name">Brenden Sylvia</div></td></tr><tr><td>2024</td><td class='team-cell'><div class="team-name-main">Get Bucked</div><div class="owner-name">cam correia</div></td></tr><tr><td>2023</td><td class='team-cell'><div class="team-name-main">Super Kamario Bros </div><div class="owner-name">Nate Vieira &amp; Tony Melo</div></td></tr><tr><td>2022</td><td class='team-cell'><div class="team-name-main">Lamarvelous 8</div><div class="owner-name">Nathan Da Silva</div></td></tr><tr><td>2021</td><td class='team-cell'><div class="team-name-main">Bend It Like Beckham</div><div class="owner-name">matt eires</div></td></tr><tr><td>2020</td><td class='team-cell'><div class="team-name-main">Hey Lynn Jr</div><div class="owner-name">matt eires</div></td></tr><tr><td>2019</td><td class='team-cell'><div class="team-name-main">The Jackson 9</div><div class="owner-name">cam correia</div></td></tr><tr><td>2018</td><td class='team-cell'><div class="team-name-main">He&#x27;s A BAAAAAAADDD MAN</div><div class="owner-name">cam correia</div></td></tr></tbody>
+        </table>
+        <h2 class="section-title" style="margin-top:28px;">Rivalry Tracker</h2>
+        <p class="section-note">All-time head-to-head records across every season fetched.</p>
+        <div class="rivalry-grid">
+            <div class="rivalry-card">
+              <div class="rivalry-meetings">20 all-time meetings</div>
+              <div class="rivalry-matchup">
+                <div class="rivalry-team">
+                  <div class="team-name">#NoKings </div>
+                  <div class="rivalry-record">14-6</div>
+                  <div class="rivalry-points">2961.0 pts total</div>
+                </div>
+                <div class="vs">vs</div>
+                <div class="rivalry-team">
+                  <div class="team-name">Evan Squared</div>
+                  <div class="rivalry-record">6-14</div>
+                  <div class="rivalry-points">2718.2 pts total</div>
+                </div>
+              </div>
+            </div>
+            <div class="rivalry-card">
+              <div class="rivalry-meetings">19 all-time meetings</div>
+              <div class="rivalry-matchup">
+                <div class="rivalry-team">
+                  <div class="team-name">Price Is Right</div>
+                  <div class="rivalry-record">9-10</div>
+                  <div class="rivalry-points">2559.5 pts total</div>
+                </div>
+                <div class="vs">vs</div>
+                <div class="rivalry-team">
+                  <div class="team-name">Jake London</div>
+                  <div class="rivalry-record">10-9</div>
+                  <div class="rivalry-points">2582.2 pts total</div>
+                </div>
+              </div>
+            </div>
+            <div class="rivalry-card">
+              <div class="rivalry-meetings">18 all-time meetings</div>
+              <div class="rivalry-matchup">
+                <div class="rivalry-team">
+                  <div class="team-name">CHASEing Greatness</div>
+                  <div class="rivalry-record">12-6</div>
+                  <div class="rivalry-points">2456.0 pts total</div>
+                </div>
+                <div class="vs">vs</div>
+                <div class="rivalry-team">
+                  <div class="team-name">Time To Cook</div>
+                  <div class="rivalry-record">6-12</div>
+                  <div class="rivalry-points">2318.4 pts total</div>
+                </div>
+              </div>
+            </div>
+            <div class="rivalry-card">
+              <div class="rivalry-meetings">18 all-time meetings</div>
+              <div class="rivalry-matchup">
+                <div class="rivalry-team">
+                  <div class="team-name">Bad Blood</div>
+                  <div class="rivalry-record">10-8</div>
+                  <div class="rivalry-points">2239.4 pts total</div>
+                </div>
+                <div class="vs">vs</div>
+                <div class="rivalry-team">
+                  <div class="team-name">HERB YOUR ENTHUSIASM</div>
+                  <div class="rivalry-record">8-10</div>
+                  <div class="rivalry-points">2196.7 pts total</div>
+                </div>
+              </div>
+            </div>
+            <div class="rivalry-card">
+              <div class="rivalry-meetings">17 all-time meetings</div>
+              <div class="rivalry-matchup">
+                <div class="rivalry-team">
+                  <div class="team-name">CHASEing Greatness</div>
+                  <div class="rivalry-record">9-8</div>
+                  <div class="rivalry-points">2400.9 pts total</div>
+                </div>
+                <div class="vs">vs</div>
+                <div class="rivalry-team">
+                  <div class="team-name">#NoKings </div>
+                  <div class="rivalry-record">8-9</div>
+                  <div class="rivalry-points">2297.0 pts total</div>
+                </div>
+              </div>
+            </div>
+            <div class="rivalry-card">
+              <div class="rivalry-meetings">17 all-time meetings</div>
+              <div class="rivalry-matchup">
+                <div class="rivalry-team">
+                  <div class="team-name">BuckO</div>
+                  <div class="rivalry-record">9-8</div>
+                  <div class="rivalry-points">2333.6 pts total</div>
+                </div>
+                <div class="vs">vs</div>
+                <div class="rivalry-team">
+                  <div class="team-name">HERB YOUR ENTHUSIASM</div>
+                  <div class="rivalry-record">8-9</div>
+                  <div class="rivalry-points">2235.9 pts total</div>
+                </div>
+              </div>
+            </div>
+            <div class="rivalry-card">
+              <div class="rivalry-meetings">17 all-time meetings</div>
+              <div class="rivalry-matchup">
+                <div class="rivalry-team">
+                  <div class="team-name">BuckO</div>
+                  <div class="rivalry-record">9-8</div>
+                  <div class="rivalry-points">2398.3 pts total</div>
+                </div>
+                <div class="vs">vs</div>
+                <div class="rivalry-team">
+                  <div class="team-name">Price Is Right</div>
+                  <div class="rivalry-record">8-9</div>
+                  <div class="rivalry-points">2171.2 pts total</div>
+                </div>
+              </div>
+            </div>
+            <div class="rivalry-card">
+              <div class="rivalry-meetings">17 all-time meetings</div>
+              <div class="rivalry-matchup">
+                <div class="rivalry-team">
+                  <div class="team-name">BuckO</div>
+                  <div class="rivalry-record">8-9</div>
+                  <div class="rivalry-points">2068.2 pts total</div>
+                </div>
+                <div class="vs">vs</div>
+                <div class="rivalry-team">
+                  <div class="team-name">Cant Find Nico </div>
+                  <div class="rivalry-record">9-8</div>
+                  <div class="rivalry-points">2139.7 pts total</div>
+                </div>
+              </div>
+            </div></div>
   </div>
 </section>
 
