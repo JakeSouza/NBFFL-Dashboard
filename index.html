@@ -55,12 +55,9 @@
     color: var(--text);
     border-bottom-color: var(--accent);
   }
-  section { display: none; }
-  section.active { display: block; animation: fadeSlideIn 0.28s ease; }
-  @keyframes fadeSlideIn {
-    from { opacity: 0; transform: translateY(8px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
+  section { display: none; opacity: 0; transform: translateY(8px); transition: opacity 0.25s ease, transform 0.25s ease; }
+  section.active { display: block; }
+  section.active.show { opacity: 1; transform: translateY(0); }
   .panel {
     box-shadow: 0 4px 16px rgba(0,0,0,0.28);
     background: var(--panel);
@@ -96,6 +93,21 @@
   .logo { width: 22px; height: 22px; border-radius: 50%; flex-shrink: 0; object-fit: cover; background: #1c2438; }
   .action { color: var(--accent2); }
   .empty { color: var(--muted); text-align: center; padding: 24px; }
+  .pbar { display: flex; align-items: center; gap: 8px; min-width: 90px; }
+  .pbar-track {
+    flex: 1;
+    height: 6px;
+    border-radius: 999px;
+    background: rgba(255,255,255,0.08);
+    overflow: hidden;
+  }
+  .pbar-fill {
+    height: 100%;
+    border-radius: 999px;
+    transition: width 0.4s ease;
+  }
+  .pbar-label { font-size: 12px; color: var(--muted); min-width: 32px; text-align: right; }
+  .sparkline { width: 90px; height: 26px; display: block; }
   .draft-cell {
     background: #1c2438;
     border: 1px solid var(--border);
@@ -246,8 +258,9 @@
     border-color: var(--accent);
     background: rgba(255, 90, 31, 0.12);
   }
-  .subpanel { display: none; }
-  .subpanel.active { display: block; animation: fadeSlideIn 0.22s ease; }
+  .subpanel { display: none; opacity: 0; transform: translateY(6px); transition: opacity 0.2s ease, transform 0.2s ease; }
+  .subpanel.active { display: block; }
+  .subpanel.active.show { opacity: 1; transform: translateY(0); }
   .move-up { color: #2fb344; font-weight: 600; }
   .move-down { color: #e05252; font-weight: 600; }
   .move-flat { color: var(--muted); }
@@ -350,6 +363,9 @@
     table { font-size: 12.5px; }
     th, td { padding: 7px 8px; }
     .logo { width: 18px; height: 18px; }
+    .pbar { min-width: 64px; gap: 5px; }
+    .pbar-label { font-size: 11px; min-width: 26px; }
+    .sparkline { width: 60px; height: 20px; }
 
     /* Card grids: allow a single, full-width column on narrow phones
        instead of the wider desktop minimum, and tighten the gap. */
@@ -371,7 +387,7 @@
 <body>
 <header>
   <h1>NBFFL</h1>
-  <div class="subtitle">2026 season · updated Aug 24, 2026 12:11 AM</div>
+  <div class="subtitle">2026 season · updated Aug 24, 2026 12:22 AM</div>
 </header>
 
 <nav>
@@ -390,7 +406,7 @@
     
     <div id="std-current" class="subpanel active">
       <table>
-        <thead><tr><th>#</th><th>Team</th><th>Record</th><th>PF</th><th>PA</th><th>Streak</th></tr></thead>
+        <thead><tr><th>#</th><th>Team</th><th>Record</th><th>Win%</th><th>PF</th><th>PA</th><th>Streak</th><th>Trend</th></tr></thead>
         <tbody>
         <tr>
           <td>1</td>
@@ -401,9 +417,11 @@
             </div>
           </td>
           <td>0-0</td>
+          <td><div class='pbar'><div class='pbar-track'><div class='pbar-fill' style='width:0.0%; background:var(--accent2);'></div></div><span class='pbar-label'>0%</span></div></td>
           <td>0.0</td>
           <td>0.0</td>
           <td>NONE 0</td>
+          <td></td>
         </tr>
 
         <tr>
@@ -415,9 +433,11 @@
             </div>
           </td>
           <td>0-0</td>
+          <td><div class='pbar'><div class='pbar-track'><div class='pbar-fill' style='width:0.0%; background:var(--accent2);'></div></div><span class='pbar-label'>0%</span></div></td>
           <td>0.0</td>
           <td>0.0</td>
           <td>NONE 0</td>
+          <td></td>
         </tr>
 
         <tr>
@@ -429,9 +449,11 @@
             </div>
           </td>
           <td>0-0</td>
+          <td><div class='pbar'><div class='pbar-track'><div class='pbar-fill' style='width:0.0%; background:var(--accent2);'></div></div><span class='pbar-label'>0%</span></div></td>
           <td>0.0</td>
           <td>0.0</td>
           <td>NONE 0</td>
+          <td></td>
         </tr>
 
         <tr>
@@ -443,9 +465,11 @@
             </div>
           </td>
           <td>0-0</td>
+          <td><div class='pbar'><div class='pbar-track'><div class='pbar-fill' style='width:0.0%; background:var(--accent2);'></div></div><span class='pbar-label'>0%</span></div></td>
           <td>0.0</td>
           <td>0.0</td>
           <td>NONE 0</td>
+          <td></td>
         </tr>
 
         <tr>
@@ -457,9 +481,11 @@
             </div>
           </td>
           <td>0-0</td>
+          <td><div class='pbar'><div class='pbar-track'><div class='pbar-fill' style='width:0.0%; background:var(--accent2);'></div></div><span class='pbar-label'>0%</span></div></td>
           <td>0.0</td>
           <td>0.0</td>
           <td>NONE 0</td>
+          <td></td>
         </tr>
 
         <tr>
@@ -471,9 +497,11 @@
             </div>
           </td>
           <td>0-0</td>
+          <td><div class='pbar'><div class='pbar-track'><div class='pbar-fill' style='width:0.0%; background:var(--accent2);'></div></div><span class='pbar-label'>0%</span></div></td>
           <td>0.0</td>
           <td>0.0</td>
           <td>NONE 0</td>
+          <td></td>
         </tr>
 
         <tr>
@@ -485,9 +513,11 @@
             </div>
           </td>
           <td>0-0</td>
+          <td><div class='pbar'><div class='pbar-track'><div class='pbar-fill' style='width:0.0%; background:var(--accent2);'></div></div><span class='pbar-label'>0%</span></div></td>
           <td>0.0</td>
           <td>0.0</td>
           <td>NONE 0</td>
+          <td></td>
         </tr>
 
         <tr>
@@ -499,9 +529,11 @@
             </div>
           </td>
           <td>0-0</td>
+          <td><div class='pbar'><div class='pbar-track'><div class='pbar-fill' style='width:0.0%; background:var(--accent2);'></div></div><span class='pbar-label'>0%</span></div></td>
           <td>0.0</td>
           <td>0.0</td>
           <td>NONE 0</td>
+          <td></td>
         </tr>
 
         <tr>
@@ -513,9 +545,11 @@
             </div>
           </td>
           <td>0-0</td>
+          <td><div class='pbar'><div class='pbar-track'><div class='pbar-fill' style='width:0.0%; background:var(--accent2);'></div></div><span class='pbar-label'>0%</span></div></td>
           <td>0.0</td>
           <td>0.0</td>
           <td>NONE 0</td>
+          <td></td>
         </tr>
 
         <tr>
@@ -527,9 +561,11 @@
             </div>
           </td>
           <td>0-0</td>
+          <td><div class='pbar'><div class='pbar-track'><div class='pbar-fill' style='width:0.0%; background:var(--accent2);'></div></div><span class='pbar-label'>0%</span></div></td>
           <td>0.0</td>
           <td>0.0</td>
           <td>NONE 0</td>
+          <td></td>
         </tr></tbody>
       </table>
     </div>
@@ -1252,10 +1288,10 @@
             <div class="matchup-team">
               <div class="team-name">Cant Find Nico </div>
               <div class="team-record">0-0</div>
-              <div class="proj-score">138.4</div>
+              <div class="proj-score">139.1</div>
             </div>
           </div>
-          <p class="outlook">Cant Find Nico  enters as the favorite over Time To Cook, projected to win by about 9.2 points. Not a lock, but Time To Cook will need some breakout performances to keep pace.</p>
+          <p class="outlook">On paper, Cant Find Nico  has the edge here, out-projecting Time To Cook by 9.9 points. Time To Cook isn&#x27;t out of it, but they&#x27;re chasing points from the jump.</p>
         </div>
 
         <div class="matchup-card">
@@ -2561,19 +2597,32 @@
 
 <script>
 function showTab(id, btn) {
-  document.querySelectorAll('body > section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('body > section').forEach(s => { s.classList.remove('active'); s.classList.remove('show'); });
   document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
+  const target = document.getElementById(id);
+  target.classList.add('active');
+  void target.offsetWidth; // force a reflow so the browser renders the "before" state first
+  requestAnimationFrame(() => target.classList.add('show'));
   btn.classList.add('active');
 }
 function showSubTab(id, btn) {
   const panel = document.getElementById(id);
   const container = btn.closest('.panel');
-  container.querySelectorAll('.subpanel').forEach(p => p.classList.remove('active'));
+  container.querySelectorAll('.subpanel').forEach(p => { p.classList.remove('active'); p.classList.remove('show'); });
   container.querySelectorAll('.subtab').forEach(b => b.classList.remove('active'));
   panel.classList.add('active');
+  void panel.offsetWidth;
+  requestAnimationFrame(() => panel.classList.add('show'));
   btn.classList.add('active');
 }
+// Trigger the entrance transition for whichever tab/subtab is active on
+// initial page load too, not just on click.
+document.addEventListener('DOMContentLoaded', () => {
+  document.querySelectorAll('section.active, .subpanel.active').forEach(el => {
+    void el.offsetWidth;
+    requestAnimationFrame(() => el.classList.add('show'));
+  });
+});
 </script>
 </body>
 </html>
