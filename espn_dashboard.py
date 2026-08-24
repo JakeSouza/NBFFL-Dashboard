@@ -76,7 +76,7 @@ def build_standings_tabs(league, history):
     panels = [f"""
     <div id="std-current" class="subpanel active">
       <table>
-        <thead><tr><th>#</th><th>Team</th><th>Record</th><th>PF</th><th>PA</th><th>Streak</th></tr></thead>
+        <thead><tr><th>#</th><th>Team</th><th>Record</th><th>Win%</th><th>PF</th><th>PA</th><th>Streak</th><th>Trend</th></tr></thead>
         <tbody>{build_standings_rows(league)}</tbody>
       </table>
     </div>"""]
@@ -172,6 +172,43 @@ def team_cell_html(name, owner=None):
     return f'<div class="team-name-main">{html.escape(name)}</div>{owner_html}'
 
 
+def progress_bar_html(pct, color="var(--accent2)"):
+    """Small inline horizontal bar for a 0-100 percentage value."""
+    pct = max(0.0, min(100.0, pct))
+    return (f"<div class='pbar'><div class='pbar-track'>"
+            f"<div class='pbar-fill' style='width:{pct:.1f}%; background:{color};'></div>"
+            f"</div><span class='pbar-label'>{pct:.0f}%</span></div>")
+
+
+def sparkline_svg(values, width=90, height=26, color="var(--accent2)"):
+    """
+    Compact inline SVG line chart for a season's weekly scores — no
+    charting library needed, just a hand-built polyline scaled to fit.
+    Returns "" if there isn't enough data to draw a meaningful line.
+    """
+    vals = [v for v in values if v is not None]
+    if len(vals) < 2:
+        return ""
+    lo, hi = min(vals), max(vals)
+    span = (hi - lo) or 1
+    pad = 3  # keep the line/dot from touching the SVG edges
+    usable_h = height - pad * 2
+    step = width / (len(vals) - 1)
+    points = []
+    for i, v in enumerate(vals):
+        x = i * step
+        y = pad + usable_h - ((v - lo) / span) * usable_h
+        points.append((x, y))
+    path = " ".join(f"{x:.1f},{y:.1f}" for x, y in points)
+    last_x, last_y = points[-1]
+    return (f"<svg class='sparkline' viewBox='0 0 {width} {height}' preserveAspectRatio='none' "
+            f"aria-hidden='true'>"
+            f"<polyline points='{path}' fill='none' stroke='{color}' stroke-width='1.6' "
+            f"stroke-linecap='round' stroke-linejoin='round'/>"
+            f"<circle cx='{last_x:.1f}' cy='{last_y:.1f}' r='2.2' fill='{color}'/>"
+            f"</svg>")
+
+
 def team_logo_html(team):
     """
     Renders a team's ESPN logo defensively. Real-world ESPN logo URLs can:
@@ -198,6 +235,12 @@ def build_standings_rows(league):
     rows = []
     for rank, team in enumerate(standings, start=1):
         logo = team_logo_html(team)
+        games = team.wins + team.losses + team.ties
+        win_pct = ((team.wins + 0.5 * team.ties) / games * 100) if games else 0
+        # Only completed weeks (skip trailing zeros for weeks not yet
+        # played) so the trend line doesn't nosedive to 0 at the end.
+        completed_scores = [s for s in team.scores if s]
+        trend = sparkline_svg(completed_scores)
         rows.append(f"""
         <tr>
           <td>{rank}</td>
@@ -208,9 +251,11 @@ def build_standings_rows(league):
             </div>
           </td>
           <td>{team.wins}-{team.losses}{f"-{team.ties}" if team.ties else ""}</td>
+          <td>{progress_bar_html(win_pct)}</td>
           <td>{team.points_for:.1f}</td>
           <td>{team.points_against:.1f}</td>
           <td>{team.streak_type} {team.streak_length}</td>
+          <td>{trend}</td>
         </tr>""")
     return "\n".join(rows)
 
@@ -843,7 +888,7 @@ def build_prediction_accuracy_section(league):
         <tr>
           <td class="team-cell">{team_cell_html(r['team'].team_name, get_owner_name(r['team']))}</td>
           <td>{r['played']}</td>
-          <td>{r['beat_pct']}%</td>
+          <td>{progress_bar_html(r['beat_pct'])}</td>
           <td class="{diff_class}">{r['avg_diff']:+.1f} pts/wk</td>
         </tr>""")
 
@@ -951,7 +996,7 @@ def build_power_rankings_section(league):
         <tr>
           <td>{r['power_rank']}</td>
           <td class="team-cell">{html.escape(r['team'].team_name)}</td>
-          <td>{r['power_score']}</td>
+          <td>{progress_bar_html(r['power_score'])}</td>
           <td>{r['avg_pts']}</td>
           <td>{r['avg_margin']:+.1f}</td>
           <td>vs #{r['standings_rank']} in standings {move}</td>
@@ -960,11 +1005,12 @@ def build_power_rankings_section(league):
     luck_rows = []
     for r in luck:
         luck_class = "luck-good" if r["luck"] > 0 else ("luck-bad" if r["luck"] < 0 else "")
+        bar_color = "#2fb344" if r["luck"] > 0 else ("#e05252" if r["luck"] < 0 else "var(--accent2)")
         luck_rows.append(f"""
         <tr>
           <td class="team-cell">{html.escape(r['team'].team_name)}</td>
-          <td>{r['actual_pct']}%</td>
-          <td>{r['expected_pct']}%</td>
+          <td>{progress_bar_html(r['actual_pct'])}</td>
+          <td>{progress_bar_html(r['expected_pct'])}</td>
           <td class="{luck_class}">{r['luck']:+.1f}%</td>
           <td>{r['label']}</td>
         </tr>""")
@@ -1173,12 +1219,9 @@ HTML_TEMPLATE = """<!DOCTYPE html>
     color: var(--text);
     border-bottom-color: var(--accent);
   }}
-  section {{ display: none; }}
-  section.active {{ display: block; animation: fadeSlideIn 0.28s ease; }}
-  @keyframes fadeSlideIn {{
-    from {{ opacity: 0; transform: translateY(8px); }}
-    to {{ opacity: 1; transform: translateY(0); }}
-  }}
+  section {{ display: none; opacity: 0; transform: translateY(8px); transition: opacity 0.25s ease, transform 0.25s ease; }}
+  section.active {{ display: block; }}
+  section.active.show {{ opacity: 1; transform: translateY(0); }}
   .panel {{
     box-shadow: 0 4px 16px rgba(0,0,0,0.28);
     background: var(--panel);
@@ -1214,6 +1257,21 @@ HTML_TEMPLATE = """<!DOCTYPE html>
   .logo {{ width: 22px; height: 22px; border-radius: 50%; flex-shrink: 0; object-fit: cover; background: #1c2438; }}
   .action {{ color: var(--accent2); }}
   .empty {{ color: var(--muted); text-align: center; padding: 24px; }}
+  .pbar {{ display: flex; align-items: center; gap: 8px; min-width: 90px; }}
+  .pbar-track {{
+    flex: 1;
+    height: 6px;
+    border-radius: 999px;
+    background: rgba(255,255,255,0.08);
+    overflow: hidden;
+  }}
+  .pbar-fill {{
+    height: 100%;
+    border-radius: 999px;
+    transition: width 0.4s ease;
+  }}
+  .pbar-label {{ font-size: 12px; color: var(--muted); min-width: 32px; text-align: right; }}
+  .sparkline {{ width: 90px; height: 26px; display: block; }}
   .draft-cell {{
     background: #1c2438;
     border: 1px solid var(--border);
@@ -1364,8 +1422,9 @@ HTML_TEMPLATE = """<!DOCTYPE html>
     border-color: var(--accent);
     background: rgba(255, 90, 31, 0.12);
   }}
-  .subpanel {{ display: none; }}
-  .subpanel.active {{ display: block; animation: fadeSlideIn 0.22s ease; }}
+  .subpanel {{ display: none; opacity: 0; transform: translateY(6px); transition: opacity 0.2s ease, transform 0.2s ease; }}
+  .subpanel.active {{ display: block; }}
+  .subpanel.active.show {{ opacity: 1; transform: translateY(0); }}
   .move-up {{ color: #2fb344; font-weight: 600; }}
   .move-down {{ color: #e05252; font-weight: 600; }}
   .move-flat {{ color: var(--muted); }}
@@ -1468,6 +1527,9 @@ HTML_TEMPLATE = """<!DOCTYPE html>
     table {{ font-size: 12.5px; }}
     th, td {{ padding: 7px 8px; }}
     .logo {{ width: 18px; height: 18px; }}
+    .pbar {{ min-width: 64px; gap: 5px; }}
+    .pbar-label {{ font-size: 11px; min-width: 26px; }}
+    .sparkline {{ width: 60px; height: 20px; }}
 
     /* Card grids: allow a single, full-width column on narrow phones
        instead of the wider desktop minimum, and tighten the gap. */
@@ -1561,19 +1623,32 @@ HTML_TEMPLATE = """<!DOCTYPE html>
 
 <script>
 function showTab(id, btn) {{
-  document.querySelectorAll('body > section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('body > section').forEach(s => {{ s.classList.remove('active'); s.classList.remove('show'); }});
   document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
+  const target = document.getElementById(id);
+  target.classList.add('active');
+  void target.offsetWidth; // force a reflow so the browser renders the "before" state first
+  requestAnimationFrame(() => target.classList.add('show'));
   btn.classList.add('active');
 }}
 function showSubTab(id, btn) {{
   const panel = document.getElementById(id);
   const container = btn.closest('.panel');
-  container.querySelectorAll('.subpanel').forEach(p => p.classList.remove('active'));
+  container.querySelectorAll('.subpanel').forEach(p => {{ p.classList.remove('active'); p.classList.remove('show'); }});
   container.querySelectorAll('.subtab').forEach(b => b.classList.remove('active'));
   panel.classList.add('active');
+  void panel.offsetWidth;
+  requestAnimationFrame(() => panel.classList.add('show'));
   btn.classList.add('active');
 }}
+// Trigger the entrance transition for whichever tab/subtab is active on
+// initial page load too, not just on click.
+document.addEventListener('DOMContentLoaded', () => {{
+  document.querySelectorAll('section.active, .subpanel.active').forEach(el => {{
+    void el.offsetWidth;
+    requestAnimationFrame(() => el.classList.add('show'));
+  }});
+}});
 </script>
 </body>
 </html>
