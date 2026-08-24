@@ -401,6 +401,102 @@
   .rivalry-team .team-name { font-weight: 700; font-size: 13px; }
   .rivalry-record { color: var(--accent2); font-weight: 700; font-size: 15px; margin: 4px 0 2px 0; }
   .rivalry-points { color: var(--muted); font-size: 11px; }
+
+  /* ---------- Trophy Case ---------- */
+  .trophy-wall {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 14px;
+  }
+  .trophy-card {
+    background: #1c2438;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 18px 16px;
+    text-align: center;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.25);
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+  }
+  .trophy-card:hover { transform: translateY(-3px); box-shadow: 0 8px 20px rgba(0,0,0,0.4); }
+  .trophy-year {
+    color: var(--accent);
+    font-weight: 800;
+    font-size: 13px;
+    letter-spacing: 0.5px;
+    margin-bottom: 6px;
+  }
+  .trophy-icon { font-size: 26px; margin-bottom: 8px; }
+  .trophy-card .team-name-main { font-size: 14px; }
+  .trophy-record { color: var(--muted); font-size: 12px; margin: 6px 0 4px 0; }
+  .trophy-score { font-weight: 700; font-size: 15px; color: var(--accent2); margin-top: 6px; }
+  .trophy-vs { color: var(--muted); font-size: 11px; margin-top: 4px; }
+
+  /* ---------- League Records Book ---------- */
+  .record-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 14px;
+  }
+  .record-card {
+    background: #1c2438;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.25);
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+  }
+  .record-card:hover { transform: translateY(-3px); box-shadow: 0 8px 20px rgba(0,0,0,0.4); }
+  .record-label {
+    color: var(--muted);
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 8px;
+  }
+  .record-value { font-size: 24px; font-weight: 800; color: var(--text); margin-bottom: 8px; }
+  .record-unit { font-size: 12px; font-weight: 600; color: var(--muted); }
+  .record-card .team-name-main { font-size: 14px; }
+  .record-context { color: var(--muted); font-size: 11.5px; margin-top: 6px; line-height: 1.4; }
+
+  /* ---------- Playoff Picture ---------- */
+  .playoff-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+  .playoff-col-title {
+    font-size: 13px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin: 0 0 10px 0;
+  }
+  .playoff-row {
+    display: grid;
+    grid-template-columns: 24px 1fr auto auto auto;
+    align-items: center;
+    gap: 10px;
+    background: #1c2438;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 12px;
+    margin-bottom: 8px;
+  }
+  .playoff-seed { color: var(--muted); font-weight: 700; font-size: 13px; }
+  .playoff-record { font-size: 13px; font-weight: 600; white-space: nowrap; }
+  .playoff-detail { color: var(--muted); font-size: 11.5px; white-space: nowrap; }
+  .playoff-badge {
+    font-size: 11px;
+    font-weight: 700;
+    padding: 4px 9px;
+    border-radius: 20px;
+    white-space: nowrap;
+  }
+  .badge-clinched { background: rgba(47,179,68,0.2); color: #2fb344; }
+  .badge-hunt { background: rgba(61,139,253,0.2); color: #3d8bfd; }
+  .badge-bubble { background: rgba(255,159,28,0.2); color: #ff9f1c; }
+  .badge-eliminated { background: rgba(224,82,82,0.2); color: #e05252; }
+
   footer { color: var(--muted); font-size: 12px; margin-top: 24px; text-align: center; }
 
   /* ---------- Mobile / small-screen adjustments ---------- */
@@ -438,11 +534,23 @@
 
     /* Card grids: allow a single, full-width column on narrow phones
        instead of the wider desktop minimum, and tighten the gap. */
-    .matchup-list, .report-grid, .rivalry-grid {
+    .matchup-list, .report-grid, .rivalry-grid, .trophy-wall, .record-grid {
       grid-template-columns: 1fr;
       gap: 10px;
     }
     .matchup-team .proj-score { font-size: 20px; }
+
+    .playoff-grid { grid-template-columns: 1fr; gap: 16px; }
+    .playoff-row {
+      grid-template-columns: 20px 1fr;
+      grid-template-areas: "seed team" "record record" "detail detail" "badge badge";
+      row-gap: 4px;
+    }
+    .playoff-seed { grid-area: seed; }
+    .playoff-row .team-cell { grid-area: team; }
+    .playoff-record { grid-area: record; }
+    .playoff-detail { grid-area: detail; }
+    .playoff-badge { grid-area: badge; justify-self: start; }
 
     .subnav { gap: 4px; }
     .subtab { padding: 5px 10px; font-size: 12px; }
@@ -463,7 +571,7 @@
       <span class="hero-chip">Week 1</span>
       <span class="hero-chip">10 Teams</span>
       <span class="hero-chip">🏆 CHASEing Greatness</span>
-      <span class="hero-chip hero-chip-muted">Updated Aug 24, 2026 05:33 PM</span>
+      <span class="hero-chip hero-chip-muted">Updated Aug 24, 2026 11:45 PM</span>
     </div>
   </div>
 </header>
@@ -480,7 +588,7 @@
 
 <section id="standings" class="active">
   <div class="panel">
-    <div class="subnav"><button class="subtab active" onclick="showSubTab('std-current', this)">Current</button><button class="subtab" onclick="showSubTab('std-2025', this)">2025</button><button class="subtab" onclick="showSubTab('std-2024', this)">2024</button><button class="subtab" onclick="showSubTab('std-2023', this)">2023</button><button class="subtab" onclick="showSubTab('std-2022', this)">2022</button><button class="subtab" onclick="showSubTab('std-2021', this)">2021</button><button class="subtab" onclick="showSubTab('std-2020', this)">2020</button><button class="subtab" onclick="showSubTab('std-2019', this)">2019</button><button class="subtab" onclick="showSubTab('std-2018', this)">2018</button><button class="subtab" onclick="showSubTab('std-alltime', this)">All-Time</button></div>
+    <div class="subnav"><button class="subtab active" onclick="showSubTab('std-current', this)">Current</button><button class="subtab" onclick="showSubTab('std-playoffs', this)">Playoff Picture</button><button class="subtab" onclick="showSubTab('std-2025', this)">2025</button><button class="subtab" onclick="showSubTab('std-2024', this)">2024</button><button class="subtab" onclick="showSubTab('std-2023', this)">2023</button><button class="subtab" onclick="showSubTab('std-2022', this)">2022</button><button class="subtab" onclick="showSubTab('std-2021', this)">2021</button><button class="subtab" onclick="showSubTab('std-2020', this)">2020</button><button class="subtab" onclick="showSubTab('std-2019', this)">2019</button><button class="subtab" onclick="showSubTab('std-2018', this)">2018</button><button class="subtab" onclick="showSubTab('std-alltime', this)">All-Time</button></div>
     
     <div id="std-current" class="subpanel active">
       <table>
@@ -646,6 +754,90 @@
           <td></td>
         </tr></tbody>
       </table>
+    </div>
+    <div id="std-playoffs" class="subpanel">
+      
+    <p class="section-note">Top 6 make the playoffs. Seeding follows the same win-loss-PF order as the standings table above; ESPN's own tiebreakers may differ slightly. Updates automatically as more of the regular season completes.</p>
+    <div class="playoff-grid">
+      <div class="playoff-col">
+        <h3 class="playoff-col-title">In the Playoffs</h3>
+        
+        <div class="playoff-row">
+          <div class="playoff-seed">1</div>
+          <div class="team-cell"><div class="team-name-main">CHASEing Greatness</div><div class="owner-name">Nathan Da Silva</div></div>
+          <div class="playoff-record">0-0</div>
+          <div class="playoff-detail">14 games left</div>
+          <div class="playoff-badge badge-hunt">In the hunt</div>
+        </div>
+        <div class="playoff-row">
+          <div class="playoff-seed">2</div>
+          <div class="team-cell"><div class="team-name-main">BuckO</div><div class="owner-name">matt eires</div></div>
+          <div class="playoff-record">0-0</div>
+          <div class="playoff-detail">14 games left</div>
+          <div class="playoff-badge badge-hunt">In the hunt</div>
+        </div>
+        <div class="playoff-row">
+          <div class="playoff-seed">3</div>
+          <div class="team-cell"><div class="team-name-main">The Price Is Right</div><div class="owner-name">cam correia</div></div>
+          <div class="playoff-record">0-0</div>
+          <div class="playoff-detail">14 games left</div>
+          <div class="playoff-badge badge-hunt">In the hunt</div>
+        </div>
+        <div class="playoff-row">
+          <div class="playoff-seed">4</div>
+          <div class="team-cell"><div class="team-name-main">Evan Squared</div><div class="owner-name">Evan deLacy &amp; Evan Carneiro</div></div>
+          <div class="playoff-record">0-0</div>
+          <div class="playoff-detail">14 games left</div>
+          <div class="playoff-badge badge-hunt">In the hunt</div>
+        </div>
+        <div class="playoff-row">
+          <div class="playoff-seed">5</div>
+          <div class="team-cell"><div class="team-name-main">Jake London</div><div class="owner-name">jake souza</div></div>
+          <div class="playoff-record">0-0</div>
+          <div class="playoff-detail">14 games left</div>
+          <div class="playoff-badge badge-hunt">In the hunt</div>
+        </div>
+        <div class="playoff-row">
+          <div class="playoff-seed">6</div>
+          <div class="team-cell"><div class="team-name-main">HERB YOUR ENTHUSIASM</div><div class="owner-name">Joshua Pires</div></div>
+          <div class="playoff-record">0-0</div>
+          <div class="playoff-detail">14 games left</div>
+          <div class="playoff-badge badge-hunt">In the hunt</div>
+        </div>
+      </div>
+      <div class="playoff-col">
+        <h3 class="playoff-col-title">On the Outside</h3>
+        
+        <div class="playoff-row">
+          <div class="playoff-seed">7</div>
+          <div class="team-cell"><div class="team-name-main">Cant Find Nico </div><div class="owner-name">Brenden Sylvia</div></div>
+          <div class="playoff-record">0-0</div>
+          <div class="playoff-detail">14 games left</div>
+          <div class="playoff-badge badge-bubble">On the bubble</div>
+        </div>
+        <div class="playoff-row">
+          <div class="playoff-seed">8</div>
+          <div class="team-cell"><div class="team-name-main">Bad Blood</div><div class="owner-name">bryce rudolph &amp; Bryce Rudolph</div></div>
+          <div class="playoff-record">0-0</div>
+          <div class="playoff-detail">14 games left</div>
+          <div class="playoff-badge badge-bubble">On the bubble</div>
+        </div>
+        <div class="playoff-row">
+          <div class="playoff-seed">9</div>
+          <div class="team-cell"><div class="team-name-main">#NoKings </div><div class="owner-name">Nate Vieira &amp; Tony Melo</div></div>
+          <div class="playoff-record">0-0</div>
+          <div class="playoff-detail">14 games left</div>
+          <div class="playoff-badge badge-bubble">On the bubble</div>
+        </div>
+        <div class="playoff-row">
+          <div class="playoff-seed">10</div>
+          <div class="team-cell"><div class="team-name-main">LET HIM COOK </div><div class="owner-name">Justin Silveira</div></div>
+          <div class="playoff-record">0-0</div>
+          <div class="playoff-detail">14 games left</div>
+          <div class="playoff-badge badge-bubble">On the bubble</div>
+        </div>
+      </div>
+    </div>
     </div>
         <div id="std-2025" class="subpanel">
           <table>
@@ -2532,11 +2724,110 @@
 <section id="history">
   <div class="panel">
     
-        <h2 class="section-title">League Champions</h2>
-        <table>
-          <thead><tr><th>Season</th><th>Champion</th></tr></thead>
-          <tbody><tr><td>2025</td><td class='team-cell'><div class="team-name-main">Cant Find Nico </div><div class="owner-name">Brenden Sylvia</div></td></tr><tr><td>2024</td><td class='team-cell'><div class="team-name-main">Get Bucked</div><div class="owner-name">cam correia</div></td></tr><tr><td>2023</td><td class='team-cell'><div class="team-name-main">Super Kamario Bros </div><div class="owner-name">Nate Vieira &amp; Tony Melo</div></td></tr><tr><td>2022</td><td class='team-cell'><div class="team-name-main">Lamarvelous 8</div><div class="owner-name">Nathan Da Silva</div></td></tr><tr><td>2021</td><td class='team-cell'><div class="team-name-main">Bend It Like Beckham</div><div class="owner-name">matt eires</div></td></tr><tr><td>2020</td><td class='team-cell'><div class="team-name-main">Hey Lynn Jr</div><div class="owner-name">matt eires</div></td></tr><tr><td>2019</td><td class='team-cell'><div class="team-name-main">The Jackson 9</div><div class="owner-name">cam correia</div></td></tr><tr><td>2018</td><td class='team-cell'><div class="team-name-main">He&#x27;s A BAAAAAAADDD MAN</div><div class="owner-name">cam correia</div></td></tr></tbody>
-        </table>
+    <h2 class="section-title">Hall of Fame &middot; Trophy Case</h2>
+    <p class="section-note">Every champion from every season fetched, in one wall.</p>
+    <div class="trophy-wall">
+        <div class="trophy-card">
+          <div class="trophy-year">2025</div>
+          <div class="trophy-icon">&#127942;</div>
+          <div class="team-name-main">Cant Find Nico </div><div class="owner-name">Brenden Sylvia</div>
+          <div class="trophy-record">8-6</div>
+          <div class='trophy-score'>148.4 &ndash; 136.3 <span class='trophy-vs'>vs #NoKings </span></div>
+        </div>
+        <div class="trophy-card">
+          <div class="trophy-year">2024</div>
+          <div class="trophy-icon">&#127942;</div>
+          <div class="team-name-main">Get Bucked</div><div class="owner-name">cam correia</div>
+          <div class="trophy-record">6-8</div>
+          <div class='trophy-score'>210.5 &ndash; 143.3 <span class='trophy-vs'>vs Ceddy TDs </span></div>
+        </div>
+        <div class="trophy-card">
+          <div class="trophy-year">2023</div>
+          <div class="trophy-icon">&#127942;</div>
+          <div class="team-name-main">Super Kamario Bros </div><div class="owner-name">Nate Vieira &amp; Tony Melo</div>
+          <div class="trophy-record">10-4</div>
+          <div class='trophy-score'>156.4 &ndash; 132.8 <span class='trophy-vs'>vs Hey Nacua</span></div>
+        </div>
+        <div class="trophy-card">
+          <div class="trophy-year">2022</div>
+          <div class="trophy-icon">&#127942;</div>
+          <div class="team-name-main">Lamarvelous 8</div><div class="owner-name">Nathan Da Silva</div>
+          <div class="trophy-record">10-4</div>
+          <div class='trophy-score'>176.2 &ndash; 124.7 <span class='trophy-vs'>vs Trade Me Deebo</span></div>
+        </div>
+        <div class="trophy-card">
+          <div class="trophy-year">2021</div>
+          <div class="trophy-icon">&#127942;</div>
+          <div class="team-name-main">Bend It Like Beckham</div><div class="owner-name">matt eires</div>
+          <div class="trophy-record">7-7</div>
+          <div class='trophy-score'>171.3 &ndash; 128.8 <span class='trophy-vs'>vs Dak Attack</span></div>
+        </div>
+        <div class="trophy-card">
+          <div class="trophy-year">2020</div>
+          <div class="trophy-icon">&#127942;</div>
+          <div class="team-name-main">Hey Lynn Jr</div><div class="owner-name">matt eires</div>
+          <div class="trophy-record">7-6</div>
+          <div class='trophy-score'>161.7 &ndash; 157.1 <span class='trophy-vs'>vs Team Run Lamar Run</span></div>
+        </div>
+        <div class="trophy-card">
+          <div class="trophy-year">2019</div>
+          <div class="trophy-icon">&#127942;</div>
+          <div class="team-name-main">The Jackson 9</div><div class="owner-name">cam correia</div>
+          <div class="trophy-record">9-4</div>
+          <div class='trophy-score'>169.8 &ndash; 146.6 <span class='trophy-vs'>vs New England Greatriots</span></div>
+        </div>
+        <div class="trophy-card">
+          <div class="trophy-year">2018</div>
+          <div class="trophy-icon">&#127942;</div>
+          <div class="team-name-main">He&#x27;s A BAAAAAAADDD MAN</div><div class="owner-name">cam correia</div>
+          <div class="trophy-record">10-3</div>
+          <div class='trophy-vs'>def. Alvin and the Chipmunks</div>
+        </div></div>
+    <h2 class="section-title" style="margin-top:28px;">League Records Book</h2>
+    <p class="section-note">All-time records across every season fetched. Pure trivia &mdash; bragging rights only.</p>
+    <div class="record-grid">
+    <div class="record-card">
+      <div class="record-label">&#128293; Highest Single-Week Score</div>
+      <div class="record-value">243.4</div>
+      <div class="team-name-main">Lamarvelous 8</div><div class="owner-name">Nathan Da Silva</div>
+      <div class="record-context">Week 2, 2022</div>
+    </div>
+    <div class="record-card">
+      <div class="record-label">&#128703; Toilet Bowl (Lowest Score)</div>
+      <div class="record-value">4.0</div>
+      <div class="team-name-main">PhiladelphiaEagles </div><div class="owner-name">Brenden Sylvia</div>
+      <div class="record-context">Week 15, 2023</div>
+    </div>
+        <div class="record-card">
+          <div class="record-label">&#128165; Biggest Blowout</div>
+          <div class="record-value">147.9 <span class="record-unit">pt margin</span></div>
+          <div class="team-name-main">Lamarvelous 8</div><div class="owner-name">Nathan Da Silva</div>
+          <div class="record-context">beat Trade Me Deebo 243.4&ndash;95.5 &middot; Week 2, 2022</div>
+        </div>
+        <div class="record-card">
+          <div class="record-label">&#127919; Closest Game</div>
+          <div class="record-value">0.0 <span class="record-unit">pt margin</span></div>
+          <div class="team-name-main">RIP Cooper</div><div class="owner-name">josh pires</div>
+          <div class="record-context">edged We Are Trash, But We Try 149.8&ndash;149.8 &middot; Week 8, 2018</div>
+        </div>
+        <div class="record-card">
+          <div class="record-label">&#128200; Longest Win Streak</div>
+          <div class="record-value">9 <span class="record-unit">games</span></div>
+          <div class="team-name-main">Suck My DK </div><div class="owner-name">Brenden Sylvia</div>
+          <div class="record-context">Weeks 1&ndash;9, 2020</div>
+        </div>
+        <div class="record-card">
+          <div class="record-label">&#128201; Longest Losing Streak</div>
+          <div class="record-value">13 <span class="record-unit">games</span></div>
+          <div class="team-name-main">See you in &#x27;24</div><div class="owner-name">jake souza</div>
+          <div class="record-context">2022 Wk15 &ndash; 2023 Wk10</div>
+        </div>
+        <div class="record-card">
+          <div class="record-label">&#128148; Most Points in a Loss</div>
+          <div class="record-value">208.4</div>
+          <div class="team-name-main">LaPorta Potty</div><div class="owner-name">Joshua Pires</div>
+          <div class="record-context">Week 14, 2024</div>
+        </div></div>
         <h2 class="section-title" style="margin-top:28px;">Rivalry Tracker</h2>
         <p class="section-note">All-time head-to-head records across every season fetched.</p>
         <div class="rivalry-grid">
