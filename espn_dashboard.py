@@ -172,7 +172,7 @@ def team_cell_html(name, owner=None):
     return f'<div class="team-name-main">{html.escape(name)}</div>{owner_html}'
 
 
-def progress_bar_html(pct, color="var(--accent2)"):
+def progress_bar_html(pct, color="var(--gradient)"):
     """Small inline horizontal bar for a 0-100 percentage value."""
     pct = max(0.0, min(100.0, pct))
     return (f"<div class='pbar'><div class='pbar-track'>"
@@ -180,7 +180,7 @@ def progress_bar_html(pct, color="var(--accent2)"):
             f"</div><span class='pbar-label'>{pct:.0f}%</span></div>")
 
 
-def sparkline_svg(values, width=90, height=26, color="var(--accent2)"):
+def sparkline_svg(values, width=90, height=26, color="var(--accent4)"):
     """
     Compact inline SVG line chart for a season's weekly scores — no
     charting library needed, just a hand-built polyline scaled to fit.
@@ -201,11 +201,14 @@ def sparkline_svg(values, width=90, height=26, color="var(--accent2)"):
         points.append((x, y))
     path = " ".join(f"{x:.1f},{y:.1f}" for x, y in points)
     last_x, last_y = points[-1]
+    # Color goes in style= rather than the stroke/fill attributes directly —
+    # var() resolution inside raw SVG presentation attributes is
+    # inconsistent across browsers, but is always reliable inside style=.
     return (f"<svg class='sparkline' viewBox='0 0 {width} {height}' preserveAspectRatio='none' "
             f"aria-hidden='true'>"
-            f"<polyline points='{path}' fill='none' stroke='{color}' stroke-width='1.6' "
-            f"stroke-linecap='round' stroke-linejoin='round'/>"
-            f"<circle cx='{last_x:.1f}' cy='{last_y:.1f}' r='2.2' fill='{color}'/>"
+            f"<polyline points='{path}' style='fill:none; stroke:{color}; stroke-width:1.6; "
+            f"stroke-linecap:round; stroke-linejoin:round;'/>"
+            f"<circle cx='{last_x:.1f}' cy='{last_y:.1f}' r='2.2' style='fill:{color};'/>"
             f"</svg>")
 
 
@@ -1170,13 +1173,17 @@ HTML_TEMPLATE = """<!DOCTYPE html>
 <title>{league_name} — League Dashboard</title>
 <style>
   :root {{
-    --bg: #0f1420;
-    --panel: #171d2e;
-    --border: #2a3348;
-    --text: #e8ecf4;
-    --muted: #8a92a8;
-    --accent: #ff5a1f;
-    --accent2: #3d8bfd;
+    --bg: #0a0e18;
+    --panel: #151b2e;
+    --border: #262f47;
+    --text: #eef1f8;
+    --muted: #8b93ab;
+    --accent: #ff6b35;
+    --accent2: #4f8dff;
+    --accent3: #a855f7;
+    --accent4: #22d3ee;
+    --gradient: linear-gradient(90deg, var(--accent2), var(--accent3));
+    --gradient-warm: linear-gradient(135deg, var(--accent), var(--accent3));
   }}
   * {{ box-sizing: border-box; }}
   body {{
@@ -1198,6 +1205,67 @@ HTML_TEMPLATE = """<!DOCTYPE html>
     color: var(--muted);
     font-size: 14px;
   }}
+
+  /* ---------- Hero / title section ---------- */
+  .hero {{
+    position: relative;
+    overflow: hidden;
+    border-radius: 18px;
+    border: 1px solid var(--border);
+    padding: 40px 32px;
+    margin-bottom: 28px;
+    background: linear-gradient(180deg, #121a30 0%, var(--panel) 100%);
+  }}
+  .hero-glow {{
+    position: absolute;
+    inset: -40%;
+    background:
+      radial-gradient(circle at 20% 20%, rgba(255,107,53,0.28), transparent 45%),
+      radial-gradient(circle at 80% 30%, rgba(168,85,247,0.24), transparent 45%),
+      radial-gradient(circle at 50% 90%, rgba(79,141,255,0.22), transparent 50%);
+    filter: blur(10px);
+    pointer-events: none;
+  }}
+  .hero-content {{ position: relative; z-index: 1; }}
+  .hero-eyebrow {{
+    color: var(--muted);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }}
+  .hero-title {{
+    margin: 0 0 18px 0;
+    font-size: 42px;
+    font-weight: 800;
+    letter-spacing: -1px;
+    line-height: 1.1;
+    background: linear-gradient(90deg, #ffffff 0%, #cfd8f5 60%, var(--accent3) 130%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }}
+  .hero-meta {{ display: flex; flex-wrap: wrap; gap: 8px; }}
+  .hero-chip {{
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 14px;
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 600;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.1);
+    color: var(--text);
+    backdrop-filter: blur(4px);
+  }}
+  .hero-chip-muted {{
+    color: var(--muted);
+    font-weight: 400;
+    background: transparent;
+    border-color: var(--border);
+  }}
   nav {{
     display: flex;
     flex-wrap: wrap;
@@ -1217,7 +1285,8 @@ HTML_TEMPLATE = """<!DOCTYPE html>
   }}
   nav button.active {{
     color: var(--text);
-    border-bottom-color: var(--accent);
+    border-bottom: 2px solid transparent;
+    border-image: var(--gradient-warm) 1;
   }}
   section {{ display: none; opacity: 0; transform: translateY(8px); transition: opacity 0.25s ease, transform 0.25s ease; }}
   section.active {{ display: block; }}
@@ -1507,6 +1576,9 @@ HTML_TEMPLATE = """<!DOCTYPE html>
     h1 {{ font-size: 21px; }}
     .subtitle {{ font-size: 12px; }}
     .panel {{ padding: 12px; border-radius: 10px; }}
+    .hero {{ padding: 24px 18px; border-radius: 14px; margin-bottom: 18px; }}
+    .hero-title {{ font-size: 28px; }}
+    .hero-chip {{ font-size: 12px; padding: 5px 11px; }}
 
     /* Tab bar becomes a single horizontally-scrolling row instead of
        wrapping to multiple lines, which eats a lot of vertical space on
@@ -1549,9 +1621,18 @@ HTML_TEMPLATE = """<!DOCTYPE html>
 </style>
 </head>
 <body>
-<header>
-  <h1>{league_name}</h1>
-  <div class="subtitle">{year} season · updated {updated}</div>
+<header class="hero">
+  <div class="hero-glow"></div>
+  <div class="hero-content">
+    <div class="hero-eyebrow">Fantasy Football &middot; {year} Season</div>
+    <h1 class="hero-title">{league_name}</h1>
+    <div class="hero-meta">
+      <span class="hero-chip">Week {matchup_week_hero}</span>
+      <span class="hero-chip">{team_count} Teams</span>
+      <span class="hero-chip">🏆 {leader_name}</span>
+      <span class="hero-chip hero-chip-muted">Updated {updated}</span>
+    </div>
+  </div>
 </header>
 
 <nav>
@@ -1675,10 +1756,17 @@ def main():
 
     standings_subnav, standings_panels = build_standings_tabs(league, history)
 
+    team_count = len(league.teams)
+    leader = sorted(league.teams, key=lambda t: (-t.wins, t.losses, -t.points_for))[0] if league.teams else None
+    leader_name = leader.team_name if leader else ""
+
     html_out = HTML_TEMPLATE.format(
         league_name=html.escape(league_name),
         year=YEAR,
         updated=datetime.now().strftime("%b %d, %Y %I:%M %p"),
+        team_count=team_count,
+        matchup_week_hero=matchup_week,
+        leader_name=html.escape(leader_name),
         standings_subnav=standings_subnav,
         standings_panels=standings_panels,
         matchups=matchups_html,
