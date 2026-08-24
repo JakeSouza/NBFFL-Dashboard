@@ -56,8 +56,13 @@
     border-bottom-color: var(--accent);
   }
   section { display: none; }
-  section.active { display: block; }
+  section.active { display: block; animation: fadeSlideIn 0.28s ease; }
+  @keyframes fadeSlideIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
   .panel {
+    box-shadow: 0 4px 16px rgba(0,0,0,0.28);
     background: var(--panel);
     border: 1px solid var(--border);
     border-radius: 12px;
@@ -96,12 +101,13 @@
     border: 1px solid var(--border);
     border-radius: 8px;
     padding: 10px;
-    transition: transform 0.1s ease;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.25);
     display: flex;
     flex-direction: column;
     box-sizing: border-box;
   }
-  .draft-cell:hover { transform: translateY(-2px); }
+  .draft-cell:hover { transform: translateY(-2px); box-shadow: 0 6px 14px rgba(0,0,0,0.35); }
   .draft-board-wrap { overflow-x: auto; margin-top: 8px; }
   .draft-board { border-collapse: separate; border-spacing: 6px; width: max-content; }
   .draft-board th { color: var(--muted); font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.3px; padding: 4px 6px; text-align: center; vertical-align: bottom; min-width: 124px; max-width: 140px; }
@@ -157,7 +163,10 @@
     border: 1px solid var(--border);
     border-radius: 10px;
     padding: 16px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.25);
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
   }
+  .matchup-card:hover { transform: translateY(-3px); box-shadow: 0 8px 20px rgba(0,0,0,0.4); }
   .matchup-card.bye {
     display: flex;
     flex-direction: column;
@@ -238,7 +247,7 @@
     background: rgba(255, 90, 31, 0.12);
   }
   .subpanel { display: none; }
-  .subpanel.active { display: block; }
+  .subpanel.active { display: block; animation: fadeSlideIn 0.22s ease; }
   .move-up { color: #2fb344; font-weight: 600; }
   .move-down { color: #e05252; font-weight: 600; }
   .move-flat { color: var(--muted); }
@@ -255,7 +264,10 @@
     border-radius: 10px;
     padding: 16px;
     position: relative;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.25);
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
   }
+  .report-card:hover { transform: translateY(-3px); box-shadow: 0 8px 20px rgba(0,0,0,0.4); }
   .grade-badge {
     position: absolute;
     top: 14px;
@@ -289,7 +301,10 @@
     border: 1px solid var(--border);
     border-radius: 10px;
     padding: 14px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.25);
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
   }
+  .rivalry-card:hover { transform: translateY(-3px); box-shadow: 0 8px 20px rgba(0,0,0,0.4); }
   .rivalry-meetings {
     color: var(--muted);
     font-size: 11px;
@@ -356,7 +371,7 @@
 <body>
 <header>
   <h1>NBFFL</h1>
-  <div class="subtitle">2026 season · updated Aug 24, 2026 12:04 AM</div>
+  <div class="subtitle">2026 season · updated Aug 24, 2026 12:11 AM</div>
 </header>
 
 <nav>
