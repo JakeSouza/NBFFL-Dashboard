@@ -1064,7 +1064,7 @@ def build_records_book_section(records):
     ls = records["lowest_score"]
     cards.append(f"""
     <div class="record-card">
-      <div class="record-label">&#128703; Toilet Bowl (Lowest Score)</div>
+      <div class="record-label">&#128703; Lowest. Score. Ever. (This is real)</div>
       <div class="record-value">{ls['value']:.1f}</div>
       {team_cell_html(ls['team'], ls.get('owner'))}
       <div class="record-context">Week {ls['week']}, {ls['year']}</div>
