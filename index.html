@@ -4,24 +4,26 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>NBFFL — League Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Bebas+Neue&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg: #0a0e18;
-    --panel: #151b2e;
-    --border: #262f47;
-    --text: #eef1f8;
-    --muted: #8b93ab;
-    --accent: #ff6b35;
-    --accent2: #4f8dff;
-    --accent3: #a855f7;
-    --accent4: #22d3ee;
+    --bg: #0d0f13;
+    --panel: #15181e;
+    --border: #252a33;
+    --text: #f2f0ec;
+    --muted: #8a8f9a;
+    --accent: #c81e3a;
+    --accent2: #5b7a99;
+    --accent3: #d4a017;
+    --accent4: #7fa8c9;
     --gradient: linear-gradient(90deg, var(--accent2), var(--accent3));
     --gradient-warm: linear-gradient(135deg, var(--accent), var(--accent3));
   }
   * { box-sizing: border-box; }
   body {
     margin: 0;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     background: var(--bg);
     color: var(--text);
     padding: 24px;
@@ -30,9 +32,12 @@
     margin-bottom: 28px;
   }
   h1 {
+    font-family: 'Anton', sans-serif;
+    font-weight: 400;
+    text-transform: uppercase;
     margin: 0 0 4px 0;
     font-size: 28px;
-    letter-spacing: -0.5px;
+    letter-spacing: 0.5px;
   }
   .subtitle {
     color: var(--muted);
@@ -43,38 +48,58 @@
   .hero {
     position: relative;
     overflow: hidden;
-    border-radius: 18px;
+    border-radius: 12px;
     border: 1px solid var(--border);
-    padding: 40px 32px;
-    margin-bottom: 28px;
-    background: linear-gradient(180deg, #121a30 0%, var(--panel) 100%);
+    padding: 36px 32px;
+    margin-bottom: 20px;
+    background: radial-gradient(ellipse at 50% -10%, rgba(200,30,58,0.26), transparent 60%), var(--bg);
   }
   .hero-glow {
     position: absolute;
     inset: -40%;
-    background:
-      radial-gradient(circle at 20% 20%, rgba(255,107,53,0.28), transparent 45%),
-      radial-gradient(circle at 80% 30%, rgba(168,85,247,0.24), transparent 45%),
-      radial-gradient(circle at 50% 90%, rgba(79,141,255,0.22), transparent 50%);
+    background: radial-gradient(circle at 50% 0%, rgba(200,30,58,0.20), transparent 55%);
     filter: blur(10px);
     pointer-events: none;
   }
   .hero-content { position: relative; z-index: 1; }
-  .hero-eyebrow {
-    color: var(--muted);
-    font-size: 12px;
+  .onclock {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--accent);
+    padding: 6px 14px;
+    border-radius: 3px;
+    font-family: 'JetBrains Mono', monospace;
     font-weight: 700;
+    font-size: 11px;
     letter-spacing: 1.5px;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+    color: #fff;
+  }
+  .onclock .pulse {
+    width: 7px; height: 7px; border-radius: 50%; background: #fff;
+    animation: pulse 1.4s ease-in-out infinite;
+  }
+  @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: .3; } }
+  .hero-eyebrow {
+    font-family: 'Bebas Neue', sans-serif;
+    color: var(--accent2);
+    font-size: 16px;
+    font-weight: 400;
+    letter-spacing: 3px;
     text-transform: uppercase;
     margin-bottom: 10px;
   }
   .hero-title {
+    font-family: 'Anton', sans-serif;
+    font-weight: 400;
+    text-transform: uppercase;
     margin: 0 0 18px 0;
-    font-size: 42px;
-    font-weight: 800;
-    letter-spacing: -1px;
-    line-height: 1.1;
-    background: linear-gradient(90deg, #ffffff 0%, #cfd8f5 60%, var(--accent3) 130%);
+    font-size: 46px;
+    letter-spacing: 0.5px;
+    line-height: 1.0;
+    background: linear-gradient(90deg, #ffffff 0%, #e8e2d8 60%, var(--accent3) 130%);
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
@@ -84,14 +109,14 @@
     display: inline-flex;
     align-items: center;
     gap: 6px;
-    padding: 6px 14px;
-    border-radius: 999px;
-    font-size: 13px;
+    padding: 7px 15px;
+    border-radius: 3px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
     font-weight: 600;
-    background: rgba(255,255,255,0.06);
-    border: 1px solid rgba(255,255,255,0.1);
+    background: var(--panel);
+    border: 1px solid var(--border);
     color: var(--text);
-    backdrop-filter: blur(4px);
   }
   .hero-chip-muted {
     color: var(--muted);
@@ -99,6 +124,24 @@
     background: transparent;
     border-color: var(--border);
   }
+  .ticker {
+    background: var(--accent);
+    color: #fff;
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 600;
+    font-size: 12px;
+    letter-spacing: 0.4px;
+    padding: 9px 0;
+    overflow: hidden;
+    white-space: nowrap;
+    border-radius: 8px;
+    margin-bottom: 18px;
+  }
+  .ticker-track { display: inline-block; padding-left: 100%; animation: ticker-scroll 38s linear infinite; }
+  .ticker-track span { display: inline-block; padding-right: 56px; }
+  .ticker-track span::after { content: 'CF'; color: var(--accent3); margin-left: 56px; font-size: 8px; vertical-align: middle; }
+  @keyframes ticker-scroll { from { transform: translateX(0); } to { transform: translateX(-100%); } }
+  @media (prefers-reduced-motion: reduce) { .ticker-track { animation: none; padding-left: 16px; } }
   nav {
     display: flex;
     flex-wrap: wrap;
@@ -107,10 +150,13 @@
     border-bottom: 1px solid var(--border);
   }
   nav button {
+    font-family: 'Bebas Neue', sans-serif;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
     background: none;
     border: none;
     color: var(--muted);
-    font-size: 15px;
+    font-size: 17px;
     padding: 10px 14px;
     cursor: pointer;
     border-bottom: 2px solid transparent;
@@ -138,12 +184,13 @@
     font-size: 14px;
   }
   th {
+    font-family: 'JetBrains Mono', monospace;
     text-align: left;
     color: var(--muted);
     font-weight: 600;
-    font-size: 12px;
+    font-size: 11px;
     text-transform: uppercase;
-    letter-spacing: 0.5px;
+    letter-spacing: 1px;
     padding: 8px 10px;
     border-bottom: 1px solid var(--border);
   }
@@ -156,7 +203,7 @@
   .team-cell-inner { display: flex; align-items: center; gap: 8px; }
   .team-name-main { font-weight: 600; }
   .owner-name { color: var(--muted); font-weight: 400; font-size: 11px; margin-top: 2px; }
-  .logo { width: 22px; height: 22px; border-radius: 50%; flex-shrink: 0; object-fit: cover; background: #1c2438; }
+  .logo { width: 22px; height: 22px; border-radius: 50%; flex-shrink: 0; object-fit: cover; background: #1b1f27; }
   .action { color: var(--accent2); }
   .empty { color: var(--muted); text-align: center; padding: 24px; }
   .pbar { display: flex; align-items: center; gap: 8px; min-width: 90px; }
@@ -175,7 +222,7 @@
   .pbar-label { font-size: 12px; color: var(--muted); min-width: 32px; text-align: right; }
   .sparkline { width: 90px; height: 26px; display: block; }
   .draft-cell {
-    background: #1c2438;
+    background: #1b1f27;
     border: 1px solid var(--border);
     border-radius: 8px;
     padding: 10px;
@@ -225,10 +272,11 @@
     vertical-align: middle;
   }
   .section-title {
-    font-size: 15px;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 18px;
+    letter-spacing: 1.5px;
     color: var(--muted);
     text-transform: uppercase;
-    letter-spacing: 0.5px;
     margin: 0 0 16px 0;
   }
   .matchup-list {
@@ -237,7 +285,7 @@
     gap: 14px;
   }
   .matchup-card {
-    background: #1c2438;
+    background: #1b1f27;
     border: 1px solid var(--border);
     border-radius: 10px;
     padding: 16px;
@@ -311,7 +359,7 @@
     margin-bottom: 16px;
   }
   .subtab {
-    background: #1c2438;
+    background: #1b1f27;
     border: 1px solid var(--border);
     color: var(--muted);
     font-size: 13px;
@@ -338,7 +386,7 @@
     gap: 14px;
   }
   .report-card {
-    background: #1c2438;
+    background: #1b1f27;
     border: 1px solid var(--border);
     border-radius: 10px;
     padding: 16px;
@@ -376,7 +424,7 @@
     gap: 14px;
   }
   .rivalry-card {
-    background: #1c2438;
+    background: #1b1f27;
     border: 1px solid var(--border);
     border-radius: 10px;
     padding: 14px;
@@ -409,7 +457,7 @@
     gap: 14px;
   }
   .trophy-card {
-    background: #1c2438;
+    background: #1b1f27;
     border: 1px solid var(--border);
     border-radius: 10px;
     padding: 18px 16px;
@@ -438,7 +486,7 @@
     gap: 14px;
   }
   .record-card {
-    background: #1c2438;
+    background: #1b1f27;
     border: 1px solid var(--border);
     border-radius: 10px;
     padding: 16px;
@@ -476,7 +524,7 @@
     grid-template-columns: 24px 1fr auto auto auto;
     align-items: center;
     gap: 10px;
-    background: #1c2438;
+    background: #1b1f27;
     border: 1px solid var(--border);
     border-radius: 8px;
     padding: 10px 12px;
@@ -562,16 +610,18 @@
 </style>
 </head>
 <body>
+<div class="ticker"><div class="ticker-track"><span>MCBRIDEFREY LEADS AT 0-0</span><span>CANT FIND NICO  WON THE 2025 CHAMPIONSHIP</span><span>RECORD BOOK: LAMARVELOUS 8 PUT UP 243.4 IN WEEK 2, 2022</span><span>MCBRIDEFREY LEADS AT 0-0</span><span>CANT FIND NICO  WON THE 2025 CHAMPIONSHIP</span><span>RECORD BOOK: LAMARVELOUS 8 PUT UP 243.4 IN WEEK 2, 2022</span></div></div>
 <header class="hero">
   <div class="hero-glow"></div>
   <div class="hero-content">
+    <div class="onclock"><span class="pulse"></span>Week 1 &middot; On the Clock</div>
     <div class="hero-eyebrow">Fantasy Football &middot; 2026 Season</div>
     <h1 class="hero-title">NBFFL</h1>
     <div class="hero-meta">
       <span class="hero-chip">Week 1</span>
       <span class="hero-chip">10 Teams</span>
-      <span class="hero-chip">🏆 CHASEing Greatness</span>
-      <span class="hero-chip hero-chip-muted">Updated Aug 30, 2026 02:14 PM</span>
+      <span class="hero-chip">🏆 McBridefrey</span>
+      <span class="hero-chip hero-chip-muted">Updated Aug 31, 2026 04:38 PM</span>
     </div>
   </div>
 </header>
@@ -598,8 +648,8 @@
           <td>1</td>
           <td class="team-cell">
             <div class="team-cell-inner">
-              <img src='https://g.espncdn.com/lm-static/ffl/images/default_logos/6.svg' class='logo' loading='lazy' referrerpolicy='no-referrer' onerror="this.style.display='none'">
-              <div class="team-name-main">CHASEing Greatness</div><div class="owner-name">Nathan Da Silva</div>
+              <img src='https://mystique-api.fantasy.espn.com/apis/v1/domains/lm/images/3fe1c720-a4f5-11f1-96ea-97f590071d69' class='logo' loading='lazy' referrerpolicy='no-referrer' onerror="this.style.display='none'">
+              <div class="team-name-main">McBridefrey</div><div class="owner-name">Nathan Da Silva</div>
             </div>
           </td>
           <td>0-0</td>
@@ -646,7 +696,7 @@
           <td>4</td>
           <td class="team-cell">
             <div class="team-cell-inner">
-              <img src='https://g.espncdn.com/lm-static/logo-packs/ffl/1stStringAllStars-SportsManias/barkley-01.svg' class='logo' loading='lazy' referrerpolicy='no-referrer' onerror="this.style.display='none'">
+              <img src='https://g.espncdn.com/lm-static/logo-packs/ffl/1stStringAllStars-SportsManias/jackson-01.svg' class='logo' loading='lazy' referrerpolicy='no-referrer' onerror="this.style.display='none'">
               <div class="team-name-main">Evan Squared</div><div class="owner-name">Evan deLacy &amp; Evan Carneiro</div>
             </div>
           </td>
@@ -764,7 +814,7 @@
         
         <div class="playoff-row">
           <div class="playoff-seed">1</div>
-          <div class="team-cell"><div class="team-name-main">CHASEing Greatness</div><div class="owner-name">Nathan Da Silva</div></div>
+          <div class="team-cell"><div class="team-name-main">McBridefrey</div><div class="owner-name">Nathan Da Silva</div></div>
           <div class="playoff-record">0-0</div>
           <div class="playoff-detail">14 games left</div>
           <div class="playoff-badge badge-hunt">In the hunt</div>
@@ -1509,7 +1559,7 @@
         </tr>
         <tr>
           <td>8</td>
-          <td class="team-cell"><div class="team-name-main">CHASEing Greatness</div><div class="owner-name">Nathan Da Silva</div></td>
+          <td class="team-cell"><div class="team-name-main">McBridefrey</div><div class="owner-name">Nathan Da Silva</div></td>
           <td>50-59</td>
           <td>45.9%</td>
           <td>15019.5</td>
@@ -1552,7 +1602,7 @@
             <div class="matchup-team">
               <div class="team-name">LET HIM COOK </div>
               <div class="team-record">0-0</div>
-              <div class="proj-score">129.2</div>
+              <div class="proj-score">133.7</div>
             </div>
             <div class="vs">@</div>
             <div class="matchup-team">
@@ -1561,7 +1611,7 @@
               <div class="proj-score">138.9</div>
             </div>
           </div>
-          <p class="outlook">Cant Find Nico  looks like the safer bet against LET HIM COOK  this week, favored by roughly 9.7 points — though fantasy football has a way of humbling favorites.</p>
+          <p class="outlook">Too close to call. Cant Find Nico  holds a razor-thin projected edge over LET HIM COOK  (5.2 points), so bench decisions and Monday night performances could decide it.</p>
         </div>
 
         <div class="matchup-card">
@@ -1569,16 +1619,16 @@
             <div class="matchup-team">
               <div class="team-name">I Have Downs </div>
               <div class="team-record">0-0</div>
-              <div class="proj-score">140.1</div>
+              <div class="proj-score">140.5</div>
             </div>
             <div class="vs">@</div>
             <div class="matchup-team">
               <div class="team-name">HERB YOUR ENTHUSIASM</div>
               <div class="team-record">0-0</div>
-              <div class="proj-score">139.8</div>
+              <div class="proj-score">132.8</div>
             </div>
           </div>
-          <p class="outlook">Too close to call. I Have Downs  holds a razor-thin projected edge over HERB YOUR ENTHUSIASM (0.3 points), so bench decisions and Monday night performances could decide it.</p>
+          <p class="outlook">This one&#x27;s a coin flip. I Have Downs  is given the slimmest of edges over HERB YOUR ENTHUSIASM, projected to win by just 7.7 points — a single big play could flip this.</p>
         </div>
 
         <div class="matchup-card">
@@ -1586,16 +1636,16 @@
             <div class="matchup-team">
               <div class="team-name">Jake London</div>
               <div class="team-record">0-0</div>
-              <div class="proj-score">140.8</div>
+              <div class="proj-score">140.4</div>
             </div>
             <div class="vs">@</div>
             <div class="matchup-team">
               <div class="team-name">#NoKings </div>
               <div class="team-record">0-0</div>
-              <div class="proj-score">145.7</div>
+              <div class="proj-score">146.1</div>
             </div>
           </div>
-          <p class="outlook">#NoKings  and Jake London are neck and neck heading in, separated by only 4.9 projected points. Expect this to come down to the last game on the board.</p>
+          <p class="outlook">Too close to call. #NoKings  holds a razor-thin projected edge over Jake London (5.7 points), so bench decisions and Monday night performances could decide it.</p>
         </div>
 
         <div class="matchup-card">
@@ -1603,33 +1653,33 @@
             <div class="matchup-team">
               <div class="team-name">Evan Squared</div>
               <div class="team-record">0-0</div>
-              <div class="proj-score">139.2</div>
+              <div class="proj-score">139.5</div>
             </div>
             <div class="vs">@</div>
             <div class="matchup-team">
               <div class="team-name">BuckO</div>
               <div class="team-record">0-0</div>
-              <div class="proj-score">140.1</div>
+              <div class="proj-score">139.8</div>
             </div>
           </div>
-          <p class="outlook">Too close to call. BuckO holds a razor-thin projected edge over Evan Squared (0.9 points), so bench decisions and Monday night performances could decide it.</p>
+          <p class="outlook">Too close to call. BuckO holds a razor-thin projected edge over Evan Squared (0.3 points), so bench decisions and Monday night performances could decide it.</p>
         </div>
 
         <div class="matchup-card">
           <div class="matchup-teams">
             <div class="matchup-team">
-              <div class="team-name">CHASEing Greatness</div>
+              <div class="team-name">McBridefrey</div>
               <div class="team-record">0-0</div>
-              <div class="proj-score">148.1</div>
+              <div class="proj-score">146.1</div>
             </div>
             <div class="vs">@</div>
             <div class="matchup-team">
               <div class="team-name">The Price Is Right</div>
               <div class="team-record">0-0</div>
-              <div class="proj-score">144.0</div>
+              <div class="proj-score">143.1</div>
             </div>
           </div>
-          <p class="outlook">Too close to call. CHASEing Greatness holds a razor-thin projected edge over The Price Is Right (4.1 points), so bench decisions and Monday night performances could decide it.</p>
+          <p class="outlook">This one&#x27;s a coin flip. McBridefrey is given the slimmest of edges over The Price Is Right, projected to win by just 3.0 points — a single big play could flip this.</p>
         </div>
     </div>
   </div>
@@ -1665,7 +1715,7 @@
       <span><i class="dot" style="background:rgba(178,34,34,0.7)"></i> Underperforming draft slot (4+ spots)</span>
     </div>
     <table class="draft-board">
-      <thead><tr><th class='round-label'>Rd</th><th>#NoKings </th><th>The Price Is Right</th><th>I Have Downs </th><th>Cant Find Nico </th><th>Jake London</th><th>HERB YOUR ENTHUSIASM</th><th>CHASEing Greatness</th><th>BuckO</th><th>LET HIM COOK </th><th>Evan Squared</th></tr></thead>
+      <thead><tr><th class='round-label'>Rd</th><th>#NoKings </th><th>The Price Is Right</th><th>I Have Downs </th><th>Cant Find Nico </th><th>Jake London</th><th>HERB YOUR ENTHUSIASM</th><th>McBridefrey</th><th>BuckO</th><th>LET HIM COOK </th><th>Evan Squared</th></tr></thead>
       <tbody><tr><td class='round-label'>1</td><td>
             <div class="draft-cell" style="background:#2a3348; border-color:#8a92a8;">
               <div class="pick-num">1.1</div>
@@ -1712,7 +1762,7 @@
             <div class="draft-cell" style="background:#2a3348; border-color:#8a92a8;">
               <div class="pick-num">1.7</div>
               <div class="player" title="Christian McCaffrey">Christian McCaffrey</div>
-              <div class="drafted-by" title="CHASEing Greatness">CHASEing Greatness</div>
+              <div class="drafted-by" title="McBridefrey">McBridefrey</div>
               <div class='rank-move'>RB3 &rarr; n/a</div>
               <div class='bid'>&nbsp;</div>
             </div></td><td>
@@ -1782,7 +1832,7 @@
             <div class="draft-cell" style="background:#2a3348; border-color:#8a92a8;">
               <div class="pick-num">2.4</div>
               <div class="player" title="De&#x27;Von Achane">De&#x27;Von Achane</div>
-              <div class="drafted-by" title="CHASEing Greatness">CHASEing Greatness</div>
+              <div class="drafted-by" title="McBridefrey">McBridefrey</div>
               <div class='rank-move'>RB7 &rarr; n/a</div>
               <div class='bid'>&nbsp;</div>
             </div></td><td>
@@ -1852,7 +1902,7 @@
             <div class="draft-cell" style="background:#2a3348; border-color:#8a92a8;">
               <div class="pick-num">3.7</div>
               <div class="player" title="Trey McBride">Trey McBride</div>
-              <div class="drafted-by" title="CHASEing Greatness">CHASEing Greatness</div>
+              <div class="drafted-by" title="McBridefrey">McBridefrey</div>
               <div class='rank-move'>TE2 &rarr; n/a</div>
               <div class='bid'>&nbsp;</div>
             </div></td><td>
@@ -1922,7 +1972,7 @@
             <div class="draft-cell" style="background:#2a3348; border-color:#8a92a8;">
               <div class="pick-num">4.4</div>
               <div class="player" title="Malik Nabers">Malik Nabers</div>
-              <div class="drafted-by" title="CHASEing Greatness">CHASEing Greatness</div>
+              <div class="drafted-by" title="McBridefrey">McBridefrey</div>
               <div class='rank-move'>WR14 &rarr; n/a</div>
               <div class='bid'>&nbsp;</div>
             </div></td><td>
@@ -1992,7 +2042,7 @@
             <div class="draft-cell" style="background:#2a3348; border-color:#8a92a8;">
               <div class="pick-num">5.7</div>
               <div class="player" title="Breece Hall">Breece Hall</div>
-              <div class="drafted-by" title="CHASEing Greatness">CHASEing Greatness</div>
+              <div class="drafted-by" title="McBridefrey">McBridefrey</div>
               <div class='rank-move'>RB22 &rarr; n/a</div>
               <div class='bid'>&nbsp;</div>
             </div></td><td>
@@ -2062,7 +2112,7 @@
             <div class="draft-cell" style="background:#2a3348; border-color:#8a92a8;">
               <div class="pick-num">6.4</div>
               <div class="player" title="Mike Evans">Mike Evans</div>
-              <div class="drafted-by" title="CHASEing Greatness">CHASEing Greatness</div>
+              <div class="drafted-by" title="McBridefrey">McBridefrey</div>
               <div class='rank-move'>WR23 &rarr; n/a</div>
               <div class='bid'>&nbsp;</div>
             </div></td><td>
@@ -2132,7 +2182,7 @@
             <div class="draft-cell" style="background:#2a3348; border-color:#8a92a8;">
               <div class="pick-num">7.7</div>
               <div class="player" title="Parker Washington">Parker Washington</div>
-              <div class="drafted-by" title="CHASEing Greatness">CHASEing Greatness</div>
+              <div class="drafted-by" title="McBridefrey">McBridefrey</div>
               <div class='rank-move'>WR32 &rarr; n/a</div>
               <div class='bid'>&nbsp;</div>
             </div></td><td>
@@ -2202,7 +2252,7 @@
             <div class="draft-cell" style="background:#2a3348; border-color:#8a92a8;">
               <div class="pick-num">8.4</div>
               <div class="player" title="Jalen Hurts">Jalen Hurts</div>
-              <div class="drafted-by" title="CHASEing Greatness">CHASEing Greatness</div>
+              <div class="drafted-by" title="McBridefrey">McBridefrey</div>
               <div class='rank-move'>QB6 &rarr; n/a</div>
               <div class='bid'>&nbsp;</div>
             </div></td><td>
@@ -2272,7 +2322,7 @@
             <div class="draft-cell" style="background:#2a3348; border-color:#8a92a8;">
               <div class="pick-num">9.7</div>
               <div class="player" title="Chris Godwin Jr.">Chris Godwin Jr.</div>
-              <div class="drafted-by" title="CHASEing Greatness">CHASEing Greatness</div>
+              <div class="drafted-by" title="McBridefrey">McBridefrey</div>
               <div class='rank-move'>WR38 &rarr; n/a</div>
               <div class='bid'>&nbsp;</div>
             </div></td><td>
@@ -2342,7 +2392,7 @@
             <div class="draft-cell" style="background:#2a3348; border-color:#8a92a8;">
               <div class="pick-num">10.4</div>
               <div class="player" title="Rachaad White">Rachaad White</div>
-              <div class="drafted-by" title="CHASEing Greatness">CHASEing Greatness</div>
+              <div class="drafted-by" title="McBridefrey">McBridefrey</div>
               <div class='rank-move'>RB37 &rarr; n/a</div>
               <div class='bid'>&nbsp;</div>
             </div></td><td>
@@ -2412,7 +2462,7 @@
             <div class="draft-cell" style="background:#2a3348; border-color:#8a92a8;">
               <div class="pick-num">11.7</div>
               <div class="player" title="DK Metcalf">DK Metcalf</div>
-              <div class="drafted-by" title="CHASEing Greatness">CHASEing Greatness</div>
+              <div class="drafted-by" title="McBridefrey">McBridefrey</div>
               <div class='rank-move'>WR47 &rarr; n/a</div>
               <div class='bid'>&nbsp;</div>
             </div></td><td>
@@ -2482,7 +2532,7 @@
             <div class="draft-cell" style="background:#2a3348; border-color:#8a92a8;">
               <div class="pick-num">12.4</div>
               <div class="player" title="Texans D/ST">Texans D/ST</div>
-              <div class="drafted-by" title="CHASEing Greatness">CHASEing Greatness</div>
+              <div class="drafted-by" title="McBridefrey">McBridefrey</div>
               <div class='rank-move'>D/ST1 &rarr; n/a</div>
               <div class='bid'>&nbsp;</div>
             </div></td><td>
@@ -2552,7 +2602,7 @@
             <div class="draft-cell" style="background:#2a3348; border-color:#8a92a8;">
               <div class="pick-num">13.7</div>
               <div class="player" title="Zach Charbonnet">Zach Charbonnet</div>
-              <div class="drafted-by" title="CHASEing Greatness">CHASEing Greatness</div>
+              <div class="drafted-by" title="McBridefrey">McBridefrey</div>
               <div class='rank-move'>RB48 &rarr; n/a</div>
               <div class='bid'>&nbsp;</div>
             </div></td><td>
@@ -2622,7 +2672,7 @@
             <div class="draft-cell" style="background:#2a3348; border-color:#8a92a8;">
               <div class="pick-num">14.4</div>
               <div class="player" title="Kaelon Black">Kaelon Black</div>
-              <div class="drafted-by" title="CHASEing Greatness">CHASEing Greatness</div>
+              <div class="drafted-by" title="McBridefrey">McBridefrey</div>
               <div class='rank-move'>RB51 &rarr; n/a</div>
               <div class='bid'>&nbsp;</div>
             </div></td><td>
@@ -2692,7 +2742,7 @@
             <div class="draft-cell" style="background:#2a3348; border-color:#8a92a8;">
               <div class="pick-num">15.7</div>
               <div class="player" title="Tyreek Hill">Tyreek Hill</div>
-              <div class="drafted-by" title="CHASEing Greatness">CHASEing Greatness</div>
+              <div class="drafted-by" title="McBridefrey">McBridefrey</div>
               <div class='rank-move'>WR59 &rarr; n/a</div>
               <div class='bid'>&nbsp;</div>
             </div></td><td>
@@ -2793,7 +2843,7 @@
       <div class="record-context">Week 2, 2022</div>
     </div>
     <div class="record-card">
-      <div class="record-label">&#128703; Lowest. Score. Ever. (This is real)</div>
+      <div class="record-label">&#128703; Toilet Bowl (Lowest Score)</div>
       <div class="record-value">4.0</div>
       <div class="team-name-main">PhiladelphiaEagles </div><div class="owner-name">Brenden Sylvia</div>
       <div class="record-context">Week 15, 2023</div>
@@ -2818,9 +2868,9 @@
         </div>
         <div class="record-card">
           <div class="record-label">&#128201; Longest Losing Streak</div>
-          <div class="record-value">13 <span class="record-unit">games</span></div>
-          <div class="team-name-main">See you in &#x27;24</div><div class="owner-name">jake souza</div>
-          <div class="record-context">2022 Wk15 &ndash; 2023 Wk10</div>
+          <div class="record-value">11 <span class="record-unit">games</span></div>
+          <div class="team-name-main">BuckO</div><div class="owner-name">matt eires</div>
+          <div class="record-context">Weeks 2&ndash;12, 2025</div>
         </div>
         <div class="record-card">
           <div class="record-label">&#128148; Most Points in a Loss</div>
@@ -2867,7 +2917,7 @@
               <div class="rivalry-meetings">18 all-time meetings</div>
               <div class="rivalry-matchup">
                 <div class="rivalry-team">
-                  <div class="team-name">CHASEing Greatness</div>
+                  <div class="team-name">McBridefrey</div>
                   <div class="rivalry-record">12-6</div>
                   <div class="rivalry-points">2456.0 pts total</div>
                 </div>
@@ -2899,7 +2949,7 @@
               <div class="rivalry-meetings">17 all-time meetings</div>
               <div class="rivalry-matchup">
                 <div class="rivalry-team">
-                  <div class="team-name">CHASEing Greatness</div>
+                  <div class="team-name">McBridefrey</div>
                   <div class="rivalry-record">9-8</div>
                   <div class="rivalry-points">2400.9 pts total</div>
                 </div>
