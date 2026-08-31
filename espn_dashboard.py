@@ -55,7 +55,7 @@ YEAR = int(_env_or_default("YEAR", 2026))
 ESPN_S2 = _env_or_default("ESPN_S2", "PASTE_ESPN_S2_HERE")
 SWID = _env_or_default("SWID", "PASTE_SWID_HERE")  # looks like {XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX}
 OUTPUT_FILE = "index.html"
-RECENT_ACTIVITY_COUNT = 25
+RECENT_ACTIVITY_COUNT = 50  # how many waiver-wire moves to show on the Transactions tab
 # The league's first season — used as the default start point for the
 # History tab, all-time standings, and rivalry tracker. Override with the
 # HISTORY_START_YEAR env var/secret if you only want a partial history.
@@ -172,8 +172,9 @@ def build_playoff_picture_panel(league):
 def build_standings_tabs(league, history):
     """
     Builds the Standings section as a set of sub-tabs: current season,
-    playoff picture, each historical season fetched, and an All-Time
-    cumulative view. Returns (sub_nav_html, sub_panels_html).
+    each historical season fetched, and an All-Time cumulative view.
+    Returns (sub_nav_html, sub_panels_html). Playoff Picture now lives
+    under the Power Rankings tab instead of here.
     """
     season_standings = history.get("season_standings", {}) if history else {}
     all_time = history.get("all_time", {}) if history else {}
@@ -186,12 +187,6 @@ def build_standings_tabs(league, history):
         <tbody>{build_standings_rows(league)}</tbody>
       </table>
     </div>"""]
-
-    sub_nav.append('<button class="subtab" onclick="showSubTab(\'std-playoffs\', this)">Playoff Picture</button>')
-    panels.append(f"""
-    <div id="std-playoffs" class="subpanel">
-      {build_playoff_picture_panel(league)}
-    </div>""")
 
     for year in sorted(season_standings.keys(), reverse=True):
         if year == league.year:
@@ -384,30 +379,87 @@ ACTION_LABELS = {
 }
 
 
-def build_activity_rows(league):
+WAIVER_ACTIONS = {"FA ADDED", "WAIVER ADDED", "DROPPED"}
+TRADE_ACTIONS = {"TRADE_SENT", "TRADE_RECEIVED"}
+TRADE_FETCH_SIZE = 500  # generous window so no trade this season gets pushed out by waiver-wire noise
+
+
+def build_transactions_section(league):
+    """
+    Renders the Transactions tab: the 50 most recent waiver-wire moves
+    (adds/drops) this season, plus every trade this season shown as a
+    grouped card — all sides of the same trade together, not flattened
+    into disconnected rows the way a flat activity feed would.
+    """
     try:
-        activity = league.recent_activity(size=RECENT_ACTIVITY_COUNT)
+        activity = league.recent_activity(size=TRADE_FETCH_SIZE)
     except Exception:
         activity = []
 
-    rows = []
+    waiver_entries = []
+    trade_events = []
     for act in activity:
         date_str = datetime.fromtimestamp(act.date / 1000).strftime("%b %d, %Y")
+        trade_actions_here = [a for a in act.actions if a[1] in TRADE_ACTIONS]
+        if trade_actions_here:
+            trade_events.append((date_str, trade_actions_here))
         for team, action, player, bid in act.actions:
+            if action in WAIVER_ACTIONS:
+                waiver_entries.append((date_str, team, action, player, bid))
+
+    waiver_entries = waiver_entries[:RECENT_ACTIVITY_COUNT]
+    waiver_rows = []
+    for date_str, team, action, player, bid in waiver_entries:
+        team_name = html.escape(team.team_name) if team and hasattr(team, "team_name") else "Unknown"
+        player_name = player.name if hasattr(player, "name") else str(player)
+        label = ACTION_LABELS.get(action, action.replace("_", " ").title())
+        bid_str = f" (${bid})" if bid else ""
+        waiver_rows.append(f"""
+        <tr>
+          <td>{date_str}</td>
+          <td>{team_name}</td>
+          <td class="action">{html.escape(label)}</td>
+          <td>{html.escape(str(player_name))}{bid_str}</td>
+        </tr>""")
+    if not waiver_rows:
+        waiver_rows.append("<tr><td colspan='4' class='empty'>No waiver activity found this season.</td></tr>")
+
+    trade_cards = []
+    for date_str, actions_here in trade_events:
+        by_team = {}
+        for team, action, player, bid in actions_here:
             team_name = html.escape(team.team_name) if team and hasattr(team, "team_name") else "Unknown"
-            player_name = player.name if hasattr(player, "name") else str(player)
-            label = ACTION_LABELS.get(action, action.replace("_", " ").title())
-            bid_str = f" (${bid})" if bid else ""
-            rows.append(f"""
-            <tr>
-              <td>{date_str}</td>
-              <td>{team_name}</td>
-              <td class="action">{html.escape(label)}</td>
-              <td>{html.escape(str(player_name))}{bid_str}</td>
-            </tr>""")
-    if not rows:
-        rows.append("<tr><td colspan='4' class='empty'>No recent activity found.</td></tr>")
-    return "\n".join(rows)
+            player_name = html.escape(str(player.name if hasattr(player, "name") else player))
+            by_team.setdefault(team_name, {"gets": [], "gives": []})
+            if action == "TRADE_RECEIVED":
+                by_team[team_name]["gets"].append(player_name)
+            elif action == "TRADE_SENT":
+                by_team[team_name]["gives"].append(player_name)
+        sides = "".join(
+            f"""<div class="matchup-team"><div class="team-name-main">{name}</div>
+                <div class="owner-name">Gets: {', '.join(info['gets']) or '&mdash;'}</div></div>"""
+            for name, info in by_team.items()
+        )
+        trade_cards.append(f"""
+        <div class="matchup-card">
+          <div class="section-note" style="margin-bottom:8px;">{date_str}</div>
+          <div class="matchup-teams">{sides}</div>
+        </div>""")
+    if not trade_cards:
+        trade_cards.append("<p class='empty'>No trades found this season.</p>")
+
+    return f"""
+    <h2 class="section-title">Waiver Wire</h2>
+    <p class="section-note">Most recent {RECENT_ACTIVITY_COUNT} adds/drops this season.</p>
+    <table>
+      <thead><tr><th>Date</th><th>Team</th><th>Action</th><th>Player</th></tr></thead>
+      <tbody>{"".join(waiver_rows)}</tbody>
+    </table>
+
+    <h2 class="section-title" style="margin-top:28px;">Trades</h2>
+    <p class="section-note">Every trade this season.</p>
+    <div class="matchup-list">{"".join(trade_cards)}</div>
+    """
 
 
 def fetch_player_rank_data(league):
@@ -1395,6 +1447,9 @@ def build_power_rankings_section(league):
       <thead><tr><th>Team</th><th>Actual Win%</th><th>Expected Win%</th><th>Luck</th><th></th></tr></thead>
       <tbody>{"".join(luck_rows)}</tbody>
     </table>
+
+    <h2 class="section-title" style="margin-top:28px;">Playoff Picture</h2>
+    {build_playoff_picture_panel(league)}
     """
 
 
@@ -2160,7 +2215,7 @@ HTML_TEMPLATE = """<!DOCTYPE html>
   <button class="active" onclick="showTab('standings', this)">Standings</button>
   <button onclick="showTab('power', this)">Power Rankings</button>
   <button onclick="showTab('matchups', this)">Matchups</button>
-  <button onclick="showTab('activity', this)">Recent Transactions</button>
+  <button onclick="showTab('activity', this)">Transactions</button>
   <button onclick="showTab('predictions', this)">Prediction Accuracy</button>
   <button onclick="showTab('draft', this)">Draft Analysis</button>
   <button onclick="showTab('history', this)">History</button>
@@ -2190,14 +2245,7 @@ HTML_TEMPLATE = """<!DOCTYPE html>
 
 <section id="activity">
   <div class="panel">
-    <table>
-      <thead>
-        <tr><th>Date</th><th>Team</th><th>Action</th><th>Player</th></tr>
-      </thead>
-      <tbody>
-        {activity_rows}
-      </tbody>
-    </table>
+    {activity_rows}
   </div>
 </section>
 
@@ -2327,7 +2375,7 @@ def main():
         draft_report_card=build_draft_report_card(league, rank_data),
         prediction_accuracy=prediction_html,
         history_section=build_history_section(history, YEAR),
-        activity_rows=build_activity_rows(league),
+        activity_rows=build_transactions_section(league),
         draft_board=build_draft_board(league, rank_data),
     )
 
