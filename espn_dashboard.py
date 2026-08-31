@@ -786,16 +786,21 @@ def _fetch_championship_score(lg, champion_id, runnerup_id):
 def _update_streak(state, team_id, outcome, year, week, name, owner):
     """
     Rolling win/loss streak tracker keyed by team_id. Called once per
-    completed game in ASCENDING year order, so streaks correctly carry
-    across a season boundary (e.g. a run that started week 15 of one year
-    and continued into week 1 of the next). A tie breaks both a win and a
+    completed game in ASCENDING year order. Streaks are contained to a
+    single season — crossing into a new year always breaks a streak in
+    progress, even if the outcome type would otherwise have continued it,
+    so "longest win/loss streak" reflects one season's run rather than one
+    stitched across a season boundary. A tie also breaks both a win and a
     loss streak. Records the best win streak and best loss streak seen so
     far for that team, each with the year/week span it covers.
     """
     s = state.setdefault(team_id, {
         "current_type": None, "current_len": 0, "current_start": None,
-        "best_win": None, "best_loss": None,
+        "best_win": None, "best_loss": None, "last_year": None,
     })
+    if s["last_year"] is not None and year != s["last_year"]:
+        s["current_type"], s["current_len"], s["current_start"] = None, 0, None
+    s["last_year"] = year
     if outcome == "T":
         s["current_type"], s["current_len"], s["current_start"] = None, 0, None
         return
@@ -1064,7 +1069,7 @@ def build_records_book_section(records):
     ls = records["lowest_score"]
     cards.append(f"""
     <div class="record-card">
-      <div class="record-label">&#128703; Lowest. Score. Ever. (This is real)</div>
+      <div class="record-label">&#128703; Toilet Bowl (Lowest Score)</div>
       <div class="record-value">{ls['value']:.1f}</div>
       {team_cell_html(ls['team'], ls.get('owner'))}
       <div class="record-context">Week {ls['week']}, {ls['year']}</div>
@@ -1529,24 +1534,26 @@ HTML_TEMPLATE = """<!DOCTYPE html>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>{league_name} — League Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Bebas+Neue&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
 <style>
   :root {{
-    --bg: #0a0e18;
-    --panel: #151b2e;
-    --border: #262f47;
-    --text: #eef1f8;
-    --muted: #8b93ab;
-    --accent: #ff6b35;
-    --accent2: #4f8dff;
-    --accent3: #a855f7;
-    --accent4: #22d3ee;
+    --bg: #0d0f13;
+    --panel: #15181e;
+    --border: #252a33;
+    --text: #f2f0ec;
+    --muted: #8a8f9a;
+    --accent: #c81e3a;
+    --accent2: #5b7a99;
+    --accent3: #d4a017;
+    --accent4: #7fa8c9;
     --gradient: linear-gradient(90deg, var(--accent2), var(--accent3));
     --gradient-warm: linear-gradient(135deg, var(--accent), var(--accent3));
   }}
   * {{ box-sizing: border-box; }}
   body {{
     margin: 0;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     background: var(--bg);
     color: var(--text);
     padding: 24px;
@@ -1555,9 +1562,12 @@ HTML_TEMPLATE = """<!DOCTYPE html>
     margin-bottom: 28px;
   }}
   h1 {{
+    font-family: 'Anton', sans-serif;
+    font-weight: 400;
+    text-transform: uppercase;
     margin: 0 0 4px 0;
     font-size: 28px;
-    letter-spacing: -0.5px;
+    letter-spacing: 0.5px;
   }}
   .subtitle {{
     color: var(--muted);
@@ -1568,38 +1578,58 @@ HTML_TEMPLATE = """<!DOCTYPE html>
   .hero {{
     position: relative;
     overflow: hidden;
-    border-radius: 18px;
+    border-radius: 12px;
     border: 1px solid var(--border);
-    padding: 40px 32px;
-    margin-bottom: 28px;
-    background: linear-gradient(180deg, #121a30 0%, var(--panel) 100%);
+    padding: 36px 32px;
+    margin-bottom: 20px;
+    background: radial-gradient(ellipse at 50% -10%, rgba(200,30,58,0.26), transparent 60%), var(--bg);
   }}
   .hero-glow {{
     position: absolute;
     inset: -40%;
-    background:
-      radial-gradient(circle at 20% 20%, rgba(255,107,53,0.28), transparent 45%),
-      radial-gradient(circle at 80% 30%, rgba(168,85,247,0.24), transparent 45%),
-      radial-gradient(circle at 50% 90%, rgba(79,141,255,0.22), transparent 50%);
+    background: radial-gradient(circle at 50% 0%, rgba(200,30,58,0.20), transparent 55%);
     filter: blur(10px);
     pointer-events: none;
   }}
   .hero-content {{ position: relative; z-index: 1; }}
-  .hero-eyebrow {{
-    color: var(--muted);
-    font-size: 12px;
+  .onclock {{
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--accent);
+    padding: 6px 14px;
+    border-radius: 3px;
+    font-family: 'JetBrains Mono', monospace;
     font-weight: 700;
+    font-size: 11px;
     letter-spacing: 1.5px;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+    color: #fff;
+  }}
+  .onclock .pulse {{
+    width: 7px; height: 7px; border-radius: 50%; background: #fff;
+    animation: pulse 1.4s ease-in-out infinite;
+  }}
+  @keyframes pulse {{ 0%, 100% {{ opacity: 1; }} 50% {{ opacity: .3; }} }}
+  .hero-eyebrow {{
+    font-family: 'Bebas Neue', sans-serif;
+    color: var(--accent2);
+    font-size: 16px;
+    font-weight: 400;
+    letter-spacing: 3px;
     text-transform: uppercase;
     margin-bottom: 10px;
   }}
   .hero-title {{
+    font-family: 'Anton', sans-serif;
+    font-weight: 400;
+    text-transform: uppercase;
     margin: 0 0 18px 0;
-    font-size: 42px;
-    font-weight: 800;
-    letter-spacing: -1px;
-    line-height: 1.1;
-    background: linear-gradient(90deg, #ffffff 0%, #cfd8f5 60%, var(--accent3) 130%);
+    font-size: 46px;
+    letter-spacing: 0.5px;
+    line-height: 1.0;
+    background: linear-gradient(90deg, #ffffff 0%, #e8e2d8 60%, var(--accent3) 130%);
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
@@ -1609,14 +1639,14 @@ HTML_TEMPLATE = """<!DOCTYPE html>
     display: inline-flex;
     align-items: center;
     gap: 6px;
-    padding: 6px 14px;
-    border-radius: 999px;
-    font-size: 13px;
+    padding: 7px 15px;
+    border-radius: 3px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
     font-weight: 600;
-    background: rgba(255,255,255,0.06);
-    border: 1px solid rgba(255,255,255,0.1);
+    background: var(--panel);
+    border: 1px solid var(--border);
     color: var(--text);
-    backdrop-filter: blur(4px);
   }}
   .hero-chip-muted {{
     color: var(--muted);
@@ -1624,6 +1654,24 @@ HTML_TEMPLATE = """<!DOCTYPE html>
     background: transparent;
     border-color: var(--border);
   }}
+  .ticker {{
+    background: var(--accent);
+    color: #fff;
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 600;
+    font-size: 12px;
+    letter-spacing: 0.4px;
+    padding: 9px 0;
+    overflow: hidden;
+    white-space: nowrap;
+    border-radius: 8px;
+    margin-bottom: 18px;
+  }}
+  .ticker-track {{ display: inline-block; padding-left: 100%; animation: ticker-scroll 38s linear infinite; }}
+  .ticker-track span {{ display: inline-block; padding-right: 56px; }}
+  .ticker-track span::after {{ content: '\25CF'; color: var(--accent3); margin-left: 56px; font-size: 8px; vertical-align: middle; }}
+  @keyframes ticker-scroll {{ from {{ transform: translateX(0); }} to {{ transform: translateX(-100%); }} }}
+  @media (prefers-reduced-motion: reduce) {{ .ticker-track {{ animation: none; padding-left: 16px; }} }}
   nav {{
     display: flex;
     flex-wrap: wrap;
@@ -1632,10 +1680,13 @@ HTML_TEMPLATE = """<!DOCTYPE html>
     border-bottom: 1px solid var(--border);
   }}
   nav button {{
+    font-family: 'Bebas Neue', sans-serif;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
     background: none;
     border: none;
     color: var(--muted);
-    font-size: 15px;
+    font-size: 17px;
     padding: 10px 14px;
     cursor: pointer;
     border-bottom: 2px solid transparent;
@@ -1663,12 +1714,13 @@ HTML_TEMPLATE = """<!DOCTYPE html>
     font-size: 14px;
   }}
   th {{
+    font-family: 'JetBrains Mono', monospace;
     text-align: left;
     color: var(--muted);
     font-weight: 600;
-    font-size: 12px;
+    font-size: 11px;
     text-transform: uppercase;
-    letter-spacing: 0.5px;
+    letter-spacing: 1px;
     padding: 8px 10px;
     border-bottom: 1px solid var(--border);
   }}
@@ -1681,7 +1733,7 @@ HTML_TEMPLATE = """<!DOCTYPE html>
   .team-cell-inner {{ display: flex; align-items: center; gap: 8px; }}
   .team-name-main {{ font-weight: 600; }}
   .owner-name {{ color: var(--muted); font-weight: 400; font-size: 11px; margin-top: 2px; }}
-  .logo {{ width: 22px; height: 22px; border-radius: 50%; flex-shrink: 0; object-fit: cover; background: #1c2438; }}
+  .logo {{ width: 22px; height: 22px; border-radius: 50%; flex-shrink: 0; object-fit: cover; background: #1b1f27; }}
   .action {{ color: var(--accent2); }}
   .empty {{ color: var(--muted); text-align: center; padding: 24px; }}
   .pbar {{ display: flex; align-items: center; gap: 8px; min-width: 90px; }}
@@ -1700,7 +1752,7 @@ HTML_TEMPLATE = """<!DOCTYPE html>
   .pbar-label {{ font-size: 12px; color: var(--muted); min-width: 32px; text-align: right; }}
   .sparkline {{ width: 90px; height: 26px; display: block; }}
   .draft-cell {{
-    background: #1c2438;
+    background: #1b1f27;
     border: 1px solid var(--border);
     border-radius: 8px;
     padding: 10px;
@@ -1750,10 +1802,11 @@ HTML_TEMPLATE = """<!DOCTYPE html>
     vertical-align: middle;
   }}
   .section-title {{
-    font-size: 15px;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 18px;
+    letter-spacing: 1.5px;
     color: var(--muted);
     text-transform: uppercase;
-    letter-spacing: 0.5px;
     margin: 0 0 16px 0;
   }}
   .matchup-list {{
@@ -1762,7 +1815,7 @@ HTML_TEMPLATE = """<!DOCTYPE html>
     gap: 14px;
   }}
   .matchup-card {{
-    background: #1c2438;
+    background: #1b1f27;
     border: 1px solid var(--border);
     border-radius: 10px;
     padding: 16px;
@@ -1836,7 +1889,7 @@ HTML_TEMPLATE = """<!DOCTYPE html>
     margin-bottom: 16px;
   }}
   .subtab {{
-    background: #1c2438;
+    background: #1b1f27;
     border: 1px solid var(--border);
     color: var(--muted);
     font-size: 13px;
@@ -1863,7 +1916,7 @@ HTML_TEMPLATE = """<!DOCTYPE html>
     gap: 14px;
   }}
   .report-card {{
-    background: #1c2438;
+    background: #1b1f27;
     border: 1px solid var(--border);
     border-radius: 10px;
     padding: 16px;
@@ -1901,7 +1954,7 @@ HTML_TEMPLATE = """<!DOCTYPE html>
     gap: 14px;
   }}
   .rivalry-card {{
-    background: #1c2438;
+    background: #1b1f27;
     border: 1px solid var(--border);
     border-radius: 10px;
     padding: 14px;
@@ -1934,7 +1987,7 @@ HTML_TEMPLATE = """<!DOCTYPE html>
     gap: 14px;
   }}
   .trophy-card {{
-    background: #1c2438;
+    background: #1b1f27;
     border: 1px solid var(--border);
     border-radius: 10px;
     padding: 18px 16px;
@@ -1963,7 +2016,7 @@ HTML_TEMPLATE = """<!DOCTYPE html>
     gap: 14px;
   }}
   .record-card {{
-    background: #1c2438;
+    background: #1b1f27;
     border: 1px solid var(--border);
     border-radius: 10px;
     padding: 16px;
@@ -2001,7 +2054,7 @@ HTML_TEMPLATE = """<!DOCTYPE html>
     grid-template-columns: 24px 1fr auto auto auto;
     align-items: center;
     gap: 10px;
-    background: #1c2438;
+    background: #1b1f27;
     border: 1px solid var(--border);
     border-radius: 8px;
     padding: 10px 12px;
@@ -2087,9 +2140,11 @@ HTML_TEMPLATE = """<!DOCTYPE html>
 </style>
 </head>
 <body>
+{ticker_html}
 <header class="hero">
   <div class="hero-glow"></div>
   <div class="hero-content">
+    <div class="onclock"><span class="pulse"></span>Week {matchup_week_hero} &middot; On the Clock</div>
     <div class="hero-eyebrow">Fantasy Football &middot; {year} Season</div>
     <h1 class="hero-title">{league_name}</h1>
     <div class="hero-meta">
@@ -2202,6 +2257,34 @@ document.addEventListener('DOMContentLoaded', () => {{
 """
 
 
+def build_ticker_html(league, history, leader_name, leader_record):
+    """
+    Signature Draft Day War Room element: a scrolling strip of short
+    headline facts (league leader, most recent champion, a League Records
+    Book highlight). Falls back to just a season/week line if none of that
+    data is available yet (e.g. a brand-new league's first season).
+    """
+    items = []
+    if leader_name:
+        items.append(f"{leader_name.upper()} LEADS AT {leader_record}")
+
+    champions = history.get("champions") or []
+    if champions:
+        c = champions[0]
+        items.append(f"{c['team'].upper()} WON THE {c['year']} CHAMPIONSHIP")
+
+    records = history.get("records") or {}
+    hs = records.get("highest_score")
+    if hs:
+        items.append(f"RECORD BOOK: {hs['team'].upper()} PUT UP {hs['value']:.1f} IN WEEK {hs['week']}, {hs['year']}")
+
+    if not items:
+        items = [f"WEEK {YEAR} SEASON UNDERWAY"]
+
+    spans = "".join(f"<span>{html.escape(item)}</span>" for item in items)
+    return f'<div class="ticker"><div class="ticker-track">{spans}{spans}</div></div>'
+
+
 def main():
     print(f"Connecting to league {LEAGUE_ID} ({YEAR})...")
     league = League(league_id=LEAGUE_ID, year=YEAR, espn_s2=ESPN_S2, swid=SWID)
@@ -2225,6 +2308,8 @@ def main():
     team_count = len(league.teams)
     leader = sorted(league.teams, key=lambda t: (-t.wins, t.losses, -t.points_for))[0] if league.teams else None
     leader_name = leader.team_name if leader else ""
+    leader_record = f"{leader.wins}-{leader.losses}" if leader else ""
+    ticker_html = build_ticker_html(league, history, leader_name, leader_record)
 
     html_out = HTML_TEMPLATE.format(
         league_name=html.escape(league_name),
@@ -2233,6 +2318,7 @@ def main():
         team_count=team_count,
         matchup_week_hero=matchup_week,
         leader_name=html.escape(leader_name),
+        ticker_html=ticker_html,
         standings_subnav=standings_subnav,
         standings_panels=standings_panels,
         matchups=matchups_html,
