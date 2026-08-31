@@ -621,7 +621,7 @@
       <span class="hero-chip">Week 1</span>
       <span class="hero-chip">10 Teams</span>
       <span class="hero-chip">🏆 McBridefrey</span>
-      <span class="hero-chip hero-chip-muted">Updated Aug 31, 2026 04:38 PM</span>
+      <span class="hero-chip hero-chip-muted">Updated Aug 31, 2026 06:30 PM</span>
     </div>
   </div>
 </header>
@@ -630,7 +630,7 @@
   <button class="active" onclick="showTab('standings', this)">Standings</button>
   <button onclick="showTab('power', this)">Power Rankings</button>
   <button onclick="showTab('matchups', this)">Matchups</button>
-  <button onclick="showTab('activity', this)">Recent Transactions</button>
+  <button onclick="showTab('activity', this)">Transactions</button>
   <button onclick="showTab('predictions', this)">Prediction Accuracy</button>
   <button onclick="showTab('draft', this)">Draft Analysis</button>
   <button onclick="showTab('history', this)">History</button>
@@ -638,7 +638,7 @@
 
 <section id="standings" class="active">
   <div class="panel">
-    <div class="subnav"><button class="subtab active" onclick="showSubTab('std-current', this)">Current</button><button class="subtab" onclick="showSubTab('std-playoffs', this)">Playoff Picture</button><button class="subtab" onclick="showSubTab('std-2025', this)">2025</button><button class="subtab" onclick="showSubTab('std-2024', this)">2024</button><button class="subtab" onclick="showSubTab('std-2023', this)">2023</button><button class="subtab" onclick="showSubTab('std-2022', this)">2022</button><button class="subtab" onclick="showSubTab('std-2021', this)">2021</button><button class="subtab" onclick="showSubTab('std-2020', this)">2020</button><button class="subtab" onclick="showSubTab('std-2019', this)">2019</button><button class="subtab" onclick="showSubTab('std-2018', this)">2018</button><button class="subtab" onclick="showSubTab('std-alltime', this)">All-Time</button></div>
+    <div class="subnav"><button class="subtab active" onclick="showSubTab('std-current', this)">Current</button><button class="subtab" onclick="showSubTab('std-2025', this)">2025</button><button class="subtab" onclick="showSubTab('std-2024', this)">2024</button><button class="subtab" onclick="showSubTab('std-2023', this)">2023</button><button class="subtab" onclick="showSubTab('std-2022', this)">2022</button><button class="subtab" onclick="showSubTab('std-2021', this)">2021</button><button class="subtab" onclick="showSubTab('std-2020', this)">2020</button><button class="subtab" onclick="showSubTab('std-2019', this)">2019</button><button class="subtab" onclick="showSubTab('std-2018', this)">2018</button><button class="subtab" onclick="showSubTab('std-alltime', this)">All-Time</button></div>
     
     <div id="std-current" class="subpanel active">
       <table>
@@ -804,90 +804,6 @@
           <td></td>
         </tr></tbody>
       </table>
-    </div>
-    <div id="std-playoffs" class="subpanel">
-      
-    <p class="section-note">Top 6 make the playoffs. Seeding follows the same win-loss-PF order as the standings table above; ESPN's own tiebreakers may differ slightly. Updates automatically as more of the regular season completes.</p>
-    <div class="playoff-grid">
-      <div class="playoff-col">
-        <h3 class="playoff-col-title">In the Playoffs</h3>
-        
-        <div class="playoff-row">
-          <div class="playoff-seed">1</div>
-          <div class="team-cell"><div class="team-name-main">McBridefrey</div><div class="owner-name">Nathan Da Silva</div></div>
-          <div class="playoff-record">0-0</div>
-          <div class="playoff-detail">14 games left</div>
-          <div class="playoff-badge badge-hunt">In the hunt</div>
-        </div>
-        <div class="playoff-row">
-          <div class="playoff-seed">2</div>
-          <div class="team-cell"><div class="team-name-main">BuckO</div><div class="owner-name">matt eires</div></div>
-          <div class="playoff-record">0-0</div>
-          <div class="playoff-detail">14 games left</div>
-          <div class="playoff-badge badge-hunt">In the hunt</div>
-        </div>
-        <div class="playoff-row">
-          <div class="playoff-seed">3</div>
-          <div class="team-cell"><div class="team-name-main">The Price Is Right</div><div class="owner-name">cam correia</div></div>
-          <div class="playoff-record">0-0</div>
-          <div class="playoff-detail">14 games left</div>
-          <div class="playoff-badge badge-hunt">In the hunt</div>
-        </div>
-        <div class="playoff-row">
-          <div class="playoff-seed">4</div>
-          <div class="team-cell"><div class="team-name-main">Evan Squared</div><div class="owner-name">Evan deLacy &amp; Evan Carneiro</div></div>
-          <div class="playoff-record">0-0</div>
-          <div class="playoff-detail">14 games left</div>
-          <div class="playoff-badge badge-hunt">In the hunt</div>
-        </div>
-        <div class="playoff-row">
-          <div class="playoff-seed">5</div>
-          <div class="team-cell"><div class="team-name-main">Jake London</div><div class="owner-name">jake souza</div></div>
-          <div class="playoff-record">0-0</div>
-          <div class="playoff-detail">14 games left</div>
-          <div class="playoff-badge badge-hunt">In the hunt</div>
-        </div>
-        <div class="playoff-row">
-          <div class="playoff-seed">6</div>
-          <div class="team-cell"><div class="team-name-main">HERB YOUR ENTHUSIASM</div><div class="owner-name">Joshua Pires</div></div>
-          <div class="playoff-record">0-0</div>
-          <div class="playoff-detail">14 games left</div>
-          <div class="playoff-badge badge-hunt">In the hunt</div>
-        </div>
-      </div>
-      <div class="playoff-col">
-        <h3 class="playoff-col-title">On the Outside</h3>
-        
-        <div class="playoff-row">
-          <div class="playoff-seed">7</div>
-          <div class="team-cell"><div class="team-name-main">Cant Find Nico </div><div class="owner-name">Brenden Sylvia</div></div>
-          <div class="playoff-record">0-0</div>
-          <div class="playoff-detail">14 games left</div>
-          <div class="playoff-badge badge-bubble">On the bubble</div>
-        </div>
-        <div class="playoff-row">
-          <div class="playoff-seed">8</div>
-          <div class="team-cell"><div class="team-name-main">I Have Downs </div><div class="owner-name">bryce rudolph &amp; Bryce Rudolph</div></div>
-          <div class="playoff-record">0-0</div>
-          <div class="playoff-detail">14 games left</div>
-          <div class="playoff-badge badge-bubble">On the bubble</div>
-        </div>
-        <div class="playoff-row">
-          <div class="playoff-seed">9</div>
-          <div class="team-cell"><div class="team-name-main">#NoKings </div><div class="owner-name">Nate Vieira &amp; Tony Melo</div></div>
-          <div class="playoff-record">0-0</div>
-          <div class="playoff-detail">14 games left</div>
-          <div class="playoff-badge badge-bubble">On the bubble</div>
-        </div>
-        <div class="playoff-row">
-          <div class="playoff-seed">10</div>
-          <div class="team-cell"><div class="team-name-main">LET HIM COOK </div><div class="owner-name">Justin Silveira</div></div>
-          <div class="playoff-record">0-0</div>
-          <div class="playoff-detail">14 games left</div>
-          <div class="playoff-badge badge-bubble">On the bubble</div>
-        </div>
-      </div>
-    </div>
     </div>
         <div id="std-2025" class="subpanel">
           <table>
@@ -1687,14 +1603,18 @@
 
 <section id="activity">
   <div class="panel">
+    
+    <h2 class="section-title">Waiver Wire</h2>
+    <p class="section-note">Most recent 50 adds/drops this season.</p>
     <table>
-      <thead>
-        <tr><th>Date</th><th>Team</th><th>Action</th><th>Player</th></tr>
-      </thead>
-      <tbody>
-        <tr><td colspan='4' class='empty'>No recent activity found.</td></tr>
-      </tbody>
+      <thead><tr><th>Date</th><th>Team</th><th>Action</th><th>Player</th></tr></thead>
+      <tbody><tr><td colspan='4' class='empty'>No waiver activity found this season.</td></tr></tbody>
     </table>
+
+    <h2 class="section-title" style="margin-top:28px;">Trades</h2>
+    <p class="section-note">Every trade this season.</p>
+    <div class="matchup-list"><p class='empty'>No trades found this season.</p></div>
+    
   </div>
 </section>
 
