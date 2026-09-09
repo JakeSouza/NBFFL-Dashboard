@@ -1722,7 +1722,7 @@ HTML_TEMPLATE = """<!DOCTYPE html>
     border-radius: 8px;
     margin-bottom: 18px;
   }}
-  .ticker-track {{ display: inline-block; padding-left: 100%; animation: ticker-scroll 38s linear infinite; }}
+  .ticker-track {{ display: inline-block; padding-left: 100%; animation: ticker-scroll 60s linear infinite; }}
   .ticker-track span {{ display: inline-block; padding-right: 56px; }}
   .ticker-track span::after {{ content: '\25CF'; color: var(--accent3); margin-left: 56px; font-size: 8px; vertical-align: middle; }}
   @keyframes ticker-scroll {{ from {{ transform: translateX(0); }} to {{ transform: translateX(-100%); }} }}
@@ -2308,13 +2308,65 @@ document.addEventListener('DOMContentLoaded', () => {{
 def build_ticker_html(league, history, leader_name, leader_record):
     """
     Signature Draft Day War Room element: a scrolling strip of short
-    headline facts (league leader, most recent champion, a League Records
-    Book highlight). Falls back to just a season/week line if none of that
-    data is available yet (e.g. a brand-new league's first season).
+    headline facts (league leader, longest active streak, top power
+    ranking, most recent trade, up to 3 most recent waiver-wire moves,
+    most recent champion, a League Records Book highlight). Falls back to
+    just a season/week line if none of that data is available yet (e.g. a
+    brand-new league's first season).
     """
     items = []
     if leader_name:
         items.append(f"{leader_name.upper()} LEADS AT {leader_record}")
+
+    # Longest active streak league-wide (win or loss). Requires at least 2
+    # games so a fresh 1-0 start doesn't get billed as a "streak".
+    streak_teams = [t for t in league.teams if getattr(t, "streak_length", 0) >= 2]
+    if streak_teams:
+        top_streak = max(streak_teams, key=lambda t: t.streak_length)
+        kind = "WIN STREAK" if top_streak.streak_type == "WIN" else "LOSING SKID"
+        items.append(f"{top_streak.team_name.upper()} ON A {top_streak.streak_length}-GAME {kind}")
+
+    power = compute_power_rankings(league)
+    if power:
+        items.append(f"{power[0]['team'].team_name.upper()} TOPS THE POWER RANKINGS")
+
+    # Most recent trade, plus up to 3 most recent waiver-wire moves. A
+    # smaller, ticker-sized pass over the same activity feed the
+    # Transactions tab uses (see build_transactions_section) rather than
+    # sharing state with it, so this stays independent and cheap.
+    try:
+        recent = league.recent_activity(size=25)
+    except Exception:
+        recent = []
+    trade_item = None
+    move_items = []
+    for act in recent:
+        if trade_item is None:
+            trade_actions_here = [a for a in act.actions if a[1] in TRADE_ACTIONS]
+            if trade_actions_here:
+                by_team = {}
+                for team, action, player, bid in trade_actions_here:
+                    by_team.setdefault(team, []).append((action, player))
+                sides = list(by_team.items())
+                if len(sides) >= 2:
+                    (a_team, a_actions), (b_team, _) = sides[0], sides[1]
+                    a_gets = next((p for act_type, p in a_actions if act_type == "TRADE_RECEIVED"), None)
+                    if a_gets:
+                        player_name = a_gets.name if hasattr(a_gets, "name") else str(a_gets)
+                        trade_item = f"TRADE: {a_team.team_name.upper()} ACQUIRES {player_name.upper()} FROM {b_team.team_name.upper()}"
+        if len(move_items) < 3:
+            for team, action, player, bid in act.actions:
+                if action in WAIVER_ACTIONS and len(move_items) < 3:
+                    label = ACTION_LABELS.get(action, action.replace("_", " ").title())
+                    team_name = team.team_name if team and hasattr(team, "team_name") else "Unknown"
+                    player_name = player.name if hasattr(player, "name") else str(player)
+                    move_items.append(f"{label.upper()}: {team_name.upper()} - {player_name.upper()}")
+        if trade_item and len(move_items) >= 3:
+            break
+
+    if trade_item:
+        items.append(trade_item)
+    items.extend(move_items)
 
     champions = history.get("champions") or []
     if champions:
@@ -2331,6 +2383,7 @@ def build_ticker_html(league, history, leader_name, leader_record):
 
     spans = "".join(f"<span>{html.escape(item)}</span>" for item in items)
     return f'<div class="ticker"><div class="ticker-track">{spans}{spans}</div></div>'
+
 
 
 def main():
