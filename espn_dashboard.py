@@ -364,7 +364,7 @@ def build_standings_rows(league):
           <td>{progress_bar_html(win_pct)}</td>
           <td>{team.points_for:.1f}</td>
           <td>{team.points_against:.1f}</td>
-          <td>{team.streak_type} {team.streak_length}</td>
+          <td class="{'stat-pos' if team.streak_type == 'WIN' else ('stat-neg' if team.streak_type == 'LOSS' else '')}">{team.streak_type} {team.streak_length}</td>
           <td>{trend}</td>
         </tr>""")
     return "\n".join(rows)
@@ -1604,6 +1604,11 @@ HTML_TEMPLATE = """<!DOCTYPE html>
     --accent4: #7fa8c9;
     --gradient: linear-gradient(90deg, var(--accent2), var(--accent3));
     --gradient-warm: linear-gradient(135deg, var(--accent), var(--accent3));
+    --shadow-1: 0 1px 2px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.04);
+    --shadow-2: 0 4px 14px rgba(0,0,0,0.38), inset 0 1px 0 rgba(255,255,255,0.05);
+    --shadow-3: 0 16px 40px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.06);
+    --stat-pos: #3fb950;
+    --stat-neg: #e0524f;
   }}
   * {{ box-sizing: border-box; }}
   body {{
@@ -1612,7 +1617,10 @@ HTML_TEMPLATE = """<!DOCTYPE html>
     background: var(--bg);
     color: var(--text);
     padding: 24px;
+    font-variant-numeric: tabular-nums;
   }}
+  .stat-pos {{ color: var(--stat-pos); }}
+  .stat-neg {{ color: var(--stat-neg); }}
   header {{
     margin-bottom: 28px;
   }}
@@ -1646,7 +1654,16 @@ HTML_TEMPLATE = """<!DOCTYPE html>
     filter: blur(10px);
     pointer-events: none;
   }}
-  .hero-content {{ position: relative; z-index: 1; }}
+  .hero-content {{
+    position: relative;
+    z-index: 1;
+    opacity: 0;
+    transform: translateY(10px);
+    animation: hero-in 0.6s cubic-bezier(.22,1,.36,1) forwards;
+  }}
+  @keyframes hero-in {{ from {{ opacity: 0; transform: translateY(10px); }} to {{ opacity: 1; transform: translateY(0); }} }}
+  @keyframes hero-chip-in {{ from {{ opacity: 0; transform: translateY(6px); }} to {{ opacity: 1; transform: translateY(0); }} }}
+  @media (prefers-reduced-motion: reduce) {{ .hero-content, .hero-chip {{ animation: none; opacity: 1; transform: none; }} }}
   .onclock {{
     display: inline-flex;
     align-items: center;
@@ -1668,13 +1685,10 @@ HTML_TEMPLATE = """<!DOCTYPE html>
   }}
   @keyframes pulse {{ 0%, 100% {{ opacity: 1; }} 50% {{ opacity: .3; }} }}
   .hero-eyebrow {{
-    font-family: 'Bebas Neue', sans-serif;
-    color: var(--accent2);
-    font-size: 16px;
-    font-weight: 400;
-    letter-spacing: 3px;
-    text-transform: uppercase;
-    margin-bottom: 10px;
+    color: var(--muted);
+    font-size: 14px;
+    font-weight: 500;
+    margin-bottom: 8px;
   }}
   .hero-title {{
     font-family: 'Anton', sans-serif;
@@ -1684,10 +1698,7 @@ HTML_TEMPLATE = """<!DOCTYPE html>
     font-size: 46px;
     letter-spacing: 0.5px;
     line-height: 1.0;
-    background: linear-gradient(90deg, #ffffff 0%, #e8e2d8 60%, var(--accent3) 130%);
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
+    color: var(--text);
   }}
   .hero-meta {{ display: flex; flex-wrap: wrap; gap: 8px; }}
   .hero-chip {{
@@ -1702,6 +1713,8 @@ HTML_TEMPLATE = """<!DOCTYPE html>
     background: var(--panel);
     border: 1px solid var(--border);
     color: var(--text);
+    opacity: 0;
+    animation: hero-chip-in 0.5s ease forwards;
   }}
   .hero-chip-muted {{
     color: var(--muted);
@@ -1709,6 +1722,11 @@ HTML_TEMPLATE = """<!DOCTYPE html>
     background: transparent;
     border-color: var(--border);
   }}
+  .hero-meta .hero-chip:nth-child(1) {{ animation-delay: .25s; }}
+  .hero-meta .hero-chip:nth-child(2) {{ animation-delay: .32s; }}
+  .hero-meta .hero-chip:nth-child(3) {{ animation-delay: .39s; }}
+  .hero-meta .hero-chip:nth-child(4) {{ animation-delay: .46s; }}
+  .hero-meta .hero-chip:nth-child(5) {{ animation-delay: .53s; }}
   .ticker {{
     background: var(--accent);
     color: #fff;
@@ -1756,17 +1774,24 @@ HTML_TEMPLATE = """<!DOCTYPE html>
   section.active {{ display: block; }}
   section.active.show {{ opacity: 1; transform: translateY(0); }}
   .panel {{
-    box-shadow: 0 4px 16px rgba(0,0,0,0.28);
+    box-shadow: var(--shadow-2);
     background: var(--panel);
     border: 1px solid var(--border);
     border-radius: 12px;
     padding: 20px;
     overflow-x: auto;
+    overflow-y: visible;
   }}
   table {{
     width: 100%;
     border-collapse: collapse;
     font-size: 14px;
+  }}
+  thead th {{
+    position: sticky;
+    top: 0;
+    background: var(--panel);
+    z-index: 1;
   }}
   th {{
     font-family: 'JetBrains Mono', monospace;
@@ -1812,13 +1837,13 @@ HTML_TEMPLATE = """<!DOCTYPE html>
     border-radius: 8px;
     padding: 10px;
     transition: transform 0.15s ease, box-shadow 0.15s ease;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.25);
+    box-shadow: var(--shadow-1);
     display: flex;
     flex-direction: column;
     box-sizing: border-box;
   }}
-  .draft-cell:hover {{ transform: translateY(-2px); box-shadow: 0 6px 14px rgba(0,0,0,0.35); }}
-  .draft-board-wrap {{ overflow-x: auto; margin-top: 8px; }}
+  .draft-cell:hover {{ transform: translateY(-2px); box-shadow: var(--shadow-2); }}
+  .draft-board-wrap {{ overflow-x: auto; overflow-y: visible; margin-top: 8px; }}
   .draft-board {{ border-collapse: separate; border-spacing: 6px; width: max-content; }}
   .draft-board th {{ color: var(--muted); font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.3px; padding: 4px 6px; text-align: center; vertical-align: bottom; min-width: 124px; max-width: 140px; }}
   .draft-board td {{ vertical-align: top; padding: 0; min-width: 124px; max-width: 140px; }}
@@ -1874,10 +1899,10 @@ HTML_TEMPLATE = """<!DOCTYPE html>
     border: 1px solid var(--border);
     border-radius: 10px;
     padding: 16px;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.25);
+    box-shadow: var(--shadow-1);
     transition: transform 0.15s ease, box-shadow 0.15s ease;
   }}
-  .matchup-card:hover {{ transform: translateY(-3px); box-shadow: 0 8px 20px rgba(0,0,0,0.4); }}
+  .matchup-card:hover {{ transform: translateY(-3px); box-shadow: var(--shadow-3); }}
   .matchup-card.bye {{
     display: flex;
     flex-direction: column;
@@ -1960,11 +1985,11 @@ HTML_TEMPLATE = """<!DOCTYPE html>
   .subpanel {{ display: none; opacity: 0; transform: translateY(6px); transition: opacity 0.2s ease, transform 0.2s ease; }}
   .subpanel.active {{ display: block; }}
   .subpanel.active.show {{ opacity: 1; transform: translateY(0); }}
-  .move-up {{ color: #2fb344; font-weight: 600; }}
-  .move-down {{ color: #e05252; font-weight: 600; }}
+  .move-up {{ color: var(--stat-pos); font-weight: 600; }}
+  .move-down {{ color: var(--stat-neg); font-weight: 600; }}
   .move-flat {{ color: var(--muted); }}
-  .luck-good {{ color: #2fb344; font-weight: 600; }}
-  .luck-bad {{ color: #e05252; font-weight: 600; }}
+  .luck-good {{ color: var(--stat-pos); font-weight: 600; }}
+  .luck-bad {{ color: var(--stat-neg); font-weight: 600; }}
   .report-grid {{
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
@@ -1976,10 +2001,10 @@ HTML_TEMPLATE = """<!DOCTYPE html>
     border-radius: 10px;
     padding: 16px;
     position: relative;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.25);
+    box-shadow: var(--shadow-1);
     transition: transform 0.15s ease, box-shadow 0.15s ease;
   }}
-  .report-card:hover {{ transform: translateY(-3px); box-shadow: 0 8px 20px rgba(0,0,0,0.4); }}
+  .report-card:hover {{ transform: translateY(-3px); box-shadow: var(--shadow-3); }}
   .grade-badge {{
     position: absolute;
     top: 14px;
@@ -2013,10 +2038,10 @@ HTML_TEMPLATE = """<!DOCTYPE html>
     border: 1px solid var(--border);
     border-radius: 10px;
     padding: 14px;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.25);
+    box-shadow: var(--shadow-1);
     transition: transform 0.15s ease, box-shadow 0.15s ease;
   }}
-  .rivalry-card:hover {{ transform: translateY(-3px); box-shadow: 0 8px 20px rgba(0,0,0,0.4); }}
+  .rivalry-card:hover {{ transform: translateY(-3px); box-shadow: var(--shadow-3); }}
   .rivalry-meetings {{
     color: var(--muted);
     font-size: 11px;
@@ -2047,10 +2072,10 @@ HTML_TEMPLATE = """<!DOCTYPE html>
     border-radius: 10px;
     padding: 18px 16px;
     text-align: center;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.25);
+    box-shadow: var(--shadow-1);
     transition: transform 0.15s ease, box-shadow 0.15s ease;
   }}
-  .trophy-card:hover {{ transform: translateY(-3px); box-shadow: 0 8px 20px rgba(0,0,0,0.4); }}
+  .trophy-card:hover {{ transform: translateY(-3px); box-shadow: var(--shadow-3); }}
   .trophy-year {{
     color: var(--accent);
     font-weight: 800;
@@ -2075,10 +2100,10 @@ HTML_TEMPLATE = """<!DOCTYPE html>
     border: 1px solid var(--border);
     border-radius: 10px;
     padding: 16px;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.25);
+    box-shadow: var(--shadow-1);
     transition: transform 0.15s ease, box-shadow 0.15s ease;
   }}
-  .record-card:hover {{ transform: translateY(-3px); box-shadow: 0 8px 20px rgba(0,0,0,0.4); }}
+  .record-card:hover {{ transform: translateY(-3px); box-shadow: var(--shadow-3); }}
   .record-label {{
     color: var(--muted);
     font-size: 12px;
@@ -2272,7 +2297,7 @@ HTML_TEMPLATE = """<!DOCTYPE html>
 <footer>Generated locally from your ESPN league data. Not affiliated with ESPN.</footer>
 
 <script>
-function showTab(id, btn) {{
+function switchTab(id, btn) {{
   document.querySelectorAll('body > section').forEach(s => {{ s.classList.remove('active'); s.classList.remove('show'); }});
   document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
   const target = document.getElementById(id);
@@ -2281,7 +2306,14 @@ function showTab(id, btn) {{
   requestAnimationFrame(() => target.classList.add('show'));
   btn.classList.add('active');
 }}
-function showSubTab(id, btn) {{
+function showTab(id, btn) {{
+  if (document.startViewTransition && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {{
+    document.startViewTransition(() => switchTab(id, btn));
+  }} else {{
+    switchTab(id, btn);
+  }}
+}}
+function switchSubTab(id, btn) {{
   const panel = document.getElementById(id);
   const container = btn.closest('.panel');
   container.querySelectorAll('.subpanel').forEach(p => {{ p.classList.remove('active'); p.classList.remove('show'); }});
@@ -2290,6 +2322,13 @@ function showSubTab(id, btn) {{
   void panel.offsetWidth;
   requestAnimationFrame(() => panel.classList.add('show'));
   btn.classList.add('active');
+}}
+function showSubTab(id, btn) {{
+  if (document.startViewTransition && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {{
+    document.startViewTransition(() => switchSubTab(id, btn));
+  }} else {{
+    switchSubTab(id, btn);
+  }}
 }}
 // Trigger the entrance transition for whichever tab/subtab is active on
 // initial page load too, not just on click.
