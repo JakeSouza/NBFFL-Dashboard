@@ -531,16 +531,11 @@ def delta_color(delta, dead_zone=3, max_delta=15):
     return bg, border
 
 
-def build_matchups(league):
-    """Builds the weekly matchups section: projected scores + a generated outlook."""
-    week = league.current_week
-    try:
-        matchups = league.box_scores(week)
-    except Exception:
-        matchups = []
-
+def build_matchup_previews(matchups):
+    """Pre-game expectation cards: always the projected scores, regardless
+    of whether the games have actually started."""
     if not matchups:
-        return "<p class='empty'>No matchup data available for this week yet.</p>", week
+        return "<p class='empty'>No matchup data available for this week yet.</p>"
 
     cards = []
     for m in matchups:
@@ -581,7 +576,74 @@ def build_matchups(league):
           <p class="outlook">{html.escape(outlook)}</p>
         </div>""")
 
-    return "\n".join(cards), week
+    return f"<p class='section-note'>Pre-game expectations from ESPN's live projection model.</p><div class=\"matchup-list\">{''.join(cards)}</div>"
+
+
+def build_weekly_scores(matchups):
+    """Actual/live score cards for this week's matchups. Shows a 'not
+    started' placeholder per game until ESPN reports any real points."""
+    if not matchups:
+        return "<p class='empty'>No matchup data available for this week yet.</p>"
+
+    real_games = [m for m in matchups if m.home_team and m.away_team]
+    if not any((m.home_score or m.away_score) for m in real_games):
+        return "<p class='empty'>This week's games haven't started yet — check back once kickoff hits.</p>"
+
+    cards = []
+    for m in matchups:
+        if not m.home_team or not m.away_team:
+            bye_team = m.home_team or m.away_team
+            if bye_team:
+                cards.append(f"""
+                <div class="matchup-card bye">
+                  <div class="bye-label">BYE WEEK</div>
+                  <div class="team-name">{html.escape(bye_team.team_name)}</div>
+                </div>""")
+            continue
+
+        home, away = m.home_team, m.away_team
+        home_score = round(m.home_score or 0, 1)
+        away_score = round(m.away_score or 0, 1)
+        started = bool(m.home_score or m.away_score)
+        home_ahead = started and home_score > away_score
+        away_ahead = started and away_score > home_score
+
+        cards.append(f"""
+        <div class="matchup-card">
+          <div class="matchup-teams">
+            <div class="matchup-team">
+              <div class="team-name">{html.escape(away.team_name)}</div>
+              <div class="team-record">{away.wins}-{away.losses}{f"-{away.ties}" if away.ties else ""}</div>
+              <div class="proj-score{' stat-pos' if away_ahead else ''}">{away_score if started else '—'}</div>
+            </div>
+            <div class="vs">@</div>
+            <div class="matchup-team">
+              <div class="team-name">{html.escape(home.team_name)}</div>
+              <div class="team-record">{home.wins}-{home.losses}{f"-{home.ties}" if home.ties else ""}</div>
+              <div class="proj-score{' stat-pos' if home_ahead else ''}">{home_score if started else '—'}</div>
+            </div>
+          </div>
+          <p class="outlook">{'In progress / final' if started else 'Not yet started'}</p>
+        </div>""")
+
+    return f"<div class=\"matchup-list\">{''.join(cards)}</div>"
+
+
+def build_matchups(league):
+    """Builds the weekly matchups section as two views: pre-game previews
+    (projected scores) and this week's actual/live scores."""
+    week = league.current_week
+    try:
+        matchups = league.box_scores(week)
+    except Exception:
+        matchups = []
+
+    sub_nav = ('<button class="subtab active" onclick="showSubTab(\'mu-preview\', this)">Matchup Previews</button>'
+               '<button class="subtab" onclick="showSubTab(\'mu-scores\', this)">This Week\'s Scores</button>')
+    combined = (f'<div class="subnav">{sub_nav}</div>'
+                f'<div id="mu-preview" class="subpanel active">{build_matchup_previews(matchups)}</div>'
+                f'<div id="mu-scores" class="subpanel">{build_weekly_scores(matchups)}</div>')
+    return combined, week
 
 
 def generate_matchup_outlook(favorite, underdog, fav_proj, dog_proj):
@@ -2262,9 +2324,7 @@ HTML_TEMPLATE = """<!DOCTYPE html>
 <section id="matchups">
   <div class="panel">
     <h2 class="section-title">Week {matchup_week} Matchups</h2>
-    <div class="matchup-list">
-      {matchups}
-    </div>
+    {matchups}
   </div>
 </section>
 
