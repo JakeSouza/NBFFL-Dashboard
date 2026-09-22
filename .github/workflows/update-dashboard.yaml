@@ -28,7 +28,7 @@ on:
   schedule:
     # Runs daily at 09:00 UTC. Adjust as you like — cron is in UTC, not
     # your local time. https://crontab.guru is handy for editing this.
-    - cron: "0 9 * * *"
+    - cron: "0 6 * * *"
   workflow_dispatch: {}  # lets you click "Run workflow" manually in the Actions tab
 
 permissions:
