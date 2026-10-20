@@ -37,6 +37,7 @@ anywhere except directly to ESPN's API.
 from espn_api.football import League
 from datetime import datetime
 import html
+import json
 import os
 
 # ============ CONFIG ============
@@ -60,6 +61,25 @@ RECENT_ACTIVITY_COUNT = 50  # how many waiver-wire moves to show on the Transact
 # History tab, all-time standings, and rivalry tracker. Override with the
 # HISTORY_START_YEAR env var/secret if you only want a partial history.
 HISTORY_START_YEAR = int(_env_or_default("HISTORY_START_YEAR", 2018))
+# ==================================================
+
+# Weekly parlay tracking (1 leg submitted per manager, 12 legs total) lives
+# entirely outside ESPN's data model — there is no odds/betting endpoint in
+# the ESPN API. Two backends are supported, checked in this priority order:
+#
+#   1. Firebase Firestore (live, multi-device, no login required) — set
+#      FIREBASE_CONFIG to the JSON web-app config from your Firebase project.
+#      See FIREBASE-SETUP.md for the one-time setup this requires (create a
+#      free project, publish firestore.rules, register a web app). Every
+#      manager submits their own leg from their own device; grading is a
+#      batch "load week, tap results, save" flow. Nothing about this needs a
+#      code change or repo update week to week.
+#   2. Local JSON file + browser localStorage (fallback, single-user) — used
+#      automatically when Firebase isn't configured. See load_parlay_weeks()
+#      below for the file format. Fine for a commissioner entering all 12
+#      legs themselves; doesn't sync across devices/managers.
+PARLAY_FILE = _env_or_default("PARLAY_FILE", "parlay.json")
+FIREBASE_CONFIG = _env_or_default("FIREBASE_CONFIG", "")
 # ==================================================
 
 
@@ -1645,6 +1665,313 @@ def build_draft_board(league, rank_data):
     return f'<div class="draft-board-wrap">{legend}{table}</div>'
 
 
+# --------------------------------------------------------------------------- #
+#  WEEKLY PARLAY TRACKING
+# --------------------------------------------------------------------------- #
+
+def load_parlay_weeks():
+    """
+    Weekly parlay tracking (1 leg submitted per manager toward a shared
+    12-leg parlay) is entirely outside ESPN's data model — there's no
+    odds/betting endpoint in the ESPN API — so it's sourced from a small,
+    manually-maintained JSON file (PARLAY_FILE) instead. Expected shape:
+
+      [
+        {"week": 1, "season": 2026, "legs": [
+            {"manager": "Jake", "pick": "Justin Jefferson anytime TD", "result": "hit"},
+            {"manager": "Dana", "pick": "Chiefs -3.5", "result": "miss"},
+            ... one entry per manager's submitted leg ...
+        ]},
+        ...
+      ]
+
+    "result" is "hit", "miss", "push" (a neutral, voided leg), or "pending"
+    (omit/leave pending before the week's games finish). A missing or malformed file is treated as "no
+    data yet" rather than an error — the tab just shows a placeholder with
+    the expected format until the file exists.
+    """
+    if not PARLAY_FILE or not os.path.exists(PARLAY_FILE):
+        return []
+    try:
+        with open(PARLAY_FILE, "r", encoding="utf-8") as f:
+            data = json.load(f)
+        return data if isinstance(data, list) else []
+    except Exception:
+        return []
+
+
+def compute_parlay_summary(weeks):
+    """
+    Computes summary statistics from raw parlay week data.
+    Returns a dict with:
+      - weekly: list of week objects with outcome (hit/miss/push/pending)
+      - leaderboard: list of manager stats sorted by hit rate
+      - parlays_hit: total number of perfect weeks
+      - parlays_decided: total number of graded weeks
+    """
+    if not weeks:
+        return None
+    weekly, manager_stats = [], {}
+    manager_decided_seq = {}  # manager -> ordered list of 'hit'/'miss' results
+    parlays_hit = parlays_decided = 0
+    for wk in sorted(weeks, key=lambda w: (w.get("season", 0), w.get("week", 0))):
+        legs = wk.get("legs") or []
+        results = [l.get("result") for l in legs]
+        # A pushed leg is voided: any miss -> miss; every NON-push leg hit -> hit;
+        # every leg pushed -> push; otherwise still pending.
+        live = [r for r in results if r != "push"]
+        if any(r == "miss" for r in results):
+            outcome = "miss"
+        elif live and all(r == "hit" for r in live):
+            outcome = "hit"
+        elif results and not live:
+            outcome = "push"
+        else:
+            outcome = "pending"
+        if outcome in ("hit", "miss"):
+            parlays_decided += 1
+            if outcome == "hit":
+                parlays_hit += 1
+        for l in legs:
+            mgr = l.get("manager", "Unknown")
+            st = manager_stats.setdefault(mgr, {"hits": 0, "misses": 0, "pushes": 0, "pending": 0})
+            r = l.get("result")
+            if r == "hit": st["hits"] += 1
+            elif r == "miss": st["misses"] += 1
+            elif r == "push": st["pushes"] += 1
+            else: st["pending"] += 1
+            if r in ("hit", "miss"):
+                manager_decided_seq.setdefault(mgr, []).append(r)
+        weekly.append({"season": wk.get("season"), "week": wk.get("week"), "legs": legs, "outcome": outcome})
+
+    def _best_streak(seq):
+        # Longest run of consecutive hits ANYWHERE in the season
+        best = cur = 0
+        for r in seq:
+            if r == "hit":
+                cur += 1
+                best = max(best, cur)
+            else:
+                cur = 0
+        return best
+
+    leaderboard = []
+    for mgr, st in manager_stats.items():
+        decided = st["hits"] + st["misses"]  # pushes are neutral
+        rate = (st["hits"] / decided * 100) if decided else 0
+        best_streak = _best_streak(manager_decided_seq.get(mgr, []))
+        leaderboard.append({"manager": mgr, **st, "rate": round(rate, 1), "decided": decided, "best_streak": best_streak})
+    leaderboard.sort(key=lambda x: (-x["rate"], -x["decided"]))
+    return {"weekly": weekly, "leaderboard": leaderboard, "parlays_hit": parlays_hit, "parlays_decided": parlays_decided}
+
+
+def build_manager_rosters(league):
+    """
+    Build a dict mapping manager name -> roster_id for the weekly parlay
+    pick dropdown. Uses the team's owner name as the key.
+    """
+    rosters = {}
+    for team in league.teams:
+        owner = get_owner_name(team)
+        if owner:
+            rosters[owner] = team.team_id
+    return rosters
+
+
+def render_parlay(weeks, model):
+    """
+    Renders the Weekly Parlay tab, picking a backend in priority order:
+      1. Firebase Firestore (FIREBASE_CONFIG set to valid JSON with at
+         least a projectId) — live, multi-device, no login. See
+         FIREBASE-SETUP.md and firestore.rules.
+      2. Local JSON file + localStorage — used both when FIREBASE_CONFIG
+         isn't set at all, AND when it's set but can't be parsed/is
+         missing required fields (with a visible warning banner in that
+         second case, so a misconfigured value fails loudly instead of
+         silently reverting with no explanation).
+
+    Either way, an HTML comment right before the tab's content records
+    which backend was actually selected and why — view the page's source
+    (Ctrl+U / Cmd+Option+U in most browsers) and search for "Weekly Parlay
+    backend" to check this in seconds without inspecting environment
+    variables directly.
+    """
+    if not FIREBASE_CONFIG:
+        return "<!-- Weekly Parlay backend: LOCAL (FIREBASE_CONFIG is not set) -->\n" + render_parlay_local(weeks, model)
+
+    try:
+        parsed = json.loads(FIREBASE_CONFIG)
+        if not isinstance(parsed, dict) or not parsed.get("projectId"):
+            raise ValueError("parsed JSON is missing a \"projectId\" field")
+    except Exception as e:
+        warning = (
+            "<div class='parlay-alert err' style='margin-bottom:16px'>"
+            f"FIREBASE_CONFIG is set but could not be used ({html.escape(str(e))}). Falling back to "
+            "local-file mode until this is fixed &mdash; check that the environment variable "
+            "holds the exact JSON object from the Firebase console, with no missing quotes or "
+            "shell-escaping issues (wrap it in single quotes if setting it via a shell export). "
+            "See FIREBASE-SETUP.md."
+            "</div>"
+        )
+        return (
+            f"<!-- Weekly Parlay backend: LOCAL (FIREBASE_CONFIG is set but invalid: {html.escape(str(e))}) -->\n"
+            + warning + render_parlay_local(weeks, model)
+        )
+
+    return f"<!-- Weekly Parlay backend: FIREBASE (projectId={html.escape(parsed.get('projectId', ''))}) -->\n" + render_parlay_firebase(model)
+
+
+def render_parlay_firebase(model):
+    """
+    Firebase-backed Weekly Parlay tab.
+
+    Default view is a single editable table for the CURRENT season/week —
+    Team, Player, Result columns — pre-populated with one row per known
+    manager so there's nothing to set up before filling it in. Changing the
+    season/week fields and hitting Load switches to editing a different
+    week; Save Picks batch-writes every filled-in row at once, whether
+    that's the first pass (picks only, results TBD) or a later pass after
+    results come in (same rows, just with Result changed from TBD).
+
+    Below that: a season-long Team Stats table (record, current streak,
+    most-picked player), then the all-time History (leaderboard + every
+    past week as a "parlay slip" card).
+
+    Firebase's client SDK talks to Firestore directly from the browser, so
+    nothing here requires touching this repo again to keep tracking weekly
+    picks — see FIREBASE-SETUP.md for the one-time setup.
+    """
+    manager_rosters_json = json.dumps(model.get('manager_rosters', {}))
+    firebase_config_json = json.dumps(json.loads(FIREBASE_CONFIG)) if FIREBASE_CONFIG else "null"
+    return f"""<h2 class="section-title">Weekly Parlay</h2>
+    <div id="pqStatus" class="section-note">Loading&hellip;</div>
+
+    <div id="pqWeekBand" class="parlay-week-band">
+      <div class="pq-week-band-left">
+        <div class="pq-week-band-title">Week {model['current_week']}, {model['season']}</div>
+        <div class="pq-week-status" id="pqWeekStatus"></div>
+      </div>
+      <div class="pq-week-band-stats" id="pqWeekBandStats"></div>
+    </div>
+
+    <div class="parlay-card">
+      <div class="parlay-week-selector">
+        <label>Season <input type="number" id="pqSeason" value="{model['season']}"></label>
+        <label>Week <input type="number" id="pqWeek" value="{model['current_week']}"></label>
+        <button type="button" class="btn-secondary" id="pqLoadWeekBtn">Load</button>
+      </div>
+
+      <div class="parlay-table-wrap">
+        <table class="parlay-table">
+          <thead><tr><th>Team</th><th>Player</th><th>Bet Type</th><th>Amount</th><th>Result</th><th></th></tr></thead>
+          <tbody id="pqPicksBody"></tbody>
+        </table>
+      </div>
+      <div class="parlay-entry-actions">
+        <button type="button" class="btn-secondary" id="pqAddRowBtn">+ Add Row</button>
+        <button type="button" class="btn-primary" id="pqSaveBtn">Save Picks</button>
+      </div>
+      <div id="pqSaveStatus"></div>
+    </div>
+
+    <h3 class="section-title" style="margin:28px 0 10px">Team Stats &middot; {model['season']} Season</h3>
+    <div id="pqTeamStats"></div>
+
+    <h3 class="section-title" style="margin:28px 0 10px">History</h3>
+    <div id="pqHero"></div>
+    <div id="pqSummary"></div>
+    <div id="pqWeekly"></div>
+
+    <script>
+      window.FIREBASE_CONFIG = {firebase_config_json};
+      window.MANAGER_ROSTERS = {manager_rosters_json};
+      window.PQ_CURRENT_SEASON = {model['season']};
+    </script>"""
+
+
+def _parlay_result_icon(result):
+    return {"hit": ("&#10003;", "ic-hit"), "miss": ("&#10007;", "ic-miss"), "push": ("&#8211;", "ic-push")}.get(result, ("&#8226;", "ic-pending"))
+
+
+def render_parlay_local(weeks, model):
+    """
+    Renders the Weekly Parlay tab, including an in-browser entry form.
+
+    That form is a single-user workflow, not a shared multi-manager one:
+    it saves drafts to THIS browser's localStorage as you fill them in,
+    and a "Download updated parlay.json" button exports the merged result
+    (file data + your drafts) for you to commit — at which point it becomes
+    the real source of truth and shows up for everyone on the next
+    regenerate. It intentionally doesn't try to sync across devices or
+    submit anywhere on its own, since a static HTML page has nowhere to
+    send that data to. Fine for a commissioner entering all 12 legs
+    themselves; not a fit if you want each manager submitting their own.
+    """
+    summary = compute_parlay_summary(weeks)
+    header = "<h2 class='section-title'>Weekly Parlay</h2>"
+    if summary:
+        decided = summary["parlays_decided"]
+        rate = (summary["parlays_hit"] / decided * 100) if decided else 0
+        header += f"""<div class="parlay-summary-hero">
+          <div class="parlay-summary-stat"><div class="psnum">{summary['parlays_hit']}-{decided - summary['parlays_hit']}</div><div class="pslbl">Season Record</div></div>
+          <div class="parlay-summary-stat"><div class="psnum">{rate:.0f}%</div><div class="pslbl">Perfect-Week Rate</div></div>
+          <div class="parlay-summary-stat"><div class="psnum">{len(summary['weekly'])}</div><div class="pslbl">Weeks Tracked</div></div>
+        </div>"""
+
+        max_hits = max((r["hits"] for r in summary["leaderboard"]), default=0)
+        lb_rows = []
+        for i, r in enumerate(summary["leaderboard"], 1):
+            rank_cls = f" pr{i}" if i <= 3 else ""
+            bar_pct = round((r["hits"] / max_hits * 100), 1) if max_hits else 0
+            lb_rows.append(f"""<div class="parlay-lb-row">
+              <div class="parlay-lb-rank{rank_cls}">{i}</div>
+              <div><div class="parlay-lb-name">{html.escape(r['manager'])}</div>
+                <div class="parlay-lb-bar-track"><div class="parlay-lb-bar-fill" style="width:{bar_pct}%"></div></div></div>
+              <div class="parlay-lb-right"><div class="parlay-lb-rate">{r['rate']}%</div><div class="parlay-lb-record" title="Hits-Misses-Pushes">{r['hits']}-{r['misses']}-{r['pushes']}</div></div>
+            </div>""")
+        lb_html = (f"<h3 class='section-title' style='margin:18px 0 10px'>Leg Leaderboard</h3>"
+                   f"<div class='parlay-leaderboard'>{''.join(lb_rows)}</div>")
+
+        weeks_html = []
+        for wk in reversed(summary["weekly"]):
+            legs_html = "".join(
+                (lambda icon, cls: f"""<div class="parlay-leg">
+                  <div class="parlay-leg-icon {cls}">{icon}</div>
+                  <div class="parlay-leg-body"><div class="parlay-leg-manager">{html.escape(l.get('manager',''))}</div>
+                  <div class="parlay-leg-pick">{html.escape(l.get('pick',''))}</div></div></div>""")(*_parlay_result_icon(l.get("result")))
+                for l in wk["legs"]
+            )
+            weeks_html.append(f"""<div class="parlay-slip">
+              <div class="parlay-slip-head"><div class="parlay-slip-title">Week {wk['week']}, {wk['season']}</div>
+              <div class="parlay-slip-status st-{wk['outcome']}">{html.escape(wk['outcome'].title())}</div></div>
+              <div>{legs_html}</div></div>""")
+        body_html = lb_html + "<h3 class='section-title' style='margin:18px 0 10px'>Weekly Breakdown</h3>" + "".join(weeks_html)
+    else:
+        header += (f"<p class='section-note'>No parlay data yet — use the entry form below to add this week's legs, "
+                   f"or hand-edit <code>{html.escape(PARLAY_FILE)}</code> directly.</p>")
+        body_html = ""
+
+    manager_rosters_json = json.dumps(model.get('manager_rosters', {}))
+    parlay_json = json.dumps(weeks)
+
+    entry_form = f"""
+    <h3 class="section-title" style="margin:24px 0 10px">Add / Edit a Week (commissioner entry)</h3>
+    <p class="section-note">Fills a week's legs and saves a draft in this browser as you go. Nothing here syncs to
+    other managers or updates the live page on its own — use "Download updated {html.escape(PARLAY_FILE)}" when a week
+    is final, then commit that file so the next regenerate picks it up for everyone.</p>
+    <div class="parlay-entry">
+      <div class="parlay-entry-row parlay-entry-header">
+        <input type="number" id="pxSeason" placeholder="Season" value="{model['season']}">
+        <input type="number" id="pxWeek" placeholder="Week" value="{model['current_week']}">
+        <button type="button" class="btn-secondary" onclick="loadParlayWeek()">Load Week</button>
+      </div>
+    </div>
+    <div id="parlayLegRows"></div>
+    <div class="parlay-entry-actions">
+"""
+    return header + body_html + entry_form
+
+
 HTML_TEMPLATE = """<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -2184,6 +2511,323 @@ HTML_TEMPLATE = """<!DOCTYPE html>
     grid-template-columns: 1fr 1fr;
     gap: 20px;
   }}
+
+  /* ---------- Weekly Parlay ---------- */
+  .parlay-alert {{
+    padding: 12px 16px;
+    border-radius: 8px;
+    font-size: 13px;
+    margin-top: 10px;
+    border: 1px solid transparent;
+    font-weight: 500;
+  }}
+  .parlay-alert.err {{ background: rgba(224,82,82,0.12); color: #e05252; border-color: rgba(224,82,82,0.3); }}
+  .parlay-alert.info {{ background: rgba(61,139,253,0.12); color: #3d8bfd; border-color: rgba(61,139,253,0.3); }}
+  .parlay-alert.ok {{ background: rgba(47,179,68,0.12); color: #2fb344; border-color: rgba(47,179,68,0.3); }}
+  .parlay-week-band {{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #1b1f27;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 14px 16px;
+    margin-bottom: 18px;
+  }}
+  .pq-week-band-left {{ display: flex; align-items: baseline; gap: 14px; }}
+  .pq-week-band-title {{
+    font-weight: 700;
+    font-size: 15px;
+    color: var(--text);
+  }}
+  .pq-week-status {{ color: var(--muted); font-size: 12px; }}
+  .pq-week-band-stats {{
+    display: flex;
+    gap: 24px;
+  }}
+  .pq-week-band-stat {{
+    text-align: right;
+  }}
+  .pwn {{ font-size: 16px; font-weight: 700; color: var(--text); }}
+  .pwl {{ color: var(--muted); font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; }}
+  .parlay-card {{
+    background: #1b1f27;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 18px;
+    margin-bottom: 20px;
+  }}
+  .parlay-week-selector {{
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    margin-bottom: 14px;
+    flex-wrap: wrap;
+  }}
+  .parlay-week-selector label {{
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }}
+  .parlay-week-selector input {{
+    background: var(--panel);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 6px 10px;
+    border-radius: 5px;
+    font-size: 12px;
+    width: 70px;
+  }}
+  .parlay-week-selector input:focus {{
+    outline: none;
+    border-color: var(--accent2);
+  }}
+  .btn-secondary {{
+    background: #1b1f27;
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 8px 14px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.15s ease, border-color 0.15s ease;
+  }}
+  .btn-secondary:hover {{
+    background: rgba(91,122,153,0.2);
+    border-color: var(--accent2);
+  }}
+  .btn-primary {{
+    background: var(--accent);
+    border: 1px solid var(--accent);
+    color: #fff;
+    padding: 8px 14px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.15s ease, box-shadow 0.15s ease;
+  }}
+  .btn-primary:hover {{
+    background: rgba(200,30,58,0.8);
+    box-shadow: 0 2px 8px rgba(200,30,58,0.4);
+  }}
+  .parlay-table-wrap {{
+    overflow-x: auto;
+    margin: 14px 0;
+  }}
+  .parlay-table {{
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }}
+  .parlay-table th {{
+    text-align: left;
+    color: var(--muted);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 8px 10px;
+    border-bottom: 1px solid var(--border);
+    background: #15181e;
+  }}
+  .parlay-table td {{
+    padding: 8px 10px;
+    border-bottom: 1px solid var(--border);
+  }}
+  .parlay-table tr:last-child td {{ border-bottom: none; }}
+  .parlay-table input, .parlay-table select {{
+    background: var(--panel);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 6px 8px;
+    border-radius: 5px;
+    font-size: 12px;
+    width: 100%;
+    max-width: 280px;
+  }}
+  .parlay-table input.pq-row-player {
+    max-width: 400px;
+  }
+  .parlay-table input.pq-row-amount { max-width: 100px; }
+  .parlay-table select.pq-row-bet-type { max-width: 160px; }
+  .parlay-table input:focus, .parlay-table select:focus {{
+    outline: none;
+    border-color: var(--accent2);
+  }}
+  .parlay-entry-actions {{
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 14px;
+  }}
+  .parlay-lb-row {{
+    display: grid;
+    grid-template-columns: 28px 1fr auto;
+    align-items: center;
+    gap: 12px;
+    background: #1b1f27;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 12px;
+    margin-bottom: 8px;
+  }}
+  .parlay-lb-rank {{
+    font-weight: 700;
+    font-size: 14px;
+    color: var(--muted);
+    text-align: center;
+  }}
+  .parlay-lb-rank.pr1 {{ color: #ffd23f; font-size: 18px; }}
+  .parlay-lb-rank.pr2 {{ color: #c81e3a; font-size: 18px; }}
+  .parlay-lb-rank.pr3 {{ color: #5b7a99; font-size: 18px; }}
+  .parlay-lb-name {{ font-weight: 600; font-size: 13px; color: var(--text); }}
+  .parlay-lb-bar-track {{
+    height: 6px;
+    border-radius: 999px;
+    background: rgba(255,255,255,0.08);
+    overflow: hidden;
+    margin-top: 6px;
+  }}
+  .parlay-lb-bar-fill {{
+    height: 100%;
+    border-radius: 999px;
+    background: linear-gradient(90deg, var(--accent2), var(--accent3));
+    transition: width 0.3s ease;
+  }}
+  .parlay-lb-right {{ text-align: right; }}
+  .parlay-lb-rate {{ font-size: 14px; font-weight: 700; color: var(--accent2); }}
+  .parlay-lb-record {{ font-size: 11px; color: var(--muted); }}
+  .parlay-slip {{
+    background: #1b1f27;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 12px;
+    margin-bottom: 12px;
+  }}
+  .parlay-slip-head {{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+  }}
+  .parlay-slip-title {{
+    font-weight: 600;
+    font-size: 13px;
+    color: var(--text);
+  }}
+  .parlay-slip-status {{
+    font-size: 11px;
+    font-weight: 600;
+    padding: 4px 9px;
+    border-radius: 20px;
+    white-space: nowrap;
+  }}
+  .parlay-slip-status.st-hit {{ background: rgba(47,179,68,0.15); color: #2fb344; }}
+  .parlay-slip-status.st-miss {{ background: rgba(224,82,82,0.15); color: #e05252; }}
+  .parlay-slip-status.st-push {{ background: rgba(138,146,168,0.15); color: var(--muted); }}
+  .parlay-slip-status.st-pending {{ background: rgba(255,255,255,0.08); color: var(--muted); }}
+  .parlay-leg {{
+    display: flex;
+    gap: 10px;
+    background: #15181e;
+    border-radius: 6px;
+    padding: 8px 10px;
+    margin-bottom: 6px;
+  }}
+  .parlay-leg-icon {{
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    flex-shrink: 0;
+  }}
+  .parlay-leg-icon.ic-hit {{ background: rgba(47,179,68,0.2); color: #2fb344; }}
+  .parlay-leg-icon.ic-miss {{ background: rgba(224,82,82,0.2); color: #e05252; }}
+  .parlay-leg-icon.ic-push {{ background: rgba(255,255,255,0.1); color: var(--muted); }}
+  .parlay-leg-icon.ic-pending {{ background: rgba(255,255,255,0.08); color: var(--muted); }}
+  .parlay-leg-body {{ flex: 1; min-width: 0; }}
+  .parlay-leg-manager {{ font-size: 11px; color: var(--muted); margin-bottom: 2px; }}
+  .parlay-leg-pick {{ font-size: 13px; font-weight: 500; color: var(--text); word-break: break-all; }}
+  .parlay-summary-hero {{
+    display: flex;
+    gap: 24px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+  }}
+  .parlay-summary-stat {{
+    background: #1b1f27;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 12px 16px;
+    text-align: center;
+    min-width: 100px;
+    flex: 1;
+  }}
+  .psnum {{ font-size: 20px; font-weight: 800; color: var(--text); }}
+  .pslbl {{ color: var(--muted); font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; margin-top: 4px; }}
+  .parlay-entry {{
+    background: #1b1f27;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 18px;
+    margin-top: 10px;
+  }}
+  .parlay-entry-row {{
+    display: grid;
+    grid-template-columns: 1fr 2fr auto auto;
+    gap: 8px;
+    margin-bottom: 8px;
+    align-items: center;
+  }}
+  .parlay-entry-header {{
+    grid-template-columns: 1fr 1fr auto;
+  }}
+  .parlay-entry-row input, .parlay-entry-row select {{
+    background: var(--panel);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 8px 11px;
+    border-radius: 7px;
+    font-size: 12px;
+    width: 100%;
+  }}
+  .parlay-entry-row input:focus, .parlay-entry-row select:focus {{
+    outline: none;
+    border-color: var(--accent2);
+  }}
+  .parlay-progress-wrap {{
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 4px 0 14px;
+  }}
+  .parlay-progress {{
+    flex: 1;
+    height: 6px;
+    border-radius: 4px;
+    background: var(--panel);
+    overflow: hidden;
+  }}
+  .parlay-progress-fill {{
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent2), var(--accent3));
+    transition: width 0.25s ease;
+    border-radius: 4px;
+  }}
+  .parlay-progress-label {{
+    font-size: 11px;
+    color: var(--muted);
+    white-space: nowrap;
+    font-weight: 600;
+  }}
   .playoff-col-title {{
     font-size: 13px;
     color: var(--muted);
@@ -2306,6 +2950,7 @@ HTML_TEMPLATE = """<!DOCTYPE html>
   <button onclick="showTab('predictions', this)">Prediction Accuracy</button>
   <button onclick="showTab('draft', this)">Draft Analysis</button>
   <button onclick="showTab('history', this)">History</button>
+  <button onclick="showTab('parlay', this)">Weekly Parlay</button>
 </nav>
 
 <section id="standings" class="active">
@@ -2354,7 +2999,17 @@ HTML_TEMPLATE = """<!DOCTYPE html>
   </div>
 </section>
 
+<section id="parlay">
+  <div class="panel">
+    {parlay}
+  </div>
+</section>
+
 <footer>Generated locally from your ESPN league data. Not affiliated with ESPN.</footer>
+
+<!-- Firebase SDK for Weekly Parlay -->
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
 
 <script>
 function switchTab(id, btn) {{
@@ -2397,7 +3052,320 @@ document.addEventListener('DOMContentLoaded', () => {{
     void el.offsetWidth;
     requestAnimationFrame(() => el.classList.add('show'));
   }});
+  // Initialize Firebase if config is available
+  if (window.FIREBASE_CONFIG && window.FIREBASE_CONFIG.projectId) {{
+    const firebaseConfig = window.FIREBASE_CONFIG;
+    if (!firebase.apps.length) {{
+      firebase.initializeApp(firebaseConfig);
+    }}
+  }}
 }});
+
+// Weekly Parlay Firebase functionality
+function initializeParlayFirebase() {{
+  if (!window.FIREBASE_CONFIG || !window.FIREBASE_CONFIG.projectId || !firebase.apps.length) {{
+    return;
+  }}
+  const pqDb = () => firebase.firestore();
+  const PQ_ICONS = {{ hit: ['&#10003;', 'ic-hit'], miss: ['&#10007;', 'ic-miss'], push: ['&#8211;', 'ic-push'], pending: ['&#8226;', 'ic-pending'] }};
+  let currentSeason = parseInt(document.getElementById('pqSeason').value, 10);
+  let currentWeek = parseInt(document.getElementById('pqWeek').value, 10);
+  function pqSlug(s) {{
+    return String(s || '').toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+  }}
+  function setParlayAlert(id, msg, type) {{
+    const el = document.getElementById(id);
+    if (!el) return;
+    let cls = '';
+    if (type === 'err') cls = 'parlay-alert err';
+    else if (type === 'info') cls = 'parlay-alert info';
+    else if (type === 'ok') cls = 'parlay-alert ok';
+    el.className = cls;
+    el.textContent = msg;
+  }}
+  async function pqFetchAllLegs() {{
+    try {{
+      const snap = await pqDb().collection('nbfflParlayLegs').get();
+      const legs = [];
+      snap.forEach(function(d) {{ legs.push(d.data()); }});
+      return legs;
+    }} catch (err) {{
+      console.error('Error fetching parlay legs:', err);
+      return [];
+    }}
+  }}
+  async function pqSaveResults(entries) {
+    const batch = pqDb().batch();
+    entries.forEach(function(e) {
+      const id = e.season + '-' + e.week + '-' + pqSlug(e.manager);
+      batch.set(pqDb().collection('nbfflParlayLegs').doc(id), {
+        season: e.season, week: e.week, manager: e.manager, 
+        player: e.player, bet_type: e.betType, amount: e.amount, result: e.result,
+        updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+      }, {merge: true});
+    });
+    await batch.commit();
+  }  function pqTeamOptionsHtml(selected) {{
+    const managers = Object.keys(window.MANAGER_ROSTERS || {{}}).sort();
+    return '<option value="">Select team...</option>' + managers.map(function(m) {{
+      return '<option value="' + escapeHtml(m) + '"' + (m === selected ? ' selected' : '') + '>' + escapeHtml(m) + '</option>';
+    }}).join('');
+  }}
+  function escapeHtml(s) {{
+    const div = document.createElement('div');
+    div.textContent = s;
+    return div.innerHTML;
+  }}
+  function pqApplyRowTint(tr, resultVal) {{
+    tr.classList.remove('pq-row-hit', 'pq-row-miss', 'pq-row-push');
+    if (resultVal === 'hit') tr.classList.add('pq-row-hit');
+    else if (resultVal === 'miss') tr.classList.add('pq-row-miss');
+    else if (resultVal === 'push') tr.classList.add('pq-row-push');
+  }}
+  function pqAddPicksRow(manager, player, betType, amount, result) {
+    const tbody = document.getElementById('pqPicksBody');
+    if (!tbody) return;
+    const resultVal = result || 'pending';
+    const playerVal = player || '';
+    const betTypeVal = betType || '';
+    const amountVal = amount || '';
+    
+    const tr = document.createElement('tr');
+    
+    // Build bet type dropdown - PLAYER ONLY, no team bets
+    const betTypeOptions = BET_TYPES.map(opt => 
+      '<option value="' + opt.value + '"' + (opt.value === betTypeVal ? ' selected' : '') + '>' + opt.label + '</option>'
+    ).join('');
+    
+    tr.innerHTML =
+      '<td><select class="pq-row-team">' + pqTeamOptionsHtml(manager || '') + '</select></td>' +
+      '<td><input type="text" class="pq-row-player" value="' + escapeHtml(playerVal) + '" placeholder="Player name"></td>' +
+      '<td><select class="pq-row-bet-type">' + betTypeOptions + '</select></td>' +
+      '<td><input type="text" class="pq-row-amount" value="' + escapeHtml(amountVal) + '" placeholder="Amount"></td>' +
+      '<td><select class="pq-row-result">' +
+        '<option value="pending"' + (resultVal === 'pending' ? ' selected' : '') + '>TBD</option>' +
+        '<option value="hit"' + (resultVal === 'hit' ? ' selected' : '') + '>Hit</option>' +
+        '<option value="miss"' + (resultVal === 'miss' ? ' selected' : '') + '>Miss</option>' +
+        '<option value="push"' + (resultVal === 'push' ? ' selected' : '') + '>Push</option>' +
+      '</select></td>' +
+      '<td><button type="button" class="btn-remove pq-row-remove" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:18px;">&times;</button></td>';
+    tbody.appendChild(tr);
+    pqApplyRowTint(tr, resultVal);
+    const resultSel = tr.querySelector('.pq-row-result');
+    const betTypeSel = tr.querySelector('.pq-row-bet-type');
+    const amountInput = tr.querySelector('.pq-row-amount');
+    resultSel.addEventListener('change', function() { pqApplyRowTint(tr, resultSel.value); });
+    tr.querySelector('.pq-row-remove').addEventListener('click', function() { tr.remove(); });
+    
+    // Toggle amount field based on bet type
+    // For "Anytime TD", amount is not needed
+    function updateAmountVisibility() {
+      if (betTypeSel.value === 'anytime_td') {
+        amountInput.style.display = 'none';
+      } else {
+        amountInput.style.display = '';
+      }
+    }
+    betTypeSel.addEventListener('change', updateAmountVisibility);
+    updateAmountVisibility();
+  }
+  function pqRenderWeekBand(season, week, filteredLegs) {{
+    const titleEl = document.querySelector('#pqWeekBand .pq-week-band-title');
+    const statsEl = document.getElementById('pqWeekBandStats');
+    const statusEl = document.getElementById('pqWeekStatus');
+    if (!titleEl || !statsEl) return;
+    titleEl.textContent = 'Week ' + week + ', ' + season;
+    const submitted = filteredLegs.length;
+    const hits = filteredLegs.filter(function(l) {{ return l.result === 'hit'; }}).length;
+    const misses = filteredLegs.filter(function(l) {{ return l.result === 'miss'; }}).length;
+    const pushes = filteredLegs.filter(function(l) {{ return l.result === 'push'; }}).length;
+    const graded = hits + misses + pushes;
+    statsEl.innerHTML =
+      '<div class="pq-week-band-stat"><div class="pwn">' + submitted + '</div><div class="pwl">Submitted</div></div>' +
+      '<div class="pq-week-band-stat"><div class="pwn">' + graded + ' / ' + submitted + '</div><div class="pwl">Graded</div></div>' +
+      '<div class="pq-week-band-stat"><div class="pwn">' + hits + '-' + misses + '-' + pushes + '</div><div class="pwl">Hit-Miss-Push</div></div>';
+    if (statusEl) {{
+      let cls, label;
+      if (submitted === 0) {{ cls = 'pq-status-none'; label = 'Not started'; }}
+      else if (graded < submitted) {{ cls = 'pq-status-partial'; label = 'Picks saved - needs results'; }}
+      else {{ cls = 'pq-status-complete'; label = 'Complete'; }}
+      statusEl.innerHTML = '<span class="pq-status-badge ' + cls + '">' + label + '</span>';
+    }}
+  }}
+  function pqComputeStreak(sortedDecidedLegs) {{
+    if (!sortedDecidedLegs.length) return {{type: null, length: 0}};
+    const lastType = sortedDecidedLegs[sortedDecidedLegs.length - 1].result;
+    let len = 0;
+    for (let i = sortedDecidedLegs.length - 1; i >= 0; i--) {{
+      if (sortedDecidedLegs[i].result === lastType) len++; else break;
+    }}
+    return {{type: lastType, length: len}};
+  }}
+  function pqRenderTeamStats(allLegs) {{
+    const wrap = document.getElementById('pqTeamStats');
+    if (!wrap) return;
+    const season = window.PQ_CURRENT_SEASON;
+    const thisSeasonLegs = allLegs.filter(function(l) {{ return Number(l.season) === season; }});
+    const managers = Object.keys(window.MANAGER_ROSTERS || {{}}).sort();
+    const rows = managers.map(function(mgr) {{
+      const mgrLegs = thisSeasonLegs.filter(function(l) {{ return l.manager === mgr; }});
+      const decidedLegs = mgrLegs.filter(function(l) {{ return l.result !== 'pending'; }}).sort(function(a, b) {{ return a.week - b.week; }});
+      const streak = pqComputeStreak(decidedLegs);
+      const hits = mgrLegs.filter(function(l) {{ return l.result === 'hit'; }}).length;
+      const misses = mgrLegs.filter(function(l) {{ return l.result === 'miss'; }}).length;
+      const pushes = mgrLegs.filter(function(l) {{ return l.result === 'push'; }}).length;
+      const total = hits + misses + pushes;
+      const rate = total ? Math.round(hits / total * 100) : 0;
+      let streakHtml = '';
+      if (streak.type) {{
+        const typeLabel = streak.type === 'hit' ? 'Hit Streak' : 'Miss Streak';
+        streakHtml = '<span style="color:' + (streak.type === 'hit' ? '#2fb344' : '#e05252') + ';font-weight:600;">' +
+          streak.length + '-week ' + typeLabel + '</span>';
+      }}
+      return '<div class="parlay-lb-row">' +
+        '<div class="parlay-lb-rank">' + (hits > 0 ? '&#10003;' : '') + '</div>' +
+        '<div><div class="parlay-lb-name">' + escapeHtml(mgr) + '</div>' +
+          (streakHtml ? '<div style="margin-top:4px;">' + streakHtml + '</div>' : '') +
+        '</div>' +
+        '<div class="parlay-lb-right"><div class="parlay-lb-rate">' + rate + '%</div>' +
+          '<div class="parlay-lb-record">' + hits + '-' + misses + '-' + pushes + '</div>' +
+        '</div>' +
+      '</div>';
+    }});
+    wrap.innerHTML = '<div class="parlay-leaderboard">' + rows.join('') + '</div>';
+  }}
+  function pqRenderHistory(allLegs) {
+    const wrap = document.getElementById('pqWeekly');
+    if (!wrap) return;
+    const byWeek = {};
+    allLegs.forEach(function(l) {
+      const key = l.season + '-' + String(l.week).padStart(2, '0');
+      if (!byWeek[key]) byWeek[key] = [];
+      byWeek[key].push(l);
+    });
+    const sortedKeys = Object.keys(byWeek).sort().reverse();
+    const slips = sortedKeys.map(function(key) {
+      const legs = byWeek[key];
+      const parts = key.split('-');
+      const season = parseInt(parts[0], 10);
+      const week = parseInt(parts[1], 10);
+      const hits = legs.filter(function(l) { return l.result === 'hit'; }).length;
+      const misses = legs.filter(function(l) { return l.result === 'miss'; }).length;
+      const pushes = legs.filter(function(l) { return l.result === 'push'; }).length;
+      let outcome = 'pending';
+      if (hits + misses + pushes > 0) {
+        if (misses > 0) outcome = 'miss';
+        else if (hits > 0 && hits === legs.length) outcome = 'hit';
+        else if (pushes === legs.length) outcome = 'push';
+      }
+      const legsHtml = legs.map(function(l) {
+        const iconData = PQ_ICONS[l.result || 'pending'] || PQ_ICONS.pending;
+        const betLabel = BET_TYPES.find(bt => bt.value === l.bet_type)?.label || l.bet_type || 'Custom';
+        const amountStr = l.amount ? ' (' + escapeHtml(l.amount) + ')' : '';
+        return '<div class="parlay-leg">' +
+          '<div class="parlay-leg-icon ' + iconData[1] + '">' + iconData[0] + '</div>' +
+          '<div class="parlay-leg-body"><div class="parlay-leg-manager">' + escapeHtml(l.manager) + '</div>' +
+          '<div class="parlay-leg-pick">' + escapeHtml(l.player) + ' - ' + escapeHtml(betLabel) + amountStr + '</div></div>' +
+        '</div>';
+      }).join('');
+      return '<div class="parlay-slip">' +
+        '<div class="parlay-slip-head"><div class="parlay-slip-title">Week ' + week + ', ' + season + '</div>' +
+        '<div class="parlay-slip-status st-' + outcome + '">' + (outcome.charAt(0).toUpperCase() + outcome.slice(1)) + '</div></div>' +
+        '<div>' + legsHtml + '</div>' +
+      '</div>';
+    });
+    wrap.innerHTML = slips.join('');
+  }  function pqRenderHero(allLegs) {{
+    const wrap = document.getElementById('pqHero');
+    if (!wrap) return;
+    const season = window.PQ_CURRENT_SEASON;
+    const thisSeasonLegs = allLegs.filter(function(l) {{ return Number(l.season) === season; }});
+    const totalWeeks = Object.keys(thisSeasonLegs.reduce(function(acc, l) {{ acc[l.week] = true; return acc; }}, {{}})).length;
+    const hits = thisSeasonLegs.filter(function(l) {{ return l.result === 'hit'; }}).length;
+    const misses = thisSeasonLegs.filter(function(l) {{ return l.result === 'miss'; }}).length;
+    const pushes = thisSeasonLegs.filter(function(l) {{ return l.result === 'push'; }}).length;
+    const decided = hits + misses + pushes;
+    const rate = decided ? Math.round(hits / decided * 100) : 0;
+    wrap.innerHTML = '<div class="parlay-summary-hero">' +
+      '<div class="parlay-summary-stat"><div class="psnum">' + hits + '-' + misses + '</div><div class="pslbl">Season Record</div></div>' +
+      '<div class="parlay-summary-stat"><div class="psnum">' + rate + '%</div><div class="pslbl">Hit Rate</div></div>' +
+      '<div class="parlay-summary-stat"><div class="psnum">' + totalWeeks + '</div><div class="pslbl">Weeks Tracked</div></div>' +
+    '</div>';
+  }}
+  async function pqLoadWeek() {
+    currentSeason = parseInt(document.getElementById('pqSeason').value, 10);
+    currentWeek = parseInt(document.getElementById('pqWeek').value, 10);
+    const tbody = document.getElementById('pqPicksBody');
+    if (!tbody) return;
+    if (!currentSeason || !currentWeek) {
+      setParlayAlert('pqSaveStatus', 'Enter a season and week first.', 'err');
+      return;
+    }
+    setParlayAlert('pqSaveStatus', 'Loading...', 'info');
+    try {
+      const legs = await pqFetchAllLegs();
+      const filtered = legs.filter(function(l) { return Number(l.season) === currentSeason && Number(l.week) === currentWeek; });
+      tbody.innerHTML = '';
+      if (filtered.length) {
+        filtered.forEach(function(l) { 
+          pqAddPicksRow(l.manager, l.player, l.bet_type, l.amount, l.result); 
+        });
+      } else {
+        Object.keys(window.MANAGER_ROSTERS || {}).sort().forEach(function(m) { 
+          pqAddPicksRow(m, '', '', '', 'pending'); 
+        });
+      }
+      setParlayAlert('pqSaveStatus', '', null);
+      pqRenderWeekBand(currentSeason, currentWeek, filtered);
+      const allLegs = await pqFetchAllLegs();
+      pqRenderTeamStats(allLegs);
+      pqRenderHistory(allLegs);
+      pqRenderHero(allLegs);
+    } catch (err) {
+      setParlayAlert('pqSaveStatus', 'Could not load that week.', 'err');
+      console.error(err);
+    }
+  }  async function pqSavePicks() {
+    currentSeason = parseInt(document.getElementById('pqSeason').value, 10);
+    currentWeek = parseInt(document.getElementById('pqWeek').value, 10);
+    if (!currentSeason || !currentWeek) {
+      setParlayAlert('pqSaveStatus', 'Enter a season and week first.', 'err');
+      return;
+    }
+    const rows = document.querySelectorAll('#pqPicksBody tr');
+    const entries = [];
+    rows.forEach(function(tr) {
+      const manager = tr.querySelector('.pq-row-team').value;
+      const player = tr.querySelector('.pq-row-player').value;
+      const betType = tr.querySelector('.pq-row-bet-type').value;
+      const amount = tr.querySelector('.pq-row-amount').value;
+      const result = tr.querySelector('.pq-row-result').value;
+      if (manager && player && betType) {
+        entries.push({season: currentSeason, week: currentWeek, manager: manager, 
+                     player: player, betType: betType, amount: amount, result: result});
+      }
+    });
+    if (!entries.length) {
+      setParlayAlert('pqSaveStatus', 'Fill in at least one row (team, player, bet type required).', 'err');
+      return;
+    }
+    setParlayAlert('pqSaveStatus', 'Saving...', 'info');
+    try {
+      await pqSaveResults(entries);
+      setParlayAlert('pqSaveStatus', 'Saved ' + entries.length + ' pick' + (entries.length === 1 ? '' : 's') + ' for Week ' + currentWeek + ', ' + currentSeason + '.', 'ok');
+      pqLoadWeek();
+    } catch (err) {
+      setParlayAlert('pqSaveStatus', 'Could not save: ' + err.message, 'err');
+    }
+  }  const loadBtn = document.getElementById('pqLoadWeekBtn');
+  const saveBtn = document.getElementById('pqSaveBtn');
+  const addRowBtn = document.getElementById('pqAddRowBtn');
+  if (loadBtn) loadBtn.addEventListener('click', pqLoadWeek);
+  if (saveBtn) saveBtn.addEventListener('click', pqSavePicks);
+  if (addRowBtn) addRowBtn.addEventListener('click', function() { pqAddPicksRow('', '', '', '', 'pending'); });
+  if (document.getElementById('pqPicksBody')) {{ pqLoadWeek(); }}
+}}
+
 </script>
 </body>
 </html>
@@ -2511,6 +3479,28 @@ def main():
     leader_record = f"{leader.wins}-{leader.losses}" if leader else ""
     ticker_html = build_ticker_html(league, history, leader_name, leader_record)
 
+    # Weekly parlay tracking
+    print("Loading parlay data...")
+    parlay_weeks = load_parlay_weeks()
+    manager_rosters = build_manager_rosters(league)
+    # Current week from league data
+    current_week = league.current_week if hasattr(league, 'current_week') and league.current_week else 1
+    try:
+        state = league.league_state
+        if state and hasattr(state, 'current_matchup_period'):
+            current_week = state.current_matchup_period
+    except Exception:
+        pass
+    if current_week < 1:
+        current_week = 1
+
+    parlay_model = {
+        'season': YEAR,
+        'current_week': current_week,
+        'manager_rosters': manager_rosters,
+    }
+    parlay_html = render_parlay(parlay_weeks, parlay_model)
+
     html_out = HTML_TEMPLATE.format(
         league_name=html.escape(league_name),
         year=YEAR,
@@ -2529,6 +3519,7 @@ def main():
         history_section=build_history_section(history, YEAR),
         activity_rows=build_transactions_section(league),
         draft_board=build_draft_board(league, rank_data),
+        parlay=parlay_html,
     )
 
     with open(OUTPUT_FILE, "w", encoding="utf-8") as f:

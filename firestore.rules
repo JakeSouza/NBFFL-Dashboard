@@ -1,0 +1,15 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Weekly Parlay legs for NBFFL
+    // Any authenticated request can read/write parlay legs.
+    // In practice, "authenticated" here just means the request came from
+    // a page that initialized Firebase with the project's config  since
+    // the web config is public, this effectively means anyone who visits
+    // the dashboard page can submit picks. That's the intended behavior:
+    // every manager submits their own leg from their own device.
+    match /nbfflParlayLegs/{document=**} {
+      allow read, write: if request.auth != null;
+    }
+  }
+}
