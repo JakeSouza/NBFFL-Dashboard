@@ -57,6 +57,7 @@ jobs:
           ESPN_S2: ${{ secrets.ESPN_S2 }}
           SWID: ${{ secrets.SWID }}
           HISTORY_START_YEAR: ${{ secrets.HISTORY_START_YEAR }}
+          FIREBASE_CONFIG: ${{ secrets.FIREBASE_CONFIG }}
         run: python espn_dashboard.py
 
       - name: Commit and push if changed
