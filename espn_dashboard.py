@@ -2649,27 +2649,27 @@ HTML_TEMPLATE = """<!DOCTYPE html>
     font-size: 12px;
     width: 100%;
     max-width: 280px;
-  }}
-  .parlay-table input.pq-row-player {{
+  }}}}
+  .parlay-table input.pq-row-player {{{{
     max-width: 400px;
-  }}
-  .parlay-table input.pq-row-amount {{
+  }}}}
+  .parlay-table input.pq-row-amount {{{{
     max-width: 100px;
-  }}
+  }}}}
 
   /* ---------- Weekly Parlay ---------- */
-  .parlay-alert {{
+  .parlay-alert {{{{
     padding: 12px 16px;
     border-radius: 8px;
     font-size: 13px;
     margin-top: 10px;
     border: 1px solid transparent;
     font-weight: 500;
-  }}
-  .parlay-alert.err {{ background: rgba(224,82,82,0.12); color: #e05252; border-color: rgba(224,82,82,0.3); }}
-  .parlay-alert.info {{ background: rgba(61,139,253,0.12); color: #3d8bfd; border-color: rgba(61,139,253,0.3); }}
-  .parlay-alert.ok {{ background: rgba(47,179,68,0.12); color: #2fb344; border-color: rgba(47,179,68,0.3); }}
-  .parlay-week-band {{
+  }}}}
+  .parlay-alert.err {{{{ background: rgba(224,82,82,0.12); color: #e05252; border-color: rgba(224,82,82,0.3); }}}}
+  .parlay-alert.info {{{{ background: rgba(61,139,253,0.12); color: #3d8bfd; border-color: rgba(61,139,253,0.3); }}}}
+  .parlay-alert.ok {{{{ background: rgba(47,179,68,0.12); color: #2fb344; border-color: rgba(47,179,68,0.3); }}}}
+  .parlay-week-band {{{{
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -2678,38 +2678,38 @@ HTML_TEMPLATE = """<!DOCTYPE html>
     border-radius: 8px;
     padding: 14px 16px;
     margin-bottom: 18px;
-  }}
-  .pq-week-band-left {{ display: flex; align-items: baseline; gap: 14px; }}
-  .pq-week-band-title {{
+  }}}}
+  .pq-week-band-left {{{{ display: flex; align-items: baseline; gap: 14px; }}}}
+  .pq-week-band-title {{{{
     font-weight: 700;
     font-size: 15px;
     color: var(--text);
-  }}
-  .pq-week-status {{ color: var(--muted); font-size: 12px; }}
-  .pq-week-band-stats {{
+  }}}}
+  .pq-week-status {{{{ color: var(--muted); font-size: 12px; }}}}
+  .pq-week-band-stats {{{{
     display: flex;
     gap: 24px;
-  }}
-  .pq-week-band-stat {{
+  }}}}
+  .pq-week-band-stat {{{{
     text-align: right;
-  }}
-  .pwn {{ font-size: 16px; font-weight: 700; color: var(--text); }}
-  .pwl {{ color: var(--muted); font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; }}
-  .parlay-card {{
+  }}}}
+  .pwn {{{{ font-size: 16px; font-weight: 700; color: var(--text); }}}}
+  .pwl {{{{ color: var(--muted); font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; }}}}
+  .parlay-card {{{{
     background: #1b1f27;
     border: 1px solid var(--border);
     border-radius: 8px;
     padding: 18px;
     margin-bottom: 20px;
-  }}
-  .parlay-week-selector {{
+  }}}}
+  .parlay-week-selector {{{{
     display: flex;
     gap: 10px;
     align-items: center;
     margin-bottom: 14px;
     flex-wrap: wrap;
-  }}
-  .parlay-week-selector label {{
+  }}}}
+  .parlay-week-selector label {{{{
     display: flex;
     align-items: center;
     gap: 6px;
@@ -2717,8 +2717,8 @@ HTML_TEMPLATE = """<!DOCTYPE html>
     color: var(--muted);
     text-transform: uppercase;
     letter-spacing: 0.5px;
-  }}
-  .parlay-week-selector input {{
+  }}}}
+  .parlay-week-selector input {{{{
     background: var(--panel);
     border: 1px solid var(--border);
     color: var(--text);
@@ -2726,12 +2726,12 @@ HTML_TEMPLATE = """<!DOCTYPE html>
     border-radius: 5px;
     font-size: 12px;
     width: 70px;
-  }}
-  .parlay-week-selector input:focus {{
+  }}}}
+  .parlay-week-selector input:focus {{{{
     outline: none;
     border-color: var(--accent2);
-  }}
-  .btn-secondary {{
+  }}}}
+  .btn-secondary {{{{
     background: #1b1f27;
     border: 1px solid var(--border);
     color: var(--text);
@@ -2741,12 +2741,12 @@ HTML_TEMPLATE = """<!DOCTYPE html>
     font-weight: 500;
     cursor: pointer;
     transition: background-color 0.15s ease, border-color 0.15s ease;
-  }}
-  .btn-secondary:hover {{
+  }}}}
+  .btn-secondary:hover {{{{
     background: rgba(91,122,153,0.2);
     border-color: var(--accent2);
-  }}
-  .btn-primary {{
+  }}}}
+  .btn-primary {{{{
     background: var(--accent);
     border: 1px solid var(--accent);
     color: #fff;
@@ -2756,21 +2756,21 @@ HTML_TEMPLATE = """<!DOCTYPE html>
     font-weight: 600;
     cursor: pointer;
     transition: background-color 0.15s ease, box-shadow 0.15s ease;
-  }}
-  .btn-primary:hover {{
+  }}}}
+  .btn-primary:hover {{{{
     background: rgba(200,30,58,0.8);
     box-shadow: 0 2px 8px rgba(200,30,58,0.4);
-  }}
-  .parlay-table-wrap {{
+  }}}}
+  .parlay-table-wrap {{{{
     overflow-x: auto;
     margin: 14px 0;
-  }}
-  .parlay-table {{
+  }}}}
+  .parlay-table {{{{
     width: 100%;
     border-collapse: collapse;
     font-size: 13px;
-  }}
-  .parlay-table th {{
+  }}}}
+  .parlay-table th {{{{
     text-align: left;
     color: var(--muted);
     font-size: 11px;
@@ -2779,13 +2779,13 @@ HTML_TEMPLATE = """<!DOCTYPE html>
     padding: 8px 10px;
     border-bottom: 1px solid var(--border);
     background: #15181e;
-  }}
-  .parlay-table td {{
+  }}}}
+  .parlay-table td {{{{
     padding: 8px 10px;
     border-bottom: 1px solid var(--border);
-  }}
-  .parlay-table tr:last-child td {{ border-bottom: none; }}
-  .parlay-table input, .parlay-table select {{
+  }}}}
+  .parlay-table tr:last-child td {{{{ border-bottom: none; }}}}
+  .parlay-table input, .parlay-table select {{{{
     background: var(--panel);
     border: 1px solid var(--border);
     color: var(--text);
@@ -2794,27 +2794,27 @@ HTML_TEMPLATE = """<!DOCTYPE html>
     font-size: 12px;
     width: 100%;
     max-width: 280px;
-  }}
-  .parlay-table input.pq-row-player {{
+  }}}}
+  .parlay-table input.pq-row-player {{{{
     max-width: 400px;
-  }}
-  .parlay-table input.pq-row-amount {{
+  }}}}
+  .parlay-table input.pq-row-amount {{{{
     max-width: 100px;
-  }}
-  .parlay-table select.pq-row-bet-type {{
+  }}}}
+  .parlay-table select.pq-row-bet-type {{{{
     max-width: 160px;
-  }}
-  .parlay-table input:focus, .parlay-table select:focus {{
+  }}}}
+  .parlay-table input:focus, .parlay-table select:focus {{{{
     outline: none;
     border-color: var(--accent2);
-  }}
-  .parlay-entry-actions {{
+  }}}}
+  .parlay-entry-actions {{{{
     display: flex;
     gap: 10px;
     flex-wrap: wrap;
     margin-top: 14px;
-  }}
-  .parlay-lb-row {{
+  }}}}
+  .parlay-lb-row {{{{
     display: grid;
     grid-template-columns: 28px 1fr auto;
     align-items: center;
@@ -2824,71 +2824,71 @@ HTML_TEMPLATE = """<!DOCTYPE html>
     border-radius: 8px;
     padding: 10px 12px;
     margin-bottom: 8px;
-  }}
-  .parlay-lb-rank {{
+  }}}}
+  .parlay-lb-rank {{{{
     font-weight: 700;
     font-size: 14px;
     color: var(--muted);
     text-align: center;
-  }}
-  .parlay-lb-rank.pr1 {{ color: #ffd23f; font-size: 18px; }}
-  .parlay-lb-rank.pr2 {{ color: #c81e3a; font-size: 18px; }}
-  .parlay-lb-rank.pr3 {{ color: #5b7a99; font-size: 18px; }}
-  .parlay-lb-name {{ font-weight: 600; font-size: 13px; color: var(--text); }}
-  .parlay-lb-bar-track {{
+  }}}}
+  .parlay-lb-rank.pr1 {{{{ color: #ffd23f; font-size: 18px; }}}}
+  .parlay-lb-rank.pr2 {{{{ color: #c81e3a; font-size: 18px; }}}}
+  .parlay-lb-rank.pr3 {{{{ color: #5b7a99; font-size: 18px; }}}}
+  .parlay-lb-name {{{{ font-weight: 600; font-size: 13px; color: var(--text); }}}}
+  .parlay-lb-bar-track {{{{
     height: 6px;
     border-radius: 999px;
     background: rgba(255,255,255,0.08);
     overflow: hidden;
     margin-top: 6px;
-  }}
-  .parlay-lb-bar-fill {{
+  }}}}
+  .parlay-lb-bar-fill {{{{
     height: 100%;
     border-radius: 999px;
     background: linear-gradient(90deg, var(--accent2), var(--accent3));
     transition: width 0.3s ease;
-  }}
-  .parlay-lb-right {{ text-align: right; }}
-  .parlay-lb-rate {{ font-size: 14px; font-weight: 700; color: var(--accent2); }}
-  .parlay-lb-record {{ font-size: 11px; color: var(--muted); }}
-  .parlay-slip {{
+  }}}}
+  .parlay-lb-right {{{{ text-align: right; }}}}
+  .parlay-lb-rate {{{{ font-size: 14px; font-weight: 700; color: var(--accent2); }}}}
+  .parlay-lb-record {{{{ font-size: 11px; color: var(--muted); }}}}
+  .parlay-slip {{{{
     background: #1b1f27;
     border: 1px solid var(--border);
     border-radius: 8px;
     padding: 12px;
     margin-bottom: 12px;
-  }}
-  .parlay-slip-head {{
+  }}}}
+  .parlay-slip-head {{{{
     display: flex;
     justify-content: space-between;
     align-items: center;
     margin-bottom: 10px;
-  }}
-  .parlay-slip-title {{
+  }}}}
+  .parlay-slip-title {{{{
     font-weight: 600;
     font-size: 13px;
     color: var(--text);
-  }}
-  .parlay-slip-status {{
+  }}}}
+  .parlay-slip-status {{{{
     font-size: 11px;
     font-weight: 600;
     padding: 4px 9px;
     border-radius: 20px;
     white-space: nowrap;
-  }}
-  .parlay-slip-status.st-hit {{ background: rgba(47,179,68,0.15); color: #2fb344; }}
-  .parlay-slip-status.st-miss {{ background: rgba(224,82,82,0.15); color: #e05252; }}
-  .parlay-slip-status.st-push {{ background: rgba(138,146,168,0.15); color: var(--muted); }}
-  .parlay-slip-status.st-pending {{ background: rgba(255,255,255,0.08); color: var(--muted); }}
-  .parlay-leg {{
+  }}}}
+  .parlay-slip-status.st-hit {{{{ background: rgba(47,179,68,0.15); color: #2fb344; }}}}
+  .parlay-slip-status.st-miss {{{{ background: rgba(224,82,82,0.15); color: #e05252; }}}}
+  .parlay-slip-status.st-push {{{{ background: rgba(138,146,168,0.15); color: var(--muted); }}}}
+  .parlay-slip-status.st-pending {{{{ background: rgba(255,255,255,0.08); color: var(--muted); }}}}
+  .parlay-leg {{{{
     display: flex;
     gap: 10px;
     background: #15181e;
     border-radius: 6px;
     padding: 8px 10px;
     margin-bottom: 6px;
-  }}
-  .parlay-leg-icon {{
+  }}}}
+  .parlay-leg-icon {{{{
     width: 20px;
     height: 20px;
     border-radius: 50%;
@@ -2897,21 +2897,21 @@ HTML_TEMPLATE = """<!DOCTYPE html>
     justify-content: center;
     font-size: 12px;
     flex-shrink: 0;
-  }}
-  .parlay-leg-icon.ic-hit {{ background: rgba(47,179,68,0.2); color: #2fb344; }}
-  .parlay-leg-icon.ic-miss {{ background: rgba(224,82,82,0.2); color: #e05252; }}
-  .parlay-leg-icon.ic-push {{ background: rgba(255,255,255,0.1); color: var(--muted); }}
-  .parlay-leg-icon.ic-pending {{ background: rgba(255,255,255,0.08); color: var(--muted); }}
-  .parlay-leg-body {{ flex: 1; min-width: 0; }}
-  .parlay-leg-manager {{ font-size: 11px; color: var(--muted); margin-bottom: 2px; }}
-  .parlay-leg-pick {{ font-size: 13px; font-weight: 500; color: var(--text); word-break: break-all; }}
-  .parlay-summary-hero {{
+  }}}}
+  .parlay-leg-icon.ic-hit {{{{ background: rgba(47,179,68,0.2); color: #2fb344; }}}}
+  .parlay-leg-icon.ic-miss {{{{ background: rgba(224,82,82,0.2); color: #e05252; }}}}
+  .parlay-leg-icon.ic-push {{{{ background: rgba(255,255,255,0.1); color: var(--muted); }}}}
+  .parlay-leg-icon.ic-pending {{{{ background: rgba(255,255,255,0.08); color: var(--muted); }}}}
+  .parlay-leg-body {{{{ flex: 1; min-width: 0; }}}}
+  .parlay-leg-manager {{{{ font-size: 11px; color: var(--muted); margin-bottom: 2px; }}}}
+  .parlay-leg-pick {{{{ font-size: 13px; font-weight: 500; color: var(--text); word-break: break-all; }}}}
+  .parlay-summary-hero {{{{
     display: flex;
     gap: 24px;
     margin-bottom: 20px;
     flex-wrap: wrap;
-  }}
-  .parlay-summary-stat {{
+  }}}}
+  .parlay-summary-stat {{{{
     background: #1b1f27;
     border: 1px solid var(--border);
     border-radius: 8px;
@@ -2919,27 +2919,27 @@ HTML_TEMPLATE = """<!DOCTYPE html>
     text-align: center;
     min-width: 100px;
     flex: 1;
-  }}
-  .psnum {{ font-size: 20px; font-weight: 800; color: var(--text); }}
-  .pslbl {{ color: var(--muted); font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; margin-top: 4px; }}
-  .parlay-entry {{
+  }}}}
+  .psnum {{{{ font-size: 20px; font-weight: 800; color: var(--text); }}}}
+  .pslbl {{{{ color: var(--muted); font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; margin-top: 4px; }}}}
+  .parlay-entry {{{{
     background: #1b1f27;
     border: 1px solid var(--border);
     border-radius: 8px;
     padding: 18px;
     margin-top: 10px;
-  }}
-  .parlay-entry-row {{
+  }}}}
+  .parlay-entry-row {{{{
     display: grid;
     grid-template-columns: 1fr 2fr auto auto;
     gap: 8px;
     margin-bottom: 8px;
     align-items: center;
-  }}
-  .parlay-entry-header {{
+  }}}}
+  .parlay-entry-header {{{{
     grid-template-columns: 1fr 1fr auto;
-  }}
-  .parlay-entry-row input, .parlay-entry-row select {{
+  }}}}
+  .parlay-entry-row input, .parlay-entry-row select {{{{
     background: var(--panel);
     border: 1px solid var(--border);
     color: var(--text);
@@ -2947,37 +2947,37 @@ HTML_TEMPLATE = """<!DOCTYPE html>
     border-radius: 7px;
     font-size: 12px;
     width: 100%;
-  }}
-  .parlay-entry-row input:focus, .parlay-entry-row select:focus {{
+  }}}}
+  .parlay-entry-row input:focus, .parlay-entry-row select:focus {{{{
     outline: none;
     border-color: var(--accent2);
-  }}
-  .parlay-progress-wrap {{
+  }}}}
+  .parlay-progress-wrap {{{{
     display: flex;
     align-items: center;
     gap: 10px;
     margin: 4px 0 14px;
-  }}
-  .parlay-progress {{
+  }}}}
+  .parlay-progress {{{{
     flex: 1;
     height: 6px;
     border-radius: 4px;
     background: var(--panel);
     overflow: hidden;
-  }}
-  .parlay-progress-fill {{
+  }}}}
+  .parlay-progress-fill {{{{
     height: 100%;
     background: linear-gradient(90deg, var(--accent2), var(--accent3));
     transition: width 0.25s ease;
     border-radius: 4px;
-  }}
-  .parlay-progress-label {{
+  }}}}
+  .parlay-progress-label {{{{
     font-size: 11px;
     color: var(--muted);
     white-space: nowrap;
     font-weight: 600;
-  }}
-  .playoff-col-title {{
+  }}}}
+  .playoff-col-title {{{{
     font-size: 13px;
     color: var(--muted);
     text-transform: uppercase;
