@@ -2653,8 +2653,12 @@ HTML_TEMPLATE = """<!DOCTYPE html>
   .parlay-table input.pq-row-player {
     max-width: 400px;
   }
-  .parlay-table input.pq-row-amount { max-width: 100px; }
-  .parlay-table select.pq-row-bet-type { max-width: 160px; }
+  .parlay-table input.pq-row-amount {
+    max-width: 100px;
+  }
+  .parlay-table select.pq-row-bet-type {
+    max-width: 160px;
+  }
   .parlay-table input:focus, .parlay-table select:focus {{
     outline: none;
     border-color: var(--accent2);
