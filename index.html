@@ -1112,7 +1112,7 @@
       <span class="hero-chip">Week 7</span>
       <span class="hero-chip">10 Teams</span>
       <span class="hero-chip">🏆 The Big 3</span>
-      <span class="hero-chip hero-chip-muted">Updated Oct 20, 2026 07:56 PM</span>
+      <span class="hero-chip hero-chip-muted">Updated Oct 20, 2026 08:01 PM</span>
     </div>
   </div>
 </header>
@@ -4221,22 +4221,51 @@
 
 <section id="parlay">
   <div class="panel">
-    <!-- Weekly Parlay backend: LOCAL (FIREBASE_CONFIG is not set) -->
-<h2 class='section-title'>Weekly Parlay</h2><p class='section-note'>No parlay data yet — use the entry form below to add this week's legs, or hand-edit <code>parlay.json</code> directly.</p>
-    <h3 class="section-title" style="margin:24px 0 10px">Add / Edit a Week (commissioner entry)</h3>
-    <p class="section-note">Fills a week's legs and saves a draft in this browser as you go. Nothing here syncs to
-    other managers or updates the live page on its own — use "Download updated parlay.json" when a week
-    is final, then commit that file so the next regenerate picks it up for everyone.</p>
-    <div class="parlay-entry">
-      <div class="parlay-entry-row parlay-entry-header">
-        <input type="number" id="pxSeason" placeholder="Season" value="2026">
-        <input type="number" id="pxWeek" placeholder="Week" value="7">
-        <button type="button" class="btn-secondary" onclick="loadParlayWeek()">Load Week</button>
-      </div>
-    </div>
-    <div id="parlayLegRows"></div>
-    <div class="parlay-entry-actions">
+    <!-- Weekly Parlay backend: FIREBASE (projectId=hogs-and-dogs) -->
+<h2 class="section-title">Weekly Parlay</h2>
+    <div id="pqStatus" class="section-note">Loading&hellip;</div>
 
+    <div id="pqWeekBand" class="parlay-week-band">
+      <div class="pq-week-band-left">
+        <div class="pq-week-band-title">Week 7, 2026</div>
+        <div class="pq-week-status" id="pqWeekStatus"></div>
+      </div>
+      <div class="pq-week-band-stats" id="pqWeekBandStats"></div>
+    </div>
+
+    <div class="parlay-card">
+      <div class="parlay-week-selector">
+        <label>Season <input type="number" id="pqSeason" value="2026"></label>
+        <label>Week <input type="number" id="pqWeek" value="7"></label>
+        <button type="button" class="btn-secondary" id="pqLoadWeekBtn">Load</button>
+      </div>
+
+      <div class="parlay-table-wrap">
+        <table class="parlay-table">
+          <thead><tr><th>Team</th><th>Player</th><th>Bet Type</th><th>Amount</th><th>Result</th><th></th></tr></thead>
+          <tbody id="pqPicksBody"></tbody>
+        </table>
+      </div>
+      <div class="parlay-entry-actions">
+        <button type="button" class="btn-secondary" id="pqAddRowBtn">+ Add Row</button>
+        <button type="button" class="btn-primary" id="pqSaveBtn">Save Picks</button>
+      </div>
+      <div id="pqSaveStatus"></div>
+    </div>
+
+    <h3 class="section-title" style="margin:28px 0 10px">Team Stats &middot; 2026 Season</h3>
+    <div id="pqTeamStats"></div>
+
+    <h3 class="section-title" style="margin:28px 0 10px">History</h3>
+    <div id="pqHero"></div>
+    <div id="pqSummary"></div>
+    <div id="pqWeekly"></div>
+
+    <script>
+      window.FIREBASE_CONFIG = {"apiKey": "AIzaSyDxBIBgIELkdsawSv3Utf4flX3qzzSc8uI", "authDomain": "hogs-and-dogs.firebaseapp.com", "projectId": "hogs-and-dogs", "storageBucket": "hogs-and-dogs.firebasestorage.app", "messagingSenderId": "812656313485", "appId": "1:812656313485:web:274f603e59ca6e787b8ec4"};
+      window.MANAGER_ROSTERS = {"Nathan Da Silva": 1, "matt eires": 2, "cam correia": 3, "Evan deLacy & Evan Carneiro": 4, "jake souza": 5, "Joshua Pires": 6, "Brenden Sylvia": 7, "bryce rudolph & Bryce Rudolph": 8, "Nate Vieira & Tony Melo": 9, "Justin Silveira": 10};
+      window.PQ_CURRENT_SEASON = 2026;
+    </script>
   </div>
 </section>
 
