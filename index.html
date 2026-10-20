@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Anton&family=Bebas+Neue&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
 <style>
-  :root {
+  :root {{
     --bg: #0d0f13;
     --panel: #15181e;
     --border: #252a33;
@@ -24,36 +24,36 @@
     --shadow-3: 0 16px 40px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.06);
     --stat-pos: #3fb950;
     --stat-neg: #e0524f;
-  }
-  * { box-sizing: border-box; }
-  body {
+  }}
+  * {{ box-sizing: border-box; }}
+  body {{
     margin: 0;
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     background: var(--bg);
     color: var(--text);
     padding: 24px;
     font-variant-numeric: tabular-nums;
-  }
-  .stat-pos { color: var(--stat-pos); }
-  .stat-neg { color: var(--stat-neg); }
-  header {
+  }}
+  .stat-pos {{ color: var(--stat-pos); }}
+  .stat-neg {{ color: var(--stat-neg); }}
+  header {{
     margin-bottom: 28px;
-  }
-  h1 {
+  }}
+  h1 {{
     font-family: 'Anton', sans-serif;
     font-weight: 400;
     text-transform: uppercase;
     margin: 0 0 4px 0;
     font-size: 28px;
     letter-spacing: 0.5px;
-  }
-  .subtitle {
+  }}
+  .subtitle {{
     color: var(--muted);
     font-size: 14px;
-  }
+  }}
 
   /* ---------- Hero / title section ---------- */
-  .hero {
+  .hero {{
     position: relative;
     overflow: hidden;
     border-radius: 12px;
@@ -61,25 +61,25 @@
     padding: 36px 32px;
     margin-bottom: 20px;
     background: radial-gradient(ellipse at 50% -10%, rgba(200,30,58,0.26), transparent 60%), var(--bg);
-  }
-  .hero-glow {
+  }}
+  .hero-glow {{
     position: absolute;
     inset: -40%;
     background: radial-gradient(circle at 50% 0%, rgba(200,30,58,0.20), transparent 55%);
     filter: blur(10px);
     pointer-events: none;
-  }
-  .hero-content {
+  }}
+  .hero-content {{
     position: relative;
     z-index: 1;
     opacity: 0;
     transform: translateY(10px);
     animation: hero-in 0.6s cubic-bezier(.22,1,.36,1) forwards;
-  }
-  @keyframes hero-in { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-  @keyframes hero-chip-in { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
-  @media (prefers-reduced-motion: reduce) { .hero-content, .hero-chip { animation: none; opacity: 1; transform: none; } }
-  .onclock {
+  }}
+  @keyframes hero-in {{ from {{ opacity: 0; transform: translateY(10px); }} to {{ opacity: 1; transform: translateY(0); }} }}
+  @keyframes hero-chip-in {{ from {{ opacity: 0; transform: translateY(6px); }} to {{ opacity: 1; transform: translateY(0); }} }}
+  @media (prefers-reduced-motion: reduce) {{ .hero-content, .hero-chip {{ animation: none; opacity: 1; transform: none; }} }}
+  .onclock {{
     display: inline-flex;
     align-items: center;
     gap: 8px;
@@ -93,19 +93,19 @@
     text-transform: uppercase;
     margin-bottom: 16px;
     color: #fff;
-  }
-  .onclock .pulse {
+  }}
+  .onclock .pulse {{
     width: 7px; height: 7px; border-radius: 50%; background: #fff;
     animation: pulse 1.4s ease-in-out infinite;
-  }
-  @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: .3; } }
-  .hero-eyebrow {
+  }}
+  @keyframes pulse {{ 0%, 100% {{ opacity: 1; }} 50% {{ opacity: .3; }} }}
+  .hero-eyebrow {{
     color: var(--muted);
     font-size: 14px;
     font-weight: 500;
     margin-bottom: 8px;
-  }
-  .hero-title {
+  }}
+  .hero-title {{
     font-family: 'Anton', sans-serif;
     font-weight: 400;
     text-transform: uppercase;
@@ -114,9 +114,9 @@
     letter-spacing: 0.5px;
     line-height: 1.0;
     color: var(--text);
-  }
-  .hero-meta { display: flex; flex-wrap: wrap; gap: 8px; }
-  .hero-chip {
+  }}
+  .hero-meta {{ display: flex; flex-wrap: wrap; gap: 8px; }}
+  .hero-chip {{
     display: inline-flex;
     align-items: center;
     gap: 6px;
@@ -130,19 +130,19 @@
     color: var(--text);
     opacity: 0;
     animation: hero-chip-in 0.5s ease forwards;
-  }
-  .hero-chip-muted {
+  }}
+  .hero-chip-muted {{
     color: var(--muted);
     font-weight: 400;
     background: transparent;
     border-color: var(--border);
-  }
-  .hero-meta .hero-chip:nth-child(1) { animation-delay: .25s; }
-  .hero-meta .hero-chip:nth-child(2) { animation-delay: .32s; }
-  .hero-meta .hero-chip:nth-child(3) { animation-delay: .39s; }
-  .hero-meta .hero-chip:nth-child(4) { animation-delay: .46s; }
-  .hero-meta .hero-chip:nth-child(5) { animation-delay: .53s; }
-  .ticker {
+  }}
+  .hero-meta .hero-chip:nth-child(1) {{ animation-delay: .25s; }}
+  .hero-meta .hero-chip:nth-child(2) {{ animation-delay: .32s; }}
+  .hero-meta .hero-chip:nth-child(3) {{ animation-delay: .39s; }}
+  .hero-meta .hero-chip:nth-child(4) {{ animation-delay: .46s; }}
+  .hero-meta .hero-chip:nth-child(5) {{ animation-delay: .53s; }}
+  .ticker {{
     background: var(--accent);
     color: #fff;
     font-family: 'JetBrains Mono', monospace;
@@ -154,20 +154,20 @@
     white-space: nowrap;
     border-radius: 8px;
     margin-bottom: 18px;
-  }
-  .ticker-track { display: inline-block; padding-left: 100%; animation: ticker-scroll 60s linear infinite; }
-  .ticker-track span { display: inline-block; padding-right: 56px; }
-  .ticker-track span::after { content: 'CF'; color: var(--accent3); margin-left: 56px; font-size: 8px; vertical-align: middle; }
-  @keyframes ticker-scroll { from { transform: translateX(0); } to { transform: translateX(-100%); } }
-  @media (prefers-reduced-motion: reduce) { .ticker-track { animation: none; padding-left: 16px; } }
-  nav {
+  }}
+  .ticker-track {{ display: inline-block; padding-left: 100%; animation: ticker-scroll 60s linear infinite; }}
+  .ticker-track span {{ display: inline-block; padding-right: 56px; }}
+  .ticker-track span::after {{ content: 'CF'; color: var(--accent3); margin-left: 56px; font-size: 8px; vertical-align: middle; }}
+  @keyframes ticker-scroll {{ from {{ transform: translateX(0); }} to {{ transform: translateX(-100%); }} }}
+  @media (prefers-reduced-motion: reduce) {{ .ticker-track {{ animation: none; padding-left: 16px; }} }}
+  nav {{
     display: flex;
     flex-wrap: wrap;
     gap: 4px 8px;
     margin: 20px 0 24px 0;
     border-bottom: 1px solid var(--border);
-  }
-  nav button {
+  }}
+  nav button {{
     font-family: 'Bebas Neue', sans-serif;
     letter-spacing: 1.5px;
     text-transform: uppercase;
@@ -179,16 +179,16 @@
     cursor: pointer;
     border-bottom: 2px solid transparent;
     white-space: nowrap;
-  }
-  nav button.active {
+  }}
+  nav button.active {{
     color: var(--text);
     border-bottom: 2px solid transparent;
     border-image: var(--gradient-warm) 1;
-  }
-  section { display: none; opacity: 0; transform: translateY(8px); transition: opacity 0.25s ease, transform 0.25s ease; }
-  section.active { display: block; }
-  section.active.show { opacity: 1; transform: translateY(0); }
-  .panel {
+  }}
+  section {{ display: none; opacity: 0; transform: translateY(8px); transition: opacity 0.25s ease, transform 0.25s ease; }}
+  section.active {{ display: block; }}
+  section.active.show {{ opacity: 1; transform: translateY(0); }}
+  .panel {{
     box-shadow: var(--shadow-2);
     background: var(--panel);
     border: 1px solid var(--border);
@@ -196,19 +196,19 @@
     padding: 20px;
     overflow-x: auto;
     overflow-y: visible;
-  }
-  table {
+  }}
+  table {{
     width: 100%;
     border-collapse: collapse;
     font-size: 14px;
-  }
-  thead th {
+  }}
+  thead th {{
     position: sticky;
     top: 0;
     background: var(--panel);
     z-index: 1;
-  }
-  th {
+  }}
+  th {{
     font-family: 'JetBrains Mono', monospace;
     text-align: left;
     color: var(--muted);
@@ -218,35 +218,35 @@
     letter-spacing: 1px;
     padding: 8px 10px;
     border-bottom: 1px solid var(--border);
-  }
-  td {
+  }}
+  td {{
     padding: 10px;
     border-bottom: 1px solid var(--border);
-  }
-  tr:last-child td { border-bottom: none; }
-  .team-cell { font-weight: 600; }
-  .team-cell-inner { display: flex; align-items: center; gap: 8px; }
-  .team-name-main { font-weight: 600; }
-  .owner-name { color: var(--muted); font-weight: 400; font-size: 11px; margin-top: 2px; }
-  .logo { width: 22px; height: 22px; border-radius: 50%; flex-shrink: 0; object-fit: cover; background: #1b1f27; }
-  .action { color: var(--accent2); }
-  .empty { color: var(--muted); text-align: center; padding: 24px; }
-  .pbar { display: flex; align-items: center; gap: 8px; min-width: 90px; }
-  .pbar-track {
+  }}
+  tr:last-child td {{ border-bottom: none; }}
+  .team-cell {{ font-weight: 600; }}
+  .team-cell-inner {{ display: flex; align-items: center; gap: 8px; }}
+  .team-name-main {{ font-weight: 600; }}
+  .owner-name {{ color: var(--muted); font-weight: 400; font-size: 11px; margin-top: 2px; }}
+  .logo {{ width: 22px; height: 22px; border-radius: 50%; flex-shrink: 0; object-fit: cover; background: #1b1f27; }}
+  .action {{ color: var(--accent2); }}
+  .empty {{ color: var(--muted); text-align: center; padding: 24px; }}
+  .pbar {{ display: flex; align-items: center; gap: 8px; min-width: 90px; }}
+  .pbar-track {{
     flex: 1;
     height: 6px;
     border-radius: 999px;
     background: rgba(255,255,255,0.08);
     overflow: hidden;
-  }
-  .pbar-fill {
+  }}
+  .pbar-fill {{
     height: 100%;
     border-radius: 999px;
     transition: width 0.4s ease;
-  }
-  .pbar-label { font-size: 12px; color: var(--muted); min-width: 32px; text-align: right; }
-  .sparkline { width: 90px; height: 26px; display: block; }
-  .draft-cell {
+  }}
+  .pbar-label {{ font-size: 12px; color: var(--muted); min-width: 32px; text-align: right; }}
+  .sparkline {{ width: 90px; height: 26px; display: block; }}
+  .draft-cell {{
     background: #1b1f27;
     border: 1px solid var(--border);
     border-radius: 8px;
@@ -256,29 +256,29 @@
     display: flex;
     flex-direction: column;
     box-sizing: border-box;
-  }
-  .draft-cell:hover { transform: translateY(-2px); box-shadow: var(--shadow-2); }
-  .draft-board-wrap { overflow-x: auto; overflow-y: visible; margin-top: 8px; }
-  .draft-board { border-collapse: separate; border-spacing: 6px; width: max-content; }
-  .draft-board th { color: var(--muted); font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.3px; padding: 4px 6px; text-align: center; vertical-align: bottom; min-width: 124px; max-width: 140px; }
-  .draft-board td { vertical-align: top; padding: 0; min-width: 124px; max-width: 140px; }
-  .draft-board .round-label { color: var(--accent); font-weight: 700; font-size: 13px; text-align: center; min-width: 28px; width: 28px; }
-  .draft-board .draft-cell { width: 100%; min-width: 0; height: 112px; margin-bottom: 6px; }
-  .draft-board .draft-cell:last-child { margin-bottom: 0; }
-  .pick-num { color: var(--accent); font-size: 12px; font-weight: 700; flex-shrink: 0; }
-  .player {
+  }}
+  .draft-cell:hover {{ transform: translateY(-2px); box-shadow: var(--shadow-2); }}
+  .draft-board-wrap {{ overflow-x: auto; overflow-y: visible; margin-top: 8px; }}
+  .draft-board {{ border-collapse: separate; border-spacing: 6px; width: max-content; }}
+  .draft-board th {{ color: var(--muted); font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.3px; padding: 4px 6px; text-align: center; vertical-align: bottom; min-width: 124px; max-width: 140px; }}
+  .draft-board td {{ vertical-align: top; padding: 0; min-width: 124px; max-width: 140px; }}
+  .draft-board .round-label {{ color: var(--accent); font-weight: 700; font-size: 13px; text-align: center; min-width: 28px; width: 28px; }}
+  .draft-board .draft-cell {{ width: 100%; min-width: 0; height: 112px; margin-bottom: 6px; }}
+  .draft-board .draft-cell:last-child {{ margin-bottom: 0; }}
+  .pick-num {{ color: var(--accent); font-size: 12px; font-weight: 700; flex-shrink: 0; }}
+  .player {{
     font-weight: 600; margin: 4px 0 2px 0; font-size: 14px;
     white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
     flex-shrink: 0;
-  }
-  .drafted-by {
+  }}
+  .drafted-by {{
     color: var(--muted); font-size: 12px;
     white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
     flex-shrink: 0;
-  }
-  .rank-move { font-size: 11px; margin-top: 6px; color: var(--text); opacity: 0.9; flex-shrink: 0; }
-  .bid { color: var(--accent2); font-size: 12px; margin-top: 4px; }
-  .legend {
+  }}
+  .rank-move {{ font-size: 11px; margin-top: 6px; color: var(--text); opacity: 0.9; flex-shrink: 0; }}
+  .bid {{ color: var(--accent2); font-size: 12px; margin-top: 4px; }}
+  .legend {{
     display: flex;
     flex-wrap: wrap;
     gap: 18px;
@@ -287,83 +287,83 @@
     margin-bottom: 16px;
     padding-bottom: 12px;
     border-bottom: 1px solid var(--border);
-  }
-  .legend .dot {
+  }}
+  .legend .dot {{
     display: inline-block;
     width: 10px;
     height: 10px;
     border-radius: 50%;
     margin-right: 6px;
     vertical-align: middle;
-  }
-  .section-title {
+  }}
+  .section-title {{
     font-family: 'Bebas Neue', sans-serif;
     font-size: 18px;
     letter-spacing: 1.5px;
     color: var(--muted);
     text-transform: uppercase;
     margin: 0 0 16px 0;
-  }
-  .matchup-list {
+  }}
+  .matchup-list {{
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
     gap: 14px;
-  }
-  .matchup-card {
+  }}
+  .matchup-card {{
     background: #1b1f27;
     border: 1px solid var(--border);
     border-radius: 10px;
     padding: 16px;
     box-shadow: var(--shadow-1);
     transition: transform 0.15s ease, box-shadow 0.15s ease;
-  }
-  .matchup-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-3); }
-  .matchup-card.bye {
+  }}
+  .matchup-card:hover {{ transform: translateY(-3px); box-shadow: var(--shadow-3); }}
+  .matchup-card.bye {{
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     text-align: center;
     color: var(--muted);
-  }
-  .bye-label {
+  }}
+  .bye-label {{
     font-size: 11px;
     letter-spacing: 1px;
     color: var(--accent);
     font-weight: 700;
     margin-bottom: 6px;
-  }
-  .matchup-teams {
+  }}
+  .matchup-teams {{
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 10px;
-  }
-  .matchup-team {
+  }}
+  .matchup-team {{
     flex: 1;
     text-align: center;
-  }
-  .matchup-team .team-name {
+  }}
+  .matchup-team .team-name {{
     font-weight: 700;
     font-size: 14px;
     margin-bottom: 2px;
-  }
-  .matchup-team .team-record {
+  }}
+  .matchup-team .team-record {{
     color: var(--muted);
     font-size: 12px;
     margin-bottom: 8px;
-  }
-  .matchup-team .proj-score {
+  }}
+  .matchup-team .proj-score {{
     font-size: 24px;
     font-weight: 800;
     color: var(--accent2);
-  }
-  .vs {
+  }}
+  .vs {{
     color: var(--muted);
     font-size: 13px;
     font-weight: 600;
-  }
-  .outlook {
+  }}
+  .outlook {{
     margin: 14px 0 0 0;
     padding-top: 12px;
     border-top: 1px solid var(--border);
@@ -371,19 +371,19 @@
     line-height: 1.5;
     color: var(--text);
     opacity: 0.9;
-  }
-  .section-note {
+  }}
+  .section-note {{
     color: var(--muted);
     font-size: 12px;
     margin: -8px 0 16px 0;
-  }
-  .subnav {
+  }}
+  .subnav {{
     display: flex;
     flex-wrap: wrap;
     gap: 6px;
     margin-bottom: 16px;
-  }
-  .subtab {
+  }}
+  .subtab {{
     background: #1b1f27;
     border: 1px solid var(--border);
     color: var(--muted);
@@ -391,26 +391,26 @@
     padding: 6px 12px;
     border-radius: 20px;
     cursor: pointer;
-  }
-  .subtab.active {
+  }}
+  .subtab.active {{
     color: var(--text);
     border-color: var(--accent);
     background: rgba(255, 90, 31, 0.12);
-  }
-  .subpanel { display: none; opacity: 0; transform: translateY(6px); transition: opacity 0.2s ease, transform 0.2s ease; }
-  .subpanel.active { display: block; }
-  .subpanel.active.show { opacity: 1; transform: translateY(0); }
-  .move-up { color: var(--stat-pos); font-weight: 600; }
-  .move-down { color: var(--stat-neg); font-weight: 600; }
-  .move-flat { color: var(--muted); }
-  .luck-good { color: var(--stat-pos); font-weight: 600; }
-  .luck-bad { color: var(--stat-neg); font-weight: 600; }
-  .report-grid {
+  }}
+  .subpanel {{ display: none; opacity: 0; transform: translateY(6px); transition: opacity 0.2s ease, transform 0.2s ease; }}
+  .subpanel.active {{ display: block; }}
+  .subpanel.active.show {{ opacity: 1; transform: translateY(0); }}
+  .move-up {{ color: var(--stat-pos); font-weight: 600; }}
+  .move-down {{ color: var(--stat-neg); font-weight: 600; }}
+  .move-flat {{ color: var(--muted); }}
+  .luck-good {{ color: var(--stat-pos); font-weight: 600; }}
+  .luck-bad {{ color: var(--stat-neg); font-weight: 600; }}
+  .report-grid {{
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
     gap: 14px;
-  }
-  .report-card {
+  }}
+  .report-card {{
     background: #1b1f27;
     border: 1px solid var(--border);
     border-radius: 10px;
@@ -418,9 +418,9 @@
     position: relative;
     box-shadow: var(--shadow-1);
     transition: transform 0.15s ease, box-shadow 0.15s ease;
-  }
-  .report-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-3); }
-  .grade-badge {
+  }}
+  .report-card:hover {{ transform: translateY(-3px); box-shadow: var(--shadow-3); }}
+  .grade-badge {{
     position: absolute;
     top: 14px;
     right: 14px;
@@ -432,56 +432,56 @@
     justify-content: center;
     font-weight: 800;
     font-size: 15px;
-  }
-  .grade-a { background: rgba(47,179,68,0.2); color: #2fb344; }
-  .grade-b { background: rgba(61,139,253,0.2); color: #3d8bfd; }
-  .grade-c { background: rgba(138,146,168,0.25); color: var(--text); }
-  .grade-d { background: rgba(255,159,28,0.2); color: #ff9f1c; }
-  .grade-f { background: rgba(224,82,82,0.2); color: #e05252; }
-  .report-team { font-weight: 700; font-size: 15px; margin-bottom: 6px; padding-right: 40px; }
-  .report-stat { color: var(--muted); font-size: 12px; margin-bottom: 10px; }
-  .report-line { font-size: 12px; line-height: 1.5; margin-top: 4px; }
-  .report-line.best { color: #2fb344; }
-  .report-line.worst { color: #e05252; }
-  .rivalry-grid {
+  }}
+  .grade-a {{ background: rgba(47,179,68,0.2); color: #2fb344; }}
+  .grade-b {{ background: rgba(61,139,253,0.2); color: #3d8bfd; }}
+  .grade-c {{ background: rgba(138,146,168,0.25); color: var(--text); }}
+  .grade-d {{ background: rgba(255,159,28,0.2); color: #ff9f1c; }}
+  .grade-f {{ background: rgba(224,82,82,0.2); color: #e05252; }}
+  .report-team {{ font-weight: 700; font-size: 15px; margin-bottom: 6px; padding-right: 40px; }}
+  .report-stat {{ color: var(--muted); font-size: 12px; margin-bottom: 10px; }}
+  .report-line {{ font-size: 12px; line-height: 1.5; margin-top: 4px; }}
+  .report-line.best {{ color: #2fb344; }}
+  .report-line.worst {{ color: #e05252; }}
+  .rivalry-grid {{
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
     gap: 14px;
-  }
-  .rivalry-card {
+  }}
+  .rivalry-card {{
     background: #1b1f27;
     border: 1px solid var(--border);
     border-radius: 10px;
     padding: 14px;
     box-shadow: var(--shadow-1);
     transition: transform 0.15s ease, box-shadow 0.15s ease;
-  }
-  .rivalry-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-3); }
-  .rivalry-meetings {
+  }}
+  .rivalry-card:hover {{ transform: translateY(-3px); box-shadow: var(--shadow-3); }}
+  .rivalry-meetings {{
     color: var(--muted);
     font-size: 11px;
     text-transform: uppercase;
     letter-spacing: 0.5px;
     margin-bottom: 10px;
-  }
-  .rivalry-matchup {
+  }}
+  .rivalry-matchup {{
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 8px;
-  }
-  .rivalry-team { flex: 1; text-align: center; }
-  .rivalry-team .team-name { font-weight: 700; font-size: 13px; }
-  .rivalry-record { color: var(--accent2); font-weight: 700; font-size: 15px; margin: 4px 0 2px 0; }
-  .rivalry-points { color: var(--muted); font-size: 11px; }
+  }}
+  .rivalry-team {{ flex: 1; text-align: center; }}
+  .rivalry-team .team-name {{ font-weight: 700; font-size: 13px; }}
+  .rivalry-record {{ color: var(--accent2); font-weight: 700; font-size: 15px; margin: 4px 0 2px 0; }}
+  .rivalry-points {{ color: var(--muted); font-size: 11px; }}
 
   /* ---------- Trophy Case ---------- */
-  .trophy-wall {
+  .trophy-wall {{
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
     gap: 14px;
-  }
-  .trophy-card {
+  }}
+  .trophy-card {{
     background: #1b1f27;
     border: 1px solid var(--border);
     border-radius: 10px;
@@ -489,62 +489,383 @@
     text-align: center;
     box-shadow: var(--shadow-1);
     transition: transform 0.15s ease, box-shadow 0.15s ease;
-  }
-  .trophy-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-3); }
-  .trophy-year {
+  }}
+  .trophy-card:hover {{ transform: translateY(-3px); box-shadow: var(--shadow-3); }}
+  .trophy-year {{
     color: var(--accent);
     font-weight: 800;
     font-size: 13px;
     letter-spacing: 0.5px;
     margin-bottom: 6px;
-  }
-  .trophy-icon { font-size: 26px; margin-bottom: 8px; }
-  .trophy-card .team-name-main { font-size: 14px; }
-  .trophy-record { color: var(--muted); font-size: 12px; margin: 6px 0 4px 0; }
-  .trophy-score { font-weight: 700; font-size: 15px; color: var(--accent2); margin-top: 6px; }
-  .trophy-vs { color: var(--muted); font-size: 11px; margin-top: 4px; }
+  }}
+  .trophy-icon {{ font-size: 26px; margin-bottom: 8px; }}
+  .trophy-card .team-name-main {{ font-size: 14px; }}
+  .trophy-record {{ color: var(--muted); font-size: 12px; margin: 6px 0 4px 0; }}
+  .trophy-score {{ font-weight: 700; font-size: 15px; color: var(--accent2); margin-top: 6px; }}
+  .trophy-vs {{ color: var(--muted); font-size: 11px; margin-top: 4px; }}
 
   /* ---------- League Records Book ---------- */
-  .record-grid {
+  .record-grid {{
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
     gap: 14px;
-  }
-  .record-card {
+  }}
+  .record-card {{
     background: #1b1f27;
     border: 1px solid var(--border);
     border-radius: 10px;
     padding: 16px;
     box-shadow: var(--shadow-1);
     transition: transform 0.15s ease, box-shadow 0.15s ease;
-  }
-  .record-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-3); }
-  .record-label {
+  }}
+  .record-card:hover {{ transform: translateY(-3px); box-shadow: var(--shadow-3); }}
+  .record-label {{
     color: var(--muted);
     font-size: 12px;
     text-transform: uppercase;
     letter-spacing: 0.5px;
     margin-bottom: 8px;
-  }
-  .record-value { font-size: 24px; font-weight: 800; color: var(--text); margin-bottom: 8px; }
-  .record-unit { font-size: 12px; font-weight: 600; color: var(--muted); }
-  .record-card .team-name-main { font-size: 14px; }
-  .record-context { color: var(--muted); font-size: 11.5px; margin-top: 6px; line-height: 1.4; }
+  }}
+  .record-value {{ font-size: 24px; font-weight: 800; color: var(--text); margin-bottom: 8px; }}
+  .record-unit {{ font-size: 12px; font-weight: 600; color: var(--muted); }}
+  .record-card .team-name-main {{ font-size: 14px; }}
+  .record-context {{ color: var(--muted); font-size: 11.5px; margin-top: 6px; line-height: 1.4; }}
 
   /* ---------- Playoff Picture ---------- */
-  .playoff-grid {
+  .playoff-grid {{
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 20px;
+  }}
+
+  /* ---------- Weekly Parlay ---------- */
+  .parlay-alert {{
+    padding: 12px 16px;
+    border-radius: 8px;
+    font-size: 13px;
+    margin-top: 10px;
+    border: 1px solid transparent;
+    font-weight: 500;
+  }}
+  .parlay-alert.err {{ background: rgba(224,82,82,0.12); color: #e05252; border-color: rgba(224,82,82,0.3); }}
+  .parlay-alert.info {{ background: rgba(61,139,253,0.12); color: #3d8bfd; border-color: rgba(61,139,253,0.3); }}
+  .parlay-alert.ok {{ background: rgba(47,179,68,0.12); color: #2fb344; border-color: rgba(47,179,68,0.3); }}
+  .parlay-week-band {{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #1b1f27;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 14px 16px;
+    margin-bottom: 18px;
+  }}
+  .pq-week-band-left {{ display: flex; align-items: baseline; gap: 14px; }}
+  .pq-week-band-title {{
+    font-weight: 700;
+    font-size: 15px;
+    color: var(--text);
+  }}
+  .pq-week-status {{ color: var(--muted); font-size: 12px; }}
+  .pq-week-band-stats {{
+    display: flex;
+    gap: 24px;
+  }}
+  .pq-week-band-stat {{
+    text-align: right;
+  }}
+  .pwn {{ font-size: 16px; font-weight: 700; color: var(--text); }}
+  .pwl {{ color: var(--muted); font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; }}
+  .parlay-card {{
+    background: #1b1f27;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 18px;
+    margin-bottom: 20px;
+  }}
+  .parlay-week-selector {{
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    margin-bottom: 14px;
+    flex-wrap: wrap;
+  }}
+  .parlay-week-selector label {{
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }}
+  .parlay-week-selector input {{
+    background: var(--panel);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 6px 10px;
+    border-radius: 5px;
+    font-size: 12px;
+    width: 70px;
+  }}
+  .parlay-week-selector input:focus {{
+    outline: none;
+    border-color: var(--accent2);
+  }}
+  .btn-secondary {{
+    background: #1b1f27;
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 8px 14px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.15s ease, border-color 0.15s ease;
+  }}
+  .btn-secondary:hover {{
+    background: rgba(91,122,153,0.2);
+    border-color: var(--accent2);
+  }}
+  .btn-primary {{
+    background: var(--accent);
+    border: 1px solid var(--accent);
+    color: #fff;
+    padding: 8px 14px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.15s ease, box-shadow 0.15s ease;
+  }}
+  .btn-primary:hover {{
+    background: rgba(200,30,58,0.8);
+    box-shadow: 0 2px 8px rgba(200,30,58,0.4);
+  }}
+  .parlay-table-wrap {{
+    overflow-x: auto;
+    margin: 14px 0;
+  }}
+  .parlay-table {{
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }}
+  .parlay-table th {{
+    text-align: left;
+    color: var(--muted);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 8px 10px;
+    border-bottom: 1px solid var(--border);
+    background: #15181e;
+  }}
+  .parlay-table td {{
+    padding: 8px 10px;
+    border-bottom: 1px solid var(--border);
+  }}
+  .parlay-table tr:last-child td {{ border-bottom: none; }}
+  .parlay-table input, .parlay-table select {{
+    background: var(--panel);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 6px 8px;
+    border-radius: 5px;
+    font-size: 12px;
+    width: 100%;
+    max-width: 280px;
   }
-  .playoff-col-title {
+  .parlay-table input.pq-row-player {
+    max-width: 400px;
+  }
+  .parlay-table input.pq-row-amount {
+    max-width: 100px;
+  }
+  .parlay-table select.pq-row-bet-type {
+    max-width: 160px;
+  }
+  .parlay-table input:focus, .parlay-table select:focus {
+    outline: none;
+    border-color: var(--accent2);
+  }}
+  .parlay-entry-actions {{
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 14px;
+  }}
+  .parlay-lb-row {{
+    display: grid;
+    grid-template-columns: 28px 1fr auto;
+    align-items: center;
+    gap: 12px;
+    background: #1b1f27;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 12px;
+    margin-bottom: 8px;
+  }}
+  .parlay-lb-rank {{
+    font-weight: 700;
+    font-size: 14px;
+    color: var(--muted);
+    text-align: center;
+  }}
+  .parlay-lb-rank.pr1 {{ color: #ffd23f; font-size: 18px; }}
+  .parlay-lb-rank.pr2 {{ color: #c81e3a; font-size: 18px; }}
+  .parlay-lb-rank.pr3 {{ color: #5b7a99; font-size: 18px; }}
+  .parlay-lb-name {{ font-weight: 600; font-size: 13px; color: var(--text); }}
+  .parlay-lb-bar-track {{
+    height: 6px;
+    border-radius: 999px;
+    background: rgba(255,255,255,0.08);
+    overflow: hidden;
+    margin-top: 6px;
+  }}
+  .parlay-lb-bar-fill {{
+    height: 100%;
+    border-radius: 999px;
+    background: linear-gradient(90deg, var(--accent2), var(--accent3));
+    transition: width 0.3s ease;
+  }}
+  .parlay-lb-right {{ text-align: right; }}
+  .parlay-lb-rate {{ font-size: 14px; font-weight: 700; color: var(--accent2); }}
+  .parlay-lb-record {{ font-size: 11px; color: var(--muted); }}
+  .parlay-slip {{
+    background: #1b1f27;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 12px;
+    margin-bottom: 12px;
+  }}
+  .parlay-slip-head {{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+  }}
+  .parlay-slip-title {{
+    font-weight: 600;
+    font-size: 13px;
+    color: var(--text);
+  }}
+  .parlay-slip-status {{
+    font-size: 11px;
+    font-weight: 600;
+    padding: 4px 9px;
+    border-radius: 20px;
+    white-space: nowrap;
+  }}
+  .parlay-slip-status.st-hit {{ background: rgba(47,179,68,0.15); color: #2fb344; }}
+  .parlay-slip-status.st-miss {{ background: rgba(224,82,82,0.15); color: #e05252; }}
+  .parlay-slip-status.st-push {{ background: rgba(138,146,168,0.15); color: var(--muted); }}
+  .parlay-slip-status.st-pending {{ background: rgba(255,255,255,0.08); color: var(--muted); }}
+  .parlay-leg {{
+    display: flex;
+    gap: 10px;
+    background: #15181e;
+    border-radius: 6px;
+    padding: 8px 10px;
+    margin-bottom: 6px;
+  }}
+  .parlay-leg-icon {{
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    flex-shrink: 0;
+  }}
+  .parlay-leg-icon.ic-hit {{ background: rgba(47,179,68,0.2); color: #2fb344; }}
+  .parlay-leg-icon.ic-miss {{ background: rgba(224,82,82,0.2); color: #e05252; }}
+  .parlay-leg-icon.ic-push {{ background: rgba(255,255,255,0.1); color: var(--muted); }}
+  .parlay-leg-icon.ic-pending {{ background: rgba(255,255,255,0.08); color: var(--muted); }}
+  .parlay-leg-body {{ flex: 1; min-width: 0; }}
+  .parlay-leg-manager {{ font-size: 11px; color: var(--muted); margin-bottom: 2px; }}
+  .parlay-leg-pick {{ font-size: 13px; font-weight: 500; color: var(--text); word-break: break-all; }}
+  .parlay-summary-hero {{
+    display: flex;
+    gap: 24px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+  }}
+  .parlay-summary-stat {{
+    background: #1b1f27;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 12px 16px;
+    text-align: center;
+    min-width: 100px;
+    flex: 1;
+  }}
+  .psnum {{ font-size: 20px; font-weight: 800; color: var(--text); }}
+  .pslbl {{ color: var(--muted); font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; margin-top: 4px; }}
+  .parlay-entry {{
+    background: #1b1f27;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 18px;
+    margin-top: 10px;
+  }}
+  .parlay-entry-row {{
+    display: grid;
+    grid-template-columns: 1fr 2fr auto auto;
+    gap: 8px;
+    margin-bottom: 8px;
+    align-items: center;
+  }}
+  .parlay-entry-header {{
+    grid-template-columns: 1fr 1fr auto;
+  }}
+  .parlay-entry-row input, .parlay-entry-row select {{
+    background: var(--panel);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 8px 11px;
+    border-radius: 7px;
+    font-size: 12px;
+    width: 100%;
+  }}
+  .parlay-entry-row input:focus, .parlay-entry-row select:focus {{
+    outline: none;
+    border-color: var(--accent2);
+  }}
+  .parlay-progress-wrap {{
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 4px 0 14px;
+  }}
+  .parlay-progress {{
+    flex: 1;
+    height: 6px;
+    border-radius: 4px;
+    background: var(--panel);
+    overflow: hidden;
+  }}
+  .parlay-progress-fill {{
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent2), var(--accent3));
+    transition: width 0.25s ease;
+    border-radius: 4px;
+  }}
+  .parlay-progress-label {{
+    font-size: 11px;
+    color: var(--muted);
+    white-space: nowrap;
+    font-weight: 600;
+  }}
+  .playoff-col-title {{
     font-size: 13px;
     color: var(--muted);
     text-transform: uppercase;
     letter-spacing: 0.5px;
     margin: 0 0 10px 0;
-  }
-  .playoff-row {
+  }}
+  .playoff-row {{
     display: grid;
     grid-template-columns: 24px 1fr auto auto auto;
     align-items: center;
@@ -554,88 +875,88 @@
     border-radius: 8px;
     padding: 10px 12px;
     margin-bottom: 8px;
-  }
-  .playoff-seed { color: var(--muted); font-weight: 700; font-size: 13px; }
-  .playoff-record { font-size: 13px; font-weight: 600; white-space: nowrap; }
-  .playoff-detail { color: var(--muted); font-size: 11.5px; white-space: nowrap; }
-  .playoff-badge {
+  }}
+  .playoff-seed {{ color: var(--muted); font-weight: 700; font-size: 13px; }}
+  .playoff-record {{ font-size: 13px; font-weight: 600; white-space: nowrap; }}
+  .playoff-detail {{ color: var(--muted); font-size: 11.5px; white-space: nowrap; }}
+  .playoff-badge {{
     font-size: 11px;
     font-weight: 700;
     padding: 4px 9px;
     border-radius: 20px;
     white-space: nowrap;
-  }
-  .badge-clinched { background: rgba(47,179,68,0.2); color: #2fb344; }
-  .badge-hunt { background: rgba(61,139,253,0.2); color: #3d8bfd; }
-  .badge-bubble { background: rgba(255,159,28,0.2); color: #ff9f1c; }
-  .badge-eliminated { background: rgba(224,82,82,0.2); color: #e05252; }
+  }}
+  .badge-clinched {{ background: rgba(47,179,68,0.2); color: #2fb344; }}
+  .badge-hunt {{ background: rgba(61,139,253,0.2); color: #3d8bfd; }}
+  .badge-bubble {{ background: rgba(255,159,28,0.2); color: #ff9f1c; }}
+  .badge-eliminated {{ background: rgba(224,82,82,0.2); color: #e05252; }}
 
-  footer { color: var(--muted); font-size: 12px; margin-top: 24px; text-align: center; }
+  footer {{ color: var(--muted); font-size: 12px; margin-top: 24px; text-align: center; }}
 
   /* ---------- Mobile / small-screen adjustments ---------- */
-  @media (max-width: 640px) {
-    body { padding: 12px; }
-    h1 { font-size: 21px; }
-    .subtitle { font-size: 12px; }
-    .panel { padding: 12px; border-radius: 10px; }
-    .hero { padding: 24px 18px; border-radius: 14px; margin-bottom: 18px; }
-    .hero-title { font-size: 28px; }
-    .hero-chip { font-size: 12px; padding: 5px 11px; }
+  @media (max-width: 640px) {{
+    body {{ padding: 12px; }}
+    h1 {{ font-size: 21px; }}
+    .subtitle {{ font-size: 12px; }}
+    .panel {{ padding: 12px; border-radius: 10px; }}
+    .hero {{ padding: 24px 18px; border-radius: 14px; margin-bottom: 18px; }}
+    .hero-title {{ font-size: 28px; }}
+    .hero-chip {{ font-size: 12px; padding: 5px 11px; }}
 
     /* Tab bar becomes a single horizontally-scrolling row instead of
        wrapping to multiple lines, which eats a lot of vertical space on
        a phone and is a less familiar pattern than swipeable tabs. */
-    nav {
+    nav {{
       flex-wrap: nowrap;
       overflow-x: auto;
       -webkit-overflow-scrolling: touch;
       scrollbar-width: none;
-    }
-    nav::-webkit-scrollbar { display: none; }
-    nav button {
+    }}
+    nav::-webkit-scrollbar {{ display: none; }}
+    nav button {{
       padding: 10px 12px;
       font-size: 14px;
       min-height: 44px; /* comfortable touch target */
-    }
+    }}
 
-    table { font-size: 12.5px; }
-    th, td { padding: 7px 8px; }
-    .logo { width: 18px; height: 18px; }
-    .pbar { min-width: 64px; gap: 5px; }
-    .pbar-label { font-size: 11px; min-width: 26px; }
-    .sparkline { width: 60px; height: 20px; }
+    table {{ font-size: 12.5px; }}
+    th, td {{ padding: 7px 8px; }}
+    .logo {{ width: 18px; height: 18px; }}
+    .pbar {{ min-width: 64px; gap: 5px; }}
+    .pbar-label {{ font-size: 11px; min-width: 26px; }}
+    .sparkline {{ width: 60px; height: 20px; }}
 
     /* Card grids: allow a single, full-width column on narrow phones
        instead of the wider desktop minimum, and tighten the gap. */
-    .matchup-list, .report-grid, .rivalry-grid, .trophy-wall, .record-grid {
+    .matchup-list, .report-grid, .rivalry-grid, .trophy-wall, .record-grid {{
       grid-template-columns: 1fr;
       gap: 10px;
-    }
-    .matchup-team .proj-score { font-size: 20px; }
+    }}
+    .matchup-team .proj-score {{ font-size: 20px; }}
 
-    .playoff-grid { grid-template-columns: 1fr; gap: 16px; }
-    .playoff-row {
+    .playoff-grid {{ grid-template-columns: 1fr; gap: 16px; }}
+    .playoff-row {{
       grid-template-columns: 20px 1fr;
       grid-template-areas: "seed team" "record record" "detail detail" "badge badge";
       row-gap: 4px;
-    }
-    .playoff-seed { grid-area: seed; }
-    .playoff-row .team-cell { grid-area: team; }
-    .playoff-record { grid-area: record; }
-    .playoff-detail { grid-area: detail; }
-    .playoff-badge { grid-area: badge; justify-self: start; }
+    }}
+    .playoff-seed {{ grid-area: seed; }}
+    .playoff-row .team-cell {{ grid-area: team; }}
+    .playoff-record {{ grid-area: record; }}
+    .playoff-detail {{ grid-area: detail; }}
+    .playoff-badge {{ grid-area: badge; justify-self: start; }}
 
-    .subnav { gap: 4px; }
-    .subtab { padding: 5px 10px; font-size: 12px; }
+    .subnav {{ gap: 4px; }}
+    .subtab {{ padding: 5px 10px; font-size: 12px; }}
 
-    .draft-board th, .draft-board td { min-width: 96px; max-width: 108px; }
-    .draft-board .draft-cell { height: 100px; padding: 8px; }
-    .grade-badge { width: 28px; height: 28px; font-size: 13px; }
-  }
+    .draft-board th, .draft-board td {{ min-width: 96px; max-width: 108px; }}
+    .draft-board .draft-cell {{ height: 100px; padding: 8px; }}
+    .grade-badge {{ width: 28px; height: 28px; font-size: 13px; }}
+  }}
 </style>
 </head>
 <body>
-<div class="ticker"><div class="ticker-track"><span>THE BIG 3 LEADS AT 5-1</span><span>LOVE SHACK ON A 6-GAME LOSING SKID</span><span>WALKERNDA FOREVER TOPS THE POWER RANKINGS</span><span>TRADE: MAKE THAT A** WADDLE ACQUIRES CHASE BROWN FROM THE BIG 3</span><span>DROPPED: THE GOLDEN LEMONS - EMMETT JOHNSON</span><span>FREE AGENT ADD: THE GOLDEN LEMONS - HUNTER HENRY</span><span>FREE AGENT ADD: MAKE THAT A** WADDLE - PAT FREIERMUTH</span><span>CANT FIND NICO  WON THE 2025 CHAMPIONSHIP</span><span>RECORD BOOK: LAMARVELOUS 8 PUT UP 243.4 IN WEEK 2, 2022</span><span>THE BIG 3 LEADS AT 5-1</span><span>LOVE SHACK ON A 6-GAME LOSING SKID</span><span>WALKERNDA FOREVER TOPS THE POWER RANKINGS</span><span>TRADE: MAKE THAT A** WADDLE ACQUIRES CHASE BROWN FROM THE BIG 3</span><span>DROPPED: THE GOLDEN LEMONS - EMMETT JOHNSON</span><span>FREE AGENT ADD: THE GOLDEN LEMONS - HUNTER HENRY</span><span>FREE AGENT ADD: MAKE THAT A** WADDLE - PAT FREIERMUTH</span><span>CANT FIND NICO  WON THE 2025 CHAMPIONSHIP</span><span>RECORD BOOK: LAMARVELOUS 8 PUT UP 243.4 IN WEEK 2, 2022</span></div></div>
+<div class="ticker"><div class="ticker-track"><span>THE BIG 3 LEADS AT 5-1</span><span>LOVE SHACK ON A 6-GAME LOSING SKID</span><span>WALKERNDA FOREVER TOPS THE POWER RANKINGS</span><span>TRADE: MAKE THAT A** WADDLE ACQUIRES CHASE BROWN FROM THE BIG 3</span><span>DROPPED: EVAN SQUARED - AARON RODGERS</span><span>DROPPED: THE BIG 3 - COLTS D/ST</span><span>DROPPED: THE GOLDEN LEMONS - EMMETT JOHNSON</span><span>CANT FIND NICO  WON THE 2025 CHAMPIONSHIP</span><span>RECORD BOOK: LAMARVELOUS 8 PUT UP 243.4 IN WEEK 2, 2022</span><span>THE BIG 3 LEADS AT 5-1</span><span>LOVE SHACK ON A 6-GAME LOSING SKID</span><span>WALKERNDA FOREVER TOPS THE POWER RANKINGS</span><span>TRADE: MAKE THAT A** WADDLE ACQUIRES CHASE BROWN FROM THE BIG 3</span><span>DROPPED: EVAN SQUARED - AARON RODGERS</span><span>DROPPED: THE BIG 3 - COLTS D/ST</span><span>DROPPED: THE GOLDEN LEMONS - EMMETT JOHNSON</span><span>CANT FIND NICO  WON THE 2025 CHAMPIONSHIP</span><span>RECORD BOOK: LAMARVELOUS 8 PUT UP 243.4 IN WEEK 2, 2022</span></div></div>
 <header class="hero">
   <div class="hero-glow"></div>
   <div class="hero-content">
@@ -646,7 +967,7 @@
       <span class="hero-chip">Week 7</span>
       <span class="hero-chip">10 Teams</span>
       <span class="hero-chip">🏆 The Big 3</span>
-      <span class="hero-chip hero-chip-muted">Updated Oct 20, 2026 10:55 AM</span>
+      <span class="hero-chip hero-chip-muted">Updated Oct 20, 2026 07:03 PM</span>
     </div>
   </div>
 </header>
@@ -659,6 +980,7 @@
   <button onclick="showTab('predictions', this)">Prediction Accuracy</button>
   <button onclick="showTab('draft', this)">Draft Analysis</button>
   <button onclick="showTab('history', this)">History</button>
+  <button onclick="showTab('parlay', this)">Weekly Parlay</button>
 </nav>
 
 <section id="standings" class="active">
@@ -1790,64 +2112,64 @@
             <div class="matchup-team">
               <div class="team-name">Make That A** Waddle</div>
               <div class="team-record">2-4</div>
-              <div class="proj-score">113.9</div>
+              <div class="proj-score">113.8</div>
             </div>
             <div class="vs">@</div>
             <div class="matchup-team">
               <div class="team-name">The Golden Lemons</div>
               <div class="team-record">2-4</div>
-              <div class="proj-score">110.4</div>
+              <div class="proj-score">138.2</div>
             </div>
           </div>
-          <p class="outlook">Make That A** Waddle and The Golden Lemons are neck and neck heading in, separated by only 3.5 projected points. Expect this to come down to the last game on the board.</p>
+          <p class="outlook">This has blowout potential — The Golden Lemons is favored by 24.4 points over Make That A** Waddle. Barring injuries or busts, Make That A** Waddle is fighting an uphill battle.</p>
         </div>
         <div class="matchup-card">
           <div class="matchup-teams">
             <div class="matchup-team">
               <div class="team-name">#NoKings </div>
               <div class="team-record">4-2</div>
-              <div class="proj-score">131.4</div>
+              <div class="proj-score">143.7</div>
             </div>
             <div class="vs">@</div>
             <div class="matchup-team">
               <div class="team-name">Cookin with Bijan</div>
               <div class="team-record">4-2</div>
-              <div class="proj-score">119.4</div>
+              <div class="proj-score">127.5</div>
             </div>
           </div>
-          <p class="outlook">#NoKings  enters as the favorite over Cookin with Bijan, projected to win by about 12.0 points. Not a lock, but Cookin with Bijan will need some breakout performances to keep pace.</p>
+          <p class="outlook">#NoKings  enters as the favorite over Cookin with Bijan, projected to win by about 16.2 points. Not a lock, but Cookin with Bijan will need some breakout performances to keep pace.</p>
         </div>
         <div class="matchup-card">
           <div class="matchup-teams">
             <div class="matchup-team">
               <div class="team-name">Love Shack</div>
               <div class="team-record">0-6</div>
-              <div class="proj-score">110.5</div>
+              <div class="proj-score">124.7</div>
             </div>
             <div class="vs">@</div>
             <div class="matchup-team">
               <div class="team-name">McBridefrey</div>
               <div class="team-record">3-3</div>
-              <div class="proj-score">136.7</div>
+              <div class="proj-score">139.6</div>
             </div>
           </div>
-          <p class="outlook">The numbers aren&#x27;t kind to Love Shack here, with McBridefrey projected to win by 26.2 points. A statement upset would be one for the ages.</p>
+          <p class="outlook">On paper, McBridefrey has the edge here, out-projecting Love Shack by 14.9 points. Love Shack isn&#x27;t out of it, but they&#x27;re chasing points from the jump.</p>
         </div>
         <div class="matchup-card">
           <div class="matchup-teams">
             <div class="matchup-team">
               <div class="team-name">Walkernda Forever</div>
               <div class="team-record">4-2</div>
-              <div class="proj-score">158.6</div>
+              <div class="proj-score">160.6</div>
             </div>
             <div class="vs">@</div>
             <div class="matchup-team">
               <div class="team-name">Evan Squared</div>
               <div class="team-record">2-4</div>
-              <div class="proj-score">113.4</div>
+              <div class="proj-score">140.6</div>
             </div>
           </div>
-          <p class="outlook">Walkernda Forever is projected to run away with this one, out-scoring Evan Squared by a lopsided 45.2 points. Evan Squared will need a near-perfect week and some help from the projections being wrong.</p>
+          <p class="outlook">The numbers aren&#x27;t kind to Evan Squared here, with Walkernda Forever projected to win by 20.0 points. A statement upset would be one for the ages.</p>
         </div>
         <div class="matchup-card">
           <div class="matchup-teams">
@@ -1876,6 +2198,18 @@
     <table>
       <thead><tr><th>Date</th><th>Team</th><th>Action</th><th>Player</th></tr></thead>
       <tbody>
+        <tr>
+          <td>Oct 20, 2026</td>
+          <td>Evan Squared</td>
+          <td class="action">Dropped</td>
+          <td>Aaron Rodgers</td>
+        </tr>
+        <tr>
+          <td>Oct 20, 2026</td>
+          <td>The Big 3</td>
+          <td class="action">Dropped</td>
+          <td>Colts D/ST</td>
+        </tr>
         <tr>
           <td>Oct 18, 2026</td>
           <td>The Golden Lemons</td>
@@ -2163,18 +2497,6 @@
           <td>Evan Squared</td>
           <td class="action">Dropped</td>
           <td>Jakobi Meyers</td>
-        </tr>
-        <tr>
-          <td>Oct 08, 2026</td>
-          <td>McBridefrey</td>
-          <td class="action">Dropped</td>
-          <td>Rachaad White</td>
-        </tr>
-        <tr>
-          <td>Oct 08, 2026</td>
-          <td>McBridefrey</td>
-          <td class="action">Waiver add</td>
-          <td>Braelon Allen</td>
         </tr></tbody>
     </table>
 
@@ -3752,7 +4074,32 @@
   </div>
 </section>
 
+<section id="parlay">
+  <div class="panel">
+    <!-- Weekly Parlay backend: LOCAL (FIREBASE_CONFIG is not set) -->
+<h2 class='section-title'>Weekly Parlay</h2><p class='section-note'>No parlay data yet — use the entry form below to add this week's legs, or hand-edit <code>parlay.json</code> directly.</p>
+    <h3 class="section-title" style="margin:24px 0 10px">Add / Edit a Week (commissioner entry)</h3>
+    <p class="section-note">Fills a week's legs and saves a draft in this browser as you go. Nothing here syncs to
+    other managers or updates the live page on its own — use "Download updated parlay.json" when a week
+    is final, then commit that file so the next regenerate picks it up for everyone.</p>
+    <div class="parlay-entry">
+      <div class="parlay-entry-row parlay-entry-header">
+        <input type="number" id="pxSeason" placeholder="Season" value="2026">
+        <input type="number" id="pxWeek" placeholder="Week" value="7">
+        <button type="button" class="btn-secondary" onclick="loadParlayWeek()">Load Week</button>
+      </div>
+    </div>
+    <div id="parlayLegRows"></div>
+    <div class="parlay-entry-actions">
+
+  </div>
+</section>
+
 <footer>Generated locally from your ESPN league data. Not affiliated with ESPN.</footer>
+
+<!-- Firebase SDK for Weekly Parlay -->
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
 
 <script>
 function switchTab(id, btn) {
@@ -3795,7 +4142,320 @@ document.addEventListener('DOMContentLoaded', () => {
     void el.offsetWidth;
     requestAnimationFrame(() => el.classList.add('show'));
   });
+  // Initialize Firebase if config is available
+  if (window.FIREBASE_CONFIG && window.FIREBASE_CONFIG.projectId) {
+    const firebaseConfig = window.FIREBASE_CONFIG;
+    if (!firebase.apps.length) {
+      firebase.initializeApp(firebaseConfig);
+    }
+  }
 });
+
+// Weekly Parlay Firebase functionality
+function initializeParlayFirebase() {
+  if (!window.FIREBASE_CONFIG || !window.FIREBASE_CONFIG.projectId || !firebase.apps.length) {
+    return;
+  }
+  const pqDb = () => firebase.firestore();
+  const PQ_ICONS = { hit: ['&#10003;', 'ic-hit'], miss: ['&#10007;', 'ic-miss'], push: ['&#8211;', 'ic-push'], pending: ['&#8226;', 'ic-pending'] };
+  let currentSeason = parseInt(document.getElementById('pqSeason').value, 10);
+  let currentWeek = parseInt(document.getElementById('pqWeek').value, 10);
+  function pqSlug(s) {
+    return String(s || '').toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+  }
+  function setParlayAlert(id, msg, type) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    let cls = '';
+    if (type === 'err') cls = 'parlay-alert err';
+    else if (type === 'info') cls = 'parlay-alert info';
+    else if (type === 'ok') cls = 'parlay-alert ok';
+    el.className = cls;
+    el.textContent = msg;
+  }
+  async function pqFetchAllLegs() {
+    try {
+      const snap = await pqDb().collection('nbfflParlayLegs').get();
+      const legs = [];
+      snap.forEach(function(d) { legs.push(d.data()); });
+      return legs;
+    } catch (err) {
+      console.error('Error fetching parlay legs:', err);
+      return [];
+    }
+  }
+  async function pqSaveResults(entries) {
+    const batch = pqDb().batch();
+    entries.forEach(function(e) {
+      const id = e.season + '-' + e.week + '-' + pqSlug(e.manager);
+      batch.set(pqDb().collection('nbfflParlayLegs').doc(id), {
+        season: e.season, week: e.week, manager: e.manager, 
+        player: e.player, bet_type: e.betType, amount: e.amount, result: e.result,
+        updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+      }, {merge: true});
+    });
+    await batch.commit();
+  }  function pqTeamOptionsHtml(selected) {
+    const managers = Object.keys(window.MANAGER_ROSTERS || {}).sort();
+    return '<option value="">Select team...</option>' + managers.map(function(m) {
+      return '<option value="' + escapeHtml(m) + '"' + (m === selected ? ' selected' : '') + '>' + escapeHtml(m) + '</option>';
+    }).join('');
+  }
+  function escapeHtml(s) {
+    const div = document.createElement('div');
+    div.textContent = s;
+    return div.innerHTML;
+  }
+  function pqApplyRowTint(tr, resultVal) {
+    tr.classList.remove('pq-row-hit', 'pq-row-miss', 'pq-row-push');
+    if (resultVal === 'hit') tr.classList.add('pq-row-hit');
+    else if (resultVal === 'miss') tr.classList.add('pq-row-miss');
+    else if (resultVal === 'push') tr.classList.add('pq-row-push');
+  }
+  function pqAddPicksRow(manager, player, betType, amount, result) {
+    const tbody = document.getElementById('pqPicksBody');
+    if (!tbody) return;
+    const resultVal = result || 'pending';
+    const playerVal = player || '';
+    const betTypeVal = betType || '';
+    const amountVal = amount || '';
+    
+    const tr = document.createElement('tr');
+    
+    // Build bet type dropdown - PLAYER ONLY, no team bets
+    const betTypeOptions = BET_TYPES.map(opt => 
+      '<option value="' + opt.value + '"' + (opt.value === betTypeVal ? ' selected' : '') + '>' + opt.label + '</option>'
+    ).join('');
+    
+    tr.innerHTML =
+      '<td><select class="pq-row-team">' + pqTeamOptionsHtml(manager || '') + '</select></td>' +
+      '<td><input type="text" class="pq-row-player" value="' + escapeHtml(playerVal) + '" placeholder="Player name"></td>' +
+      '<td><select class="pq-row-bet-type">' + betTypeOptions + '</select></td>' +
+      '<td><input type="text" class="pq-row-amount" value="' + escapeHtml(amountVal) + '" placeholder="Amount"></td>' +
+      '<td><select class="pq-row-result">' +
+        '<option value="pending"' + (resultVal === 'pending' ? ' selected' : '') + '>TBD</option>' +
+        '<option value="hit"' + (resultVal === 'hit' ? ' selected' : '') + '>Hit</option>' +
+        '<option value="miss"' + (resultVal === 'miss' ? ' selected' : '') + '>Miss</option>' +
+        '<option value="push"' + (resultVal === 'push' ? ' selected' : '') + '>Push</option>' +
+      '</select></td>' +
+      '<td><button type="button" class="btn-remove pq-row-remove" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:18px;">&times;</button></td>';
+    tbody.appendChild(tr);
+    pqApplyRowTint(tr, resultVal);
+    const resultSel = tr.querySelector('.pq-row-result');
+    const betTypeSel = tr.querySelector('.pq-row-bet-type');
+    const amountInput = tr.querySelector('.pq-row-amount');
+    resultSel.addEventListener('change', function() { pqApplyRowTint(tr, resultSel.value); });
+    tr.querySelector('.pq-row-remove').addEventListener('click', function() { tr.remove(); });
+    
+    // Toggle amount field based on bet type
+    // For "Anytime TD", amount is not needed
+    function updateAmountVisibility() {
+      if (betTypeSel.value === 'anytime_td') {
+        amountInput.style.display = 'none';
+      } else {
+        amountInput.style.display = '';
+      }
+    }
+    betTypeSel.addEventListener('change', updateAmountVisibility);
+    updateAmountVisibility();
+  }
+  function pqRenderWeekBand(season, week, filteredLegs) {
+    const titleEl = document.querySelector('#pqWeekBand .pq-week-band-title');
+    const statsEl = document.getElementById('pqWeekBandStats');
+    const statusEl = document.getElementById('pqWeekStatus');
+    if (!titleEl || !statsEl) return;
+    titleEl.textContent = 'Week ' + week + ', ' + season;
+    const submitted = filteredLegs.length;
+    const hits = filteredLegs.filter(function(l) { return l.result === 'hit'; }).length;
+    const misses = filteredLegs.filter(function(l) { return l.result === 'miss'; }).length;
+    const pushes = filteredLegs.filter(function(l) { return l.result === 'push'; }).length;
+    const graded = hits + misses + pushes;
+    statsEl.innerHTML =
+      '<div class="pq-week-band-stat"><div class="pwn">' + submitted + '</div><div class="pwl">Submitted</div></div>' +
+      '<div class="pq-week-band-stat"><div class="pwn">' + graded + ' / ' + submitted + '</div><div class="pwl">Graded</div></div>' +
+      '<div class="pq-week-band-stat"><div class="pwn">' + hits + '-' + misses + '-' + pushes + '</div><div class="pwl">Hit-Miss-Push</div></div>';
+    if (statusEl) {
+      let cls, label;
+      if (submitted === 0) { cls = 'pq-status-none'; label = 'Not started'; }
+      else if (graded < submitted) { cls = 'pq-status-partial'; label = 'Picks saved - needs results'; }
+      else { cls = 'pq-status-complete'; label = 'Complete'; }
+      statusEl.innerHTML = '<span class="pq-status-badge ' + cls + '">' + label + '</span>';
+    }
+  }
+  function pqComputeStreak(sortedDecidedLegs) {
+    if (!sortedDecidedLegs.length) return {type: null, length: 0};
+    const lastType = sortedDecidedLegs[sortedDecidedLegs.length - 1].result;
+    let len = 0;
+    for (let i = sortedDecidedLegs.length - 1; i >= 0; i--) {
+      if (sortedDecidedLegs[i].result === lastType) len++; else break;
+    }
+    return {type: lastType, length: len};
+  }
+  function pqRenderTeamStats(allLegs) {
+    const wrap = document.getElementById('pqTeamStats');
+    if (!wrap) return;
+    const season = window.PQ_CURRENT_SEASON;
+    const thisSeasonLegs = allLegs.filter(function(l) { return Number(l.season) === season; });
+    const managers = Object.keys(window.MANAGER_ROSTERS || {}).sort();
+    const rows = managers.map(function(mgr) {
+      const mgrLegs = thisSeasonLegs.filter(function(l) { return l.manager === mgr; });
+      const decidedLegs = mgrLegs.filter(function(l) { return l.result !== 'pending'; }).sort(function(a, b) { return a.week - b.week; });
+      const streak = pqComputeStreak(decidedLegs);
+      const hits = mgrLegs.filter(function(l) { return l.result === 'hit'; }).length;
+      const misses = mgrLegs.filter(function(l) { return l.result === 'miss'; }).length;
+      const pushes = mgrLegs.filter(function(l) { return l.result === 'push'; }).length;
+      const total = hits + misses + pushes;
+      const rate = total ? Math.round(hits / total * 100) : 0;
+      let streakHtml = '';
+      if (streak.type) {
+        const typeLabel = streak.type === 'hit' ? 'Hit Streak' : 'Miss Streak';
+        streakHtml = '<span style="color:' + (streak.type === 'hit' ? '#2fb344' : '#e05252') + ';font-weight:600;">' +
+          streak.length + '-week ' + typeLabel + '</span>';
+      }
+      return '<div class="parlay-lb-row">' +
+        '<div class="parlay-lb-rank">' + (hits > 0 ? '&#10003;' : '') + '</div>' +
+        '<div><div class="parlay-lb-name">' + escapeHtml(mgr) + '</div>' +
+          (streakHtml ? '<div style="margin-top:4px;">' + streakHtml + '</div>' : '') +
+        '</div>' +
+        '<div class="parlay-lb-right"><div class="parlay-lb-rate">' + rate + '%</div>' +
+          '<div class="parlay-lb-record">' + hits + '-' + misses + '-' + pushes + '</div>' +
+        '</div>' +
+      '</div>';
+    });
+    wrap.innerHTML = '<div class="parlay-leaderboard">' + rows.join('') + '</div>';
+  }
+  function pqRenderHistory(allLegs) {
+    const wrap = document.getElementById('pqWeekly');
+    if (!wrap) return;
+    const byWeek = {};
+    allLegs.forEach(function(l) {
+      const key = l.season + '-' + String(l.week).padStart(2, '0');
+      if (!byWeek[key]) byWeek[key] = [];
+      byWeek[key].push(l);
+    });
+    const sortedKeys = Object.keys(byWeek).sort().reverse();
+    const slips = sortedKeys.map(function(key) {
+      const legs = byWeek[key];
+      const parts = key.split('-');
+      const season = parseInt(parts[0], 10);
+      const week = parseInt(parts[1], 10);
+      const hits = legs.filter(function(l) { return l.result === 'hit'; }).length;
+      const misses = legs.filter(function(l) { return l.result === 'miss'; }).length;
+      const pushes = legs.filter(function(l) { return l.result === 'push'; }).length;
+      let outcome = 'pending';
+      if (hits + misses + pushes > 0) {
+        if (misses > 0) outcome = 'miss';
+        else if (hits > 0 && hits === legs.length) outcome = 'hit';
+        else if (pushes === legs.length) outcome = 'push';
+      }
+      const legsHtml = legs.map(function(l) {
+        const iconData = PQ_ICONS[l.result || 'pending'] || PQ_ICONS.pending;
+        const betLabel = BET_TYPES.find(bt => bt.value === l.bet_type)?.label || l.bet_type || 'Custom';
+        const amountStr = l.amount ? ' (' + escapeHtml(l.amount) + ')' : '';
+        return '<div class="parlay-leg">' +
+          '<div class="parlay-leg-icon ' + iconData[1] + '">' + iconData[0] + '</div>' +
+          '<div class="parlay-leg-body"><div class="parlay-leg-manager">' + escapeHtml(l.manager) + '</div>' +
+          '<div class="parlay-leg-pick">' + escapeHtml(l.player) + ' - ' + escapeHtml(betLabel) + amountStr + '</div></div>' +
+        '</div>';
+      }).join('');
+      return '<div class="parlay-slip">' +
+        '<div class="parlay-slip-head"><div class="parlay-slip-title">Week ' + week + ', ' + season + '</div>' +
+        '<div class="parlay-slip-status st-' + outcome + '">' + (outcome.charAt(0).toUpperCase() + outcome.slice(1)) + '</div></div>' +
+        '<div>' + legsHtml + '</div>' +
+      '</div>';
+    });
+    wrap.innerHTML = slips.join('');
+  }  function pqRenderHero(allLegs) {
+    const wrap = document.getElementById('pqHero');
+    if (!wrap) return;
+    const season = window.PQ_CURRENT_SEASON;
+    const thisSeasonLegs = allLegs.filter(function(l) { return Number(l.season) === season; });
+    const totalWeeks = Object.keys(thisSeasonLegs.reduce(function(acc, l) { acc[l.week] = true; return acc; }, {})).length;
+    const hits = thisSeasonLegs.filter(function(l) { return l.result === 'hit'; }).length;
+    const misses = thisSeasonLegs.filter(function(l) { return l.result === 'miss'; }).length;
+    const pushes = thisSeasonLegs.filter(function(l) { return l.result === 'push'; }).length;
+    const decided = hits + misses + pushes;
+    const rate = decided ? Math.round(hits / decided * 100) : 0;
+    wrap.innerHTML = '<div class="parlay-summary-hero">' +
+      '<div class="parlay-summary-stat"><div class="psnum">' + hits + '-' + misses + '</div><div class="pslbl">Season Record</div></div>' +
+      '<div class="parlay-summary-stat"><div class="psnum">' + rate + '%</div><div class="pslbl">Hit Rate</div></div>' +
+      '<div class="parlay-summary-stat"><div class="psnum">' + totalWeeks + '</div><div class="pslbl">Weeks Tracked</div></div>' +
+    '</div>';
+  }
+  async function pqLoadWeek() {
+    currentSeason = parseInt(document.getElementById('pqSeason').value, 10);
+    currentWeek = parseInt(document.getElementById('pqWeek').value, 10);
+    const tbody = document.getElementById('pqPicksBody');
+    if (!tbody) return;
+    if (!currentSeason || !currentWeek) {
+      setParlayAlert('pqSaveStatus', 'Enter a season and week first.', 'err');
+      return;
+    }
+    setParlayAlert('pqSaveStatus', 'Loading...', 'info');
+    try {
+      const legs = await pqFetchAllLegs();
+      const filtered = legs.filter(function(l) { return Number(l.season) === currentSeason && Number(l.week) === currentWeek; });
+      tbody.innerHTML = '';
+      if (filtered.length) {
+        filtered.forEach(function(l) { 
+          pqAddPicksRow(l.manager, l.player, l.bet_type, l.amount, l.result); 
+        });
+      } else {
+        Object.keys(window.MANAGER_ROSTERS || {}).sort().forEach(function(m) { 
+          pqAddPicksRow(m, '', '', '', 'pending'); 
+        });
+      }
+      setParlayAlert('pqSaveStatus', '', null);
+      pqRenderWeekBand(currentSeason, currentWeek, filtered);
+      const allLegs = await pqFetchAllLegs();
+      pqRenderTeamStats(allLegs);
+      pqRenderHistory(allLegs);
+      pqRenderHero(allLegs);
+    } catch (err) {
+      setParlayAlert('pqSaveStatus', 'Could not load that week.', 'err');
+      console.error(err);
+    }
+  }  async function pqSavePicks() {
+    currentSeason = parseInt(document.getElementById('pqSeason').value, 10);
+    currentWeek = parseInt(document.getElementById('pqWeek').value, 10);
+    if (!currentSeason || !currentWeek) {
+      setParlayAlert('pqSaveStatus', 'Enter a season and week first.', 'err');
+      return;
+    }
+    const rows = document.querySelectorAll('#pqPicksBody tr');
+    const entries = [];
+    rows.forEach(function(tr) {
+      const manager = tr.querySelector('.pq-row-team').value;
+      const player = tr.querySelector('.pq-row-player').value;
+      const betType = tr.querySelector('.pq-row-bet-type').value;
+      const amount = tr.querySelector('.pq-row-amount').value;
+      const result = tr.querySelector('.pq-row-result').value;
+      if (manager && player && betType) {
+        entries.push({season: currentSeason, week: currentWeek, manager: manager, 
+                     player: player, betType: betType, amount: amount, result: result});
+      }
+    });
+    if (!entries.length) {
+      setParlayAlert('pqSaveStatus', 'Fill in at least one row (team, player, bet type required).', 'err');
+      return;
+    }
+    setParlayAlert('pqSaveStatus', 'Saving...', 'info');
+    try {
+      await pqSaveResults(entries);
+      setParlayAlert('pqSaveStatus', 'Saved ' + entries.length + ' pick' + (entries.length === 1 ? '' : 's') + ' for Week ' + currentWeek + ', ' + currentSeason + '.', 'ok');
+      pqLoadWeek();
+    } catch (err) {
+      setParlayAlert('pqSaveStatus', 'Could not save: ' + err.message, 'err');
+    }
+  }  const loadBtn = document.getElementById('pqLoadWeekBtn');
+  const saveBtn = document.getElementById('pqSaveBtn');
+  const addRowBtn = document.getElementById('pqAddRowBtn');
+  if (loadBtn) loadBtn.addEventListener('click', pqLoadWeek);
+  if (saveBtn) saveBtn.addEventListener('click', pqSavePicks);
+  if (addRowBtn) addRowBtn.addEventListener('click', function() { pqAddPicksRow('', '', '', '', 'pending'); });
+  if (document.getElementById('pqPicksBody')) { pqLoadWeek(); }
+}
+
 </script>
 </body>
 </html>
