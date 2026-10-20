@@ -14,11 +14,14 @@ This script generates a single-page dashboard with:
 - Prediction accuracy against ESPN projections
 - League champions and rivalry tracker
 - Recent transaction activity
+- **Weekly Parlay tracker** (with Firebase backend support)
 
 ## Project files
 
 - `espn_dashboard.py` — data fetcher and HTML generator
 - `index.html` — generated dashboard output
+- `firestore.rules` — Firebase security rules for Weekly Parlay
+- `FIREBASE-SETUP.md` — Firebase setup instructions for Weekly Parlay
 
 ## Requirements
 
@@ -44,6 +47,16 @@ export ESPN_S2="your_espn_s2_value"
 export SWID="your_swid_value"
 export HISTORY_START_YEAR=2018
 ```
+
+### Weekly Parlay Configuration (Optional)
+
+To enable the Weekly Parlay tracker with Firebase:
+
+```bash
+export FIREBASE_CONFIG='{"apiKey":"AIza...","authDomain":"your-project.firebaseapp.com","projectId":"your-project","storageBucket":"your-project.appspot.com","messagingSenderId":"123456789","appId":"1:123456789:web:abcdef123456"}'
+```
+
+See `FIREBASE-SETUP.md` for complete setup instructions. Without Firebase configured, the Weekly Parlay tab falls back to local JSON file mode.
 
 ### Getting your ESPN credentials
 
@@ -80,6 +93,8 @@ Open the generated file in a browser to view the dashboard.
 ## Security note
 
 The script sends your ESPN credentials directly to ESPN's API only from your machine. It does not upload or transmit your private league data anywhere else.
+
+The Firebase configuration (when used for Weekly Parlay) is safe to include in the dashboard HTML — it only identifies which Firebase project to use, and actual access control is enforced by the `firestore.rules` security rules.
 
 ## Example output
 
