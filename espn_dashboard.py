@@ -1981,7 +1981,7 @@ HTML_TEMPLATE = """<!DOCTYPE html>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Anton&family=Bebas+Neue&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
 <style>
-  :root {{
+  :root {{{{
     --bg: #0d0f13;
     --panel: #15181e;
     --border: #252a33;
@@ -1998,36 +1998,36 @@ HTML_TEMPLATE = """<!DOCTYPE html>
     --shadow-3: 0 16px 40px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.06);
     --stat-pos: #3fb950;
     --stat-neg: #e0524f;
-  }}
-  * {{ box-sizing: border-box; }}
-  body {{
+  }}}}
+  * {{{{ box-sizing: border-box; }}}}
+  body {{{{
     margin: 0;
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     background: var(--bg);
     color: var(--text);
     padding: 24px;
     font-variant-numeric: tabular-nums;
-  }}
-  .stat-pos {{ color: var(--stat-pos); }}
-  .stat-neg {{ color: var(--stat-neg); }}
-  header {{
+  }}}}
+  .stat-pos {{{{ color: var(--stat-pos); }}}}
+  .stat-neg {{{{ color: var(--stat-neg); }}}}
+  header {{{{
     margin-bottom: 28px;
-  }}
-  h1 {{
+  }}}}
+  h1 {{{{
     font-family: 'Anton', sans-serif;
     font-weight: 400;
     text-transform: uppercase;
     margin: 0 0 4px 0;
     font-size: 28px;
     letter-spacing: 0.5px;
-  }}
-  .subtitle {{
+  }}}}
+  .subtitle {{{{
     color: var(--muted);
     font-size: 14px;
-  }}
+  }}}}
 
   /* ---------- Hero / title section ---------- */
-  .hero {{
+  .hero {{{{
     position: relative;
     overflow: hidden;
     border-radius: 12px;
@@ -2035,25 +2035,25 @@ HTML_TEMPLATE = """<!DOCTYPE html>
     padding: 36px 32px;
     margin-bottom: 20px;
     background: radial-gradient(ellipse at 50% -10%, rgba(200,30,58,0.26), transparent 60%), var(--bg);
-  }}
-  .hero-glow {{
+  }}}}
+  .hero-glow {{{{
     position: absolute;
     inset: -40%;
     background: radial-gradient(circle at 50% 0%, rgba(200,30,58,0.20), transparent 55%);
     filter: blur(10px);
     pointer-events: none;
-  }}
-  .hero-content {{
+  }}}}
+  .hero-content {{{{
     position: relative;
     z-index: 1;
     opacity: 0;
     transform: translateY(10px);
     animation: hero-in 0.6s cubic-bezier(.22,1,.36,1) forwards;
-  }}
-  @keyframes hero-in {{ from {{ opacity: 0; transform: translateY(10px); }} to {{ opacity: 1; transform: translateY(0); }} }}
-  @keyframes hero-chip-in {{ from {{ opacity: 0; transform: translateY(6px); }} to {{ opacity: 1; transform: translateY(0); }} }}
-  @media (prefers-reduced-motion: reduce) {{ .hero-content, .hero-chip {{ animation: none; opacity: 1; transform: none; }} }}
-  .onclock {{
+  }}}}
+  @keyframes hero-in {{{{ from {{{{ opacity: 0; transform: translateY(10px); }}}} to {{{{ opacity: 1; transform: translateY(0); }}}} }}}}
+  @keyframes hero-chip-in {{{{ from {{{{ opacity: 0; transform: translateY(6px); }}}} to {{{{ opacity: 1; transform: translateY(0); }}}} }}}}
+  @media (prefers-reduced-motion: reduce) {{{{ .hero-content, .hero-chip {{{{ animation: none; opacity: 1; transform: none; }}}} }}}}
+  .onclock {{{{
     display: inline-flex;
     align-items: center;
     gap: 8px;
@@ -2067,19 +2067,19 @@ HTML_TEMPLATE = """<!DOCTYPE html>
     text-transform: uppercase;
     margin-bottom: 16px;
     color: #fff;
-  }}
-  .onclock .pulse {{
+  }}}}
+  .onclock .pulse {{{{
     width: 7px; height: 7px; border-radius: 50%; background: #fff;
     animation: pulse 1.4s ease-in-out infinite;
-  }}
-  @keyframes pulse {{ 0%, 100% {{ opacity: 1; }} 50% {{ opacity: .3; }} }}
-  .hero-eyebrow {{
+  }}}}
+  @keyframes pulse {{{{ 0%, 100% {{{{ opacity: 1; }}}} 50% {{{{ opacity: .3; }}}} }}}}
+  .hero-eyebrow {{{{
     color: var(--muted);
     font-size: 14px;
     font-weight: 500;
     margin-bottom: 8px;
-  }}
-  .hero-title {{
+  }}}}
+  .hero-title {{{{
     font-family: 'Anton', sans-serif;
     font-weight: 400;
     text-transform: uppercase;
@@ -2088,9 +2088,9 @@ HTML_TEMPLATE = """<!DOCTYPE html>
     letter-spacing: 0.5px;
     line-height: 1.0;
     color: var(--text);
-  }}
-  .hero-meta {{ display: flex; flex-wrap: wrap; gap: 8px; }}
-  .hero-chip {{
+  }}}}
+  .hero-meta {{{{ display: flex; flex-wrap: wrap; gap: 8px; }}}}
+  .hero-chip {{{{
     display: inline-flex;
     align-items: center;
     gap: 6px;
@@ -2104,19 +2104,19 @@ HTML_TEMPLATE = """<!DOCTYPE html>
     color: var(--text);
     opacity: 0;
     animation: hero-chip-in 0.5s ease forwards;
-  }}
-  .hero-chip-muted {{
+  }}}}
+  .hero-chip-muted {{{{
     color: var(--muted);
     font-weight: 400;
     background: transparent;
     border-color: var(--border);
-  }}
-  .hero-meta .hero-chip:nth-child(1) {{ animation-delay: .25s; }}
-  .hero-meta .hero-chip:nth-child(2) {{ animation-delay: .32s; }}
-  .hero-meta .hero-chip:nth-child(3) {{ animation-delay: .39s; }}
-  .hero-meta .hero-chip:nth-child(4) {{ animation-delay: .46s; }}
-  .hero-meta .hero-chip:nth-child(5) {{ animation-delay: .53s; }}
-  .ticker {{
+  }}}}
+  .hero-meta .hero-chip:nth-child(1) {{{{ animation-delay: .25s; }}}}
+  .hero-meta .hero-chip:nth-child(2) {{{{ animation-delay: .32s; }}}}
+  .hero-meta .hero-chip:nth-child(3) {{{{ animation-delay: .39s; }}}}
+  .hero-meta .hero-chip:nth-child(4) {{{{ animation-delay: .46s; }}}}
+  .hero-meta .hero-chip:nth-child(5) {{{{ animation-delay: .53s; }}}}
+  .ticker {{{{
     background: var(--accent);
     color: #fff;
     font-family: 'JetBrains Mono', monospace;
@@ -2128,20 +2128,20 @@ HTML_TEMPLATE = """<!DOCTYPE html>
     white-space: nowrap;
     border-radius: 8px;
     margin-bottom: 18px;
-  }}
-  .ticker-track {{ display: inline-block; padding-left: 100%; animation: ticker-scroll 60s linear infinite; }}
-  .ticker-track span {{ display: inline-block; padding-right: 56px; }}
-  .ticker-track span::after {{ content: '\25CF'; color: var(--accent3); margin-left: 56px; font-size: 8px; vertical-align: middle; }}
-  @keyframes ticker-scroll {{ from {{ transform: translateX(0); }} to {{ transform: translateX(-100%); }} }}
-  @media (prefers-reduced-motion: reduce) {{ .ticker-track {{ animation: none; padding-left: 16px; }} }}
-  nav {{
+  }}}}
+  .ticker-track {{{{ display: inline-block; padding-left: 100%; animation: ticker-scroll 60s linear infinite; }}}}
+  .ticker-track span {{{{ display: inline-block; padding-right: 56px; }}}}
+  .ticker-track span::after {{{{ content: '\25CF'; color: var(--accent3); margin-left: 56px; font-size: 8px; vertical-align: middle; }}}}
+  @keyframes ticker-scroll {{{{ from {{{{ transform: translateX(0); }}}} to {{{{ transform: translateX(-100%); }}}} }}}}
+  @media (prefers-reduced-motion: reduce) {{{{ .ticker-track {{{{ animation: none; padding-left: 16px; }}}} }}}}
+  nav {{{{
     display: flex;
     flex-wrap: wrap;
     gap: 4px 8px;
     margin: 20px 0 24px 0;
     border-bottom: 1px solid var(--border);
-  }}
-  nav button {{
+  }}}}
+  nav button {{{{
     font-family: 'Bebas Neue', sans-serif;
     letter-spacing: 1.5px;
     text-transform: uppercase;
@@ -2153,16 +2153,16 @@ HTML_TEMPLATE = """<!DOCTYPE html>
     cursor: pointer;
     border-bottom: 2px solid transparent;
     white-space: nowrap;
-  }}
-  nav button.active {{
+  }}}}
+  nav button.active {{{{
     color: var(--text);
     border-bottom: 2px solid transparent;
     border-image: var(--gradient-warm) 1;
-  }}
-  section {{ display: none; opacity: 0; transform: translateY(8px); transition: opacity 0.25s ease, transform 0.25s ease; }}
-  section.active {{ display: block; }}
-  section.active.show {{ opacity: 1; transform: translateY(0); }}
-  .panel {{
+  }}}}
+  section {{{{ display: none; opacity: 0; transform: translateY(8px); transition: opacity 0.25s ease, transform 0.25s ease; }}}}
+  section.active {{{{ display: block; }}}}
+  section.active.show {{{{ opacity: 1; transform: translateY(0); }}}}
+  .panel {{{{
     box-shadow: var(--shadow-2);
     background: var(--panel);
     border: 1px solid var(--border);
@@ -2170,19 +2170,19 @@ HTML_TEMPLATE = """<!DOCTYPE html>
     padding: 20px;
     overflow-x: auto;
     overflow-y: visible;
-  }}
-  table {{
+  }}}}
+  table {{{{
     width: 100%;
     border-collapse: collapse;
     font-size: 14px;
-  }}
-  thead th {{
+  }}}}
+  thead th {{{{
     position: sticky;
     top: 0;
     background: var(--panel);
     z-index: 1;
-  }}
-  th {{
+  }}}}
+  th {{{{
     font-family: 'JetBrains Mono', monospace;
     text-align: left;
     color: var(--muted);
@@ -2192,35 +2192,35 @@ HTML_TEMPLATE = """<!DOCTYPE html>
     letter-spacing: 1px;
     padding: 8px 10px;
     border-bottom: 1px solid var(--border);
-  }}
-  td {{
+  }}}}
+  td {{{{
     padding: 10px;
     border-bottom: 1px solid var(--border);
-  }}
-  tr:last-child td {{ border-bottom: none; }}
-  .team-cell {{ font-weight: 600; }}
-  .team-cell-inner {{ display: flex; align-items: center; gap: 8px; }}
-  .team-name-main {{ font-weight: 600; }}
-  .owner-name {{ color: var(--muted); font-weight: 400; font-size: 11px; margin-top: 2px; }}
-  .logo {{ width: 22px; height: 22px; border-radius: 50%; flex-shrink: 0; object-fit: cover; background: #1b1f27; }}
-  .action {{ color: var(--accent2); }}
-  .empty {{ color: var(--muted); text-align: center; padding: 24px; }}
-  .pbar {{ display: flex; align-items: center; gap: 8px; min-width: 90px; }}
-  .pbar-track {{
+  }}}}
+  tr:last-child td {{{{ border-bottom: none; }}}}
+  .team-cell {{{{ font-weight: 600; }}}}
+  .team-cell-inner {{{{ display: flex; align-items: center; gap: 8px; }}}}
+  .team-name-main {{{{ font-weight: 600; }}}}
+  .owner-name {{{{ color: var(--muted); font-weight: 400; font-size: 11px; margin-top: 2px; }}}}
+  .logo {{{{ width: 22px; height: 22px; border-radius: 50%; flex-shrink: 0; object-fit: cover; background: #1b1f27; }}}}
+  .action {{{{ color: var(--accent2); }}}}
+  .empty {{{{ color: var(--muted); text-align: center; padding: 24px; }}}}
+  .pbar {{{{ display: flex; align-items: center; gap: 8px; min-width: 90px; }}}}
+  .pbar-track {{{{
     flex: 1;
     height: 6px;
     border-radius: 999px;
     background: rgba(255,255,255,0.08);
     overflow: hidden;
-  }}
-  .pbar-fill {{
+  }}}}
+  .pbar-fill {{{{
     height: 100%;
     border-radius: 999px;
     transition: width 0.4s ease;
-  }}
-  .pbar-label {{ font-size: 12px; color: var(--muted); min-width: 32px; text-align: right; }}
-  .sparkline {{ width: 90px; height: 26px; display: block; }}
-  .draft-cell {{
+  }}}}
+  .pbar-label {{{{ font-size: 12px; color: var(--muted); min-width: 32px; text-align: right; }}}}
+  .sparkline {{{{ width: 90px; height: 26px; display: block; }}}}
+  .draft-cell {{{{
     background: #1b1f27;
     border: 1px solid var(--border);
     border-radius: 8px;
@@ -2230,29 +2230,29 @@ HTML_TEMPLATE = """<!DOCTYPE html>
     display: flex;
     flex-direction: column;
     box-sizing: border-box;
-  }}
-  .draft-cell:hover {{ transform: translateY(-2px); box-shadow: var(--shadow-2); }}
-  .draft-board-wrap {{ overflow-x: auto; overflow-y: visible; margin-top: 8px; }}
-  .draft-board {{ border-collapse: separate; border-spacing: 6px; width: max-content; }}
-  .draft-board th {{ color: var(--muted); font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.3px; padding: 4px 6px; text-align: center; vertical-align: bottom; min-width: 124px; max-width: 140px; }}
-  .draft-board td {{ vertical-align: top; padding: 0; min-width: 124px; max-width: 140px; }}
-  .draft-board .round-label {{ color: var(--accent); font-weight: 700; font-size: 13px; text-align: center; min-width: 28px; width: 28px; }}
-  .draft-board .draft-cell {{ width: 100%; min-width: 0; height: 112px; margin-bottom: 6px; }}
-  .draft-board .draft-cell:last-child {{ margin-bottom: 0; }}
-  .pick-num {{ color: var(--accent); font-size: 12px; font-weight: 700; flex-shrink: 0; }}
-  .player {{
+  }}}}
+  .draft-cell:hover {{{{ transform: translateY(-2px); box-shadow: var(--shadow-2); }}}}
+  .draft-board-wrap {{{{ overflow-x: auto; overflow-y: visible; margin-top: 8px; }}}}
+  .draft-board {{{{ border-collapse: separate; border-spacing: 6px; width: max-content; }}}}
+  .draft-board th {{{{ color: var(--muted); font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.3px; padding: 4px 6px; text-align: center; vertical-align: bottom; min-width: 124px; max-width: 140px; }}}}
+  .draft-board td {{{{ vertical-align: top; padding: 0; min-width: 124px; max-width: 140px; }}}}
+  .draft-board .round-label {{{{ color: var(--accent); font-weight: 700; font-size: 13px; text-align: center; min-width: 28px; width: 28px; }}}}
+  .draft-board .draft-cell {{{{ width: 100%; min-width: 0; height: 112px; margin-bottom: 6px; }}}}
+  .draft-board .draft-cell:last-child {{{{ margin-bottom: 0; }}}}
+  .pick-num {{{{ color: var(--accent); font-size: 12px; font-weight: 700; flex-shrink: 0; }}}}
+  .player {{{{
     font-weight: 600; margin: 4px 0 2px 0; font-size: 14px;
     white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
     flex-shrink: 0;
-  }}
-  .drafted-by {{
+  }}}}
+  .drafted-by {{{{
     color: var(--muted); font-size: 12px;
     white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
     flex-shrink: 0;
-  }}
-  .rank-move {{ font-size: 11px; margin-top: 6px; color: var(--text); opacity: 0.9; flex-shrink: 0; }}
-  .bid {{ color: var(--accent2); font-size: 12px; margin-top: 4px; }}
-  .legend {{
+  }}}}
+  .rank-move {{{{ font-size: 11px; margin-top: 6px; color: var(--text); opacity: 0.9; flex-shrink: 0; }}}}
+  .bid {{{{ color: var(--accent2); font-size: 12px; margin-top: 4px; }}}}
+  .legend {{{{
     display: flex;
     flex-wrap: wrap;
     gap: 18px;
@@ -2261,83 +2261,83 @@ HTML_TEMPLATE = """<!DOCTYPE html>
     margin-bottom: 16px;
     padding-bottom: 12px;
     border-bottom: 1px solid var(--border);
-  }}
-  .legend .dot {{
+  }}}}
+  .legend .dot {{{{
     display: inline-block;
     width: 10px;
     height: 10px;
     border-radius: 50%;
     margin-right: 6px;
     vertical-align: middle;
-  }}
-  .section-title {{
+  }}}}
+  .section-title {{{{
     font-family: 'Bebas Neue', sans-serif;
     font-size: 18px;
     letter-spacing: 1.5px;
     color: var(--muted);
     text-transform: uppercase;
     margin: 0 0 16px 0;
-  }}
-  .matchup-list {{
+  }}}}
+  .matchup-list {{{{
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
     gap: 14px;
-  }}
-  .matchup-card {{
+  }}}}
+  .matchup-card {{{{
     background: #1b1f27;
     border: 1px solid var(--border);
     border-radius: 10px;
     padding: 16px;
     box-shadow: var(--shadow-1);
     transition: transform 0.15s ease, box-shadow 0.15s ease;
-  }}
-  .matchup-card:hover {{ transform: translateY(-3px); box-shadow: var(--shadow-3); }}
-  .matchup-card.bye {{
+  }}}}
+  .matchup-card:hover {{{{ transform: translateY(-3px); box-shadow: var(--shadow-3); }}}}
+  .matchup-card.bye {{{{
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     text-align: center;
     color: var(--muted);
-  }}
-  .bye-label {{
+  }}}}
+  .bye-label {{{{
     font-size: 11px;
     letter-spacing: 1px;
     color: var(--accent);
     font-weight: 700;
     margin-bottom: 6px;
-  }}
-  .matchup-teams {{
+  }}}}
+  .matchup-teams {{{{
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 10px;
-  }}
-  .matchup-team {{
+  }}}}
+  .matchup-team {{{{
     flex: 1;
     text-align: center;
-  }}
-  .matchup-team .team-name {{
+  }}}}
+  .matchup-team .team-name {{{{
     font-weight: 700;
     font-size: 14px;
     margin-bottom: 2px;
-  }}
-  .matchup-team .team-record {{
+  }}}}
+  .matchup-team .team-record {{{{
     color: var(--muted);
     font-size: 12px;
     margin-bottom: 8px;
-  }}
-  .matchup-team .proj-score {{
+  }}}}
+  .matchup-team .proj-score {{{{
     font-size: 24px;
     font-weight: 800;
     color: var(--accent2);
-  }}
-  .vs {{
+  }}}}
+  .vs {{{{
     color: var(--muted);
     font-size: 13px;
     font-weight: 600;
-  }}
-  .outlook {{
+  }}}}
+  .outlook {{{{
     margin: 14px 0 0 0;
     padding-top: 12px;
     border-top: 1px solid var(--border);
@@ -2345,19 +2345,19 @@ HTML_TEMPLATE = """<!DOCTYPE html>
     line-height: 1.5;
     color: var(--text);
     opacity: 0.9;
-  }}
-  .section-note {{
+  }}}}
+  .section-note {{{{
     color: var(--muted);
     font-size: 12px;
     margin: -8px 0 16px 0;
-  }}
-  .subnav {{
+  }}}}
+  .subnav {{{{
     display: flex;
     flex-wrap: wrap;
     gap: 6px;
     margin-bottom: 16px;
-  }}
-  .subtab {{
+  }}}}
+  .subtab {{{{
     background: #1b1f27;
     border: 1px solid var(--border);
     color: var(--muted);
@@ -2365,26 +2365,26 @@ HTML_TEMPLATE = """<!DOCTYPE html>
     padding: 6px 12px;
     border-radius: 20px;
     cursor: pointer;
-  }}
-  .subtab.active {{
+  }}}}
+  .subtab.active {{{{
     color: var(--text);
     border-color: var(--accent);
     background: rgba(255, 90, 31, 0.12);
-  }}
-  .subpanel {{ display: none; opacity: 0; transform: translateY(6px); transition: opacity 0.2s ease, transform 0.2s ease; }}
-  .subpanel.active {{ display: block; }}
-  .subpanel.active.show {{ opacity: 1; transform: translateY(0); }}
-  .move-up {{ color: var(--stat-pos); font-weight: 600; }}
-  .move-down {{ color: var(--stat-neg); font-weight: 600; }}
-  .move-flat {{ color: var(--muted); }}
-  .luck-good {{ color: var(--stat-pos); font-weight: 600; }}
-  .luck-bad {{ color: var(--stat-neg); font-weight: 600; }}
-  .report-grid {{
+  }}}}
+  .subpanel {{{{ display: none; opacity: 0; transform: translateY(6px); transition: opacity 0.2s ease, transform 0.2s ease; }}}}
+  .subpanel.active {{{{ display: block; }}}}
+  .subpanel.active.show {{{{ opacity: 1; transform: translateY(0); }}}}
+  .move-up {{{{ color: var(--stat-pos); font-weight: 600; }}}}
+  .move-down {{{{ color: var(--stat-neg); font-weight: 600; }}}}
+  .move-flat {{{{ color: var(--muted); }}}}
+  .luck-good {{{{ color: var(--stat-pos); font-weight: 600; }}}}
+  .luck-bad {{{{ color: var(--stat-neg); font-weight: 600; }}}}
+  .report-grid {{{{
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
     gap: 14px;
-  }}
-  .report-card {{
+  }}}}
+  .report-card {{{{
     background: #1b1f27;
     border: 1px solid var(--border);
     border-radius: 10px;
@@ -2392,9 +2392,9 @@ HTML_TEMPLATE = """<!DOCTYPE html>
     position: relative;
     box-shadow: var(--shadow-1);
     transition: transform 0.15s ease, box-shadow 0.15s ease;
-  }}
-  .report-card:hover {{ transform: translateY(-3px); box-shadow: var(--shadow-3); }}
-  .grade-badge {{
+  }}}}
+  .report-card:hover {{{{ transform: translateY(-3px); box-shadow: var(--shadow-3); }}}}
+  .grade-badge {{{{
     position: absolute;
     top: 14px;
     right: 14px;
@@ -2406,56 +2406,56 @@ HTML_TEMPLATE = """<!DOCTYPE html>
     justify-content: center;
     font-weight: 800;
     font-size: 15px;
-  }}
-  .grade-a {{ background: rgba(47,179,68,0.2); color: #2fb344; }}
-  .grade-b {{ background: rgba(61,139,253,0.2); color: #3d8bfd; }}
-  .grade-c {{ background: rgba(138,146,168,0.25); color: var(--text); }}
-  .grade-d {{ background: rgba(255,159,28,0.2); color: #ff9f1c; }}
-  .grade-f {{ background: rgba(224,82,82,0.2); color: #e05252; }}
-  .report-team {{ font-weight: 700; font-size: 15px; margin-bottom: 6px; padding-right: 40px; }}
-  .report-stat {{ color: var(--muted); font-size: 12px; margin-bottom: 10px; }}
-  .report-line {{ font-size: 12px; line-height: 1.5; margin-top: 4px; }}
-  .report-line.best {{ color: #2fb344; }}
-  .report-line.worst {{ color: #e05252; }}
-  .rivalry-grid {{
+  }}}}
+  .grade-a {{{{ background: rgba(47,179,68,0.2); color: #2fb344; }}}}
+  .grade-b {{{{ background: rgba(61,139,253,0.2); color: #3d8bfd; }}}}
+  .grade-c {{{{ background: rgba(138,146,168,0.25); color: var(--text); }}}}
+  .grade-d {{{{ background: rgba(255,159,28,0.2); color: #ff9f1c; }}}}
+  .grade-f {{{{ background: rgba(224,82,82,0.2); color: #e05252; }}}}
+  .report-team {{{{ font-weight: 700; font-size: 15px; margin-bottom: 6px; padding-right: 40px; }}}}
+  .report-stat {{{{ color: var(--muted); font-size: 12px; margin-bottom: 10px; }}}}
+  .report-line {{{{ font-size: 12px; line-height: 1.5; margin-top: 4px; }}}}
+  .report-line.best {{{{ color: #2fb344; }}}}
+  .report-line.worst {{{{ color: #e05252; }}}}
+  .rivalry-grid {{{{
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
     gap: 14px;
-  }}
-  .rivalry-card {{
+  }}}}
+  .rivalry-card {{{{
     background: #1b1f27;
     border: 1px solid var(--border);
     border-radius: 10px;
     padding: 14px;
     box-shadow: var(--shadow-1);
     transition: transform 0.15s ease, box-shadow 0.15s ease;
-  }}
-  .rivalry-card:hover {{ transform: translateY(-3px); box-shadow: var(--shadow-3); }}
-  .rivalry-meetings {{
+  }}}}
+  .rivalry-card:hover {{{{ transform: translateY(-3px); box-shadow: var(--shadow-3); }}}}
+  .rivalry-meetings {{{{
     color: var(--muted);
     font-size: 11px;
     text-transform: uppercase;
     letter-spacing: 0.5px;
     margin-bottom: 10px;
-  }}
-  .rivalry-matchup {{
+  }}}}
+  .rivalry-matchup {{{{
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 8px;
-  }}
-  .rivalry-team {{ flex: 1; text-align: center; }}
-  .rivalry-team .team-name {{ font-weight: 700; font-size: 13px; }}
-  .rivalry-record {{ color: var(--accent2); font-weight: 700; font-size: 15px; margin: 4px 0 2px 0; }}
-  .rivalry-points {{ color: var(--muted); font-size: 11px; }}
+  }}}}
+  .rivalry-team {{{{ flex: 1; text-align: center; }}}}
+  .rivalry-team .team-name {{{{ font-weight: 700; font-size: 13px; }}}}
+  .rivalry-record {{{{ color: var(--accent2); font-weight: 700; font-size: 15px; margin: 4px 0 2px 0; }}}}
+  .rivalry-points {{{{ color: var(--muted); font-size: 11px; }}}}
 
   /* ---------- Trophy Case ---------- */
-  .trophy-wall {{
+  .trophy-wall {{{{
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
     gap: 14px;
-  }}
-  .trophy-card {{
+  }}}}
+  .trophy-card {{{{
     background: #1b1f27;
     border: 1px solid var(--border);
     border-radius: 10px;
@@ -2463,53 +2463,198 @@ HTML_TEMPLATE = """<!DOCTYPE html>
     text-align: center;
     box-shadow: var(--shadow-1);
     transition: transform 0.15s ease, box-shadow 0.15s ease;
-  }}
-  .trophy-card:hover {{ transform: translateY(-3px); box-shadow: var(--shadow-3); }}
-  .trophy-year {{
+  }}}}
+  .trophy-card:hover {{{{ transform: translateY(-3px); box-shadow: var(--shadow-3); }}}}
+  .trophy-year {{{{
     color: var(--accent);
     font-weight: 800;
     font-size: 13px;
     letter-spacing: 0.5px;
     margin-bottom: 6px;
-  }}
-  .trophy-icon {{ font-size: 26px; margin-bottom: 8px; }}
-  .trophy-card .team-name-main {{ font-size: 14px; }}
-  .trophy-record {{ color: var(--muted); font-size: 12px; margin: 6px 0 4px 0; }}
-  .trophy-score {{ font-weight: 700; font-size: 15px; color: var(--accent2); margin-top: 6px; }}
-  .trophy-vs {{ color: var(--muted); font-size: 11px; margin-top: 4px; }}
+  }}}}
+  .trophy-icon {{{{ font-size: 26px; margin-bottom: 8px; }}}}
+  .trophy-card .team-name-main {{{{ font-size: 14px; }}}}
+  .trophy-record {{{{ color: var(--muted); font-size: 12px; margin: 6px 0 4px 0; }}}}
+  .trophy-score {{{{ font-weight: 700; font-size: 15px; color: var(--accent2); margin-top: 6px; }}}}
+  .trophy-vs {{{{ color: var(--muted); font-size: 11px; margin-top: 4px; }}}}
 
   /* ---------- League Records Book ---------- */
-  .record-grid {{
+  .record-grid {{{{
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
     gap: 14px;
-  }}
-  .record-card {{
+  }}}}
+  .record-card {{{{
     background: #1b1f27;
     border: 1px solid var(--border);
     border-radius: 10px;
     padding: 16px;
     box-shadow: var(--shadow-1);
     transition: transform 0.15s ease, box-shadow 0.15s ease;
-  }}
-  .record-card:hover {{ transform: translateY(-3px); box-shadow: var(--shadow-3); }}
-  .record-label {{
+  }}}}
+  .record-card:hover {{{{ transform: translateY(-3px); box-shadow: var(--shadow-3); }}}}
+  .record-label {{{{
     color: var(--muted);
     font-size: 12px;
     text-transform: uppercase;
     letter-spacing: 0.5px;
     margin-bottom: 8px;
-  }}
-  .record-value {{ font-size: 24px; font-weight: 800; color: var(--text); margin-bottom: 8px; }}
-  .record-unit {{ font-size: 12px; font-weight: 600; color: var(--muted); }}
-  .record-card .team-name-main {{ font-size: 14px; }}
-  .record-context {{ color: var(--muted); font-size: 11.5px; margin-top: 6px; line-height: 1.4; }}
+  }}}}
+  .record-value {{{{ font-size: 24px; font-weight: 800; color: var(--text); margin-bottom: 8px; }}}}
+  .record-unit {{{{ font-size: 12px; font-weight: 600; color: var(--muted); }}}}
+  .record-card .team-name-main {{{{ font-size: 14px; }}}}
+  .record-context {{{{ color: var(--muted); font-size: 11.5px; margin-top: 6px; line-height: 1.4; }}}}
 
   /* ---------- Playoff Picture ---------- */
-  .playoff-grid {{
+  .playoff-grid {{{{
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 20px;
+  }}}}
+
+  /* ---------- Weekly Parlay ---------- */
+  .parlay-alert {{{{
+    padding: 12px 16px;
+    border-radius: 8px;
+    font-size: 13px;
+    margin-top: 10px;
+    border: 1px solid transparent;
+    font-weight: 500;
+  }}}}
+  .parlay-alert.err {{{{ background: rgba(224,82,82,0.12); color: #e05252; border-color: rgba(224,82,82,0.3); }}}}
+  .parlay-alert.info {{{{ background: rgba(61,139,253,0.12); color: #3d8bfd; border-color: rgba(61,139,253,0.3); }}}}
+  .parlay-alert.ok {{{{ background: rgba(47,179,68,0.12); color: #2fb344; border-color: rgba(47,179,68,0.3); }}}}
+  .parlay-week-band {{{{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #1b1f27;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 14px 16px;
+    margin-bottom: 18px;
+  }}}}
+  .pq-week-band-left {{{{ display: flex; align-items: baseline; gap: 14px; }}}}
+  .pq-week-band-title {{{{
+    font-weight: 700;
+    font-size: 15px;
+    color: var(--text);
+  }}}}
+  .pq-week-status {{{{ color: var(--muted); font-size: 12px; }}}}
+  .pq-week-band-stats {{{{
+    display: flex;
+    gap: 24px;
+  }}}}
+  .pq-week-band-stat {{{{
+    text-align: right;
+  }}}}
+  .pwn {{{{ font-size: 16px; font-weight: 700; color: var(--text); }}}}
+  .pwl {{{{ color: var(--muted); font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; }}}}
+  .parlay-card {{{{
+    background: #1b1f27;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 18px;
+    margin-bottom: 20px;
+  }}}}
+  .parlay-week-selector {{{{
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    margin-bottom: 14px;
+    flex-wrap: wrap;
+  }}}}
+  .parlay-week-selector label {{{{
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }}}}
+  .parlay-week-selector input {{{{
+    background: var(--panel);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 6px 10px;
+    border-radius: 5px;
+    font-size: 12px;
+    width: 70px;
+  }}}}
+  .parlay-week-selector input:focus {{{{
+    outline: none;
+    border-color: var(--accent2);
+  }}}}
+  .btn-secondary {{{{
+    background: #1b1f27;
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 8px 14px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.15s ease, border-color 0.15s ease;
+  }}}}
+  .btn-secondary:hover {{{{
+    background: rgba(91,122,153,0.2);
+    border-color: var(--accent2);
+  }}}}
+  .btn-primary {{{{
+    background: var(--accent);
+    border: 1px solid var(--accent);
+    color: #fff;
+    padding: 8px 14px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.15s ease, box-shadow 0.15s ease;
+  }}}}
+  .btn-primary:hover {{{{
+    background: rgba(200,30,58,0.8);
+    box-shadow: 0 2px 8px rgba(200,30,58,0.4);
+  }}}}
+  .parlay-table-wrap {{{{
+    overflow-x: auto;
+    margin: 14px 0;
+  }}}}
+  .parlay-table {{{{
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }}}}
+  .parlay-table th {{{{
+    text-align: left;
+    color: var(--muted);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 8px 10px;
+    border-bottom: 1px solid var(--border);
+    background: #15181e;
+  }}}}
+  .parlay-table td {{{{
+    padding: 8px 10px;
+    border-bottom: 1px solid var(--border);
+  }}}}
+  .parlay-table tr:last-child td {{{{ border-bottom: none; }}}}
+  .parlay-table input, .parlay-table select {{{{
+    background: var(--panel);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 6px 8px;
+    border-radius: 5px;
+    font-size: 12px;
+    width: 100%;
+    max-width: 280px;
+  }}
+  .parlay-table input.pq-row-player {{
+    max-width: 400px;
+  }}
+  .parlay-table input.pq-row-amount {{
+    max-width: 100px;
   }}
 
   /* ---------- Weekly Parlay ---------- */
@@ -2838,8 +2983,8 @@ HTML_TEMPLATE = """<!DOCTYPE html>
     text-transform: uppercase;
     letter-spacing: 0.5px;
     margin: 0 0 10px 0;
-  }}
-  .playoff-row {{
+  }}}}
+  .playoff-row {{{{
     display: grid;
     grid-template-columns: 24px 1fr auto auto auto;
     align-items: center;
@@ -2849,84 +2994,84 @@ HTML_TEMPLATE = """<!DOCTYPE html>
     border-radius: 8px;
     padding: 10px 12px;
     margin-bottom: 8px;
-  }}
-  .playoff-seed {{ color: var(--muted); font-weight: 700; font-size: 13px; }}
-  .playoff-record {{ font-size: 13px; font-weight: 600; white-space: nowrap; }}
-  .playoff-detail {{ color: var(--muted); font-size: 11.5px; white-space: nowrap; }}
-  .playoff-badge {{
+  }}}}
+  .playoff-seed {{{{ color: var(--muted); font-weight: 700; font-size: 13px; }}}}
+  .playoff-record {{{{ font-size: 13px; font-weight: 600; white-space: nowrap; }}}}
+  .playoff-detail {{{{ color: var(--muted); font-size: 11.5px; white-space: nowrap; }}}}
+  .playoff-badge {{{{
     font-size: 11px;
     font-weight: 700;
     padding: 4px 9px;
     border-radius: 20px;
     white-space: nowrap;
-  }}
-  .badge-clinched {{ background: rgba(47,179,68,0.2); color: #2fb344; }}
-  .badge-hunt {{ background: rgba(61,139,253,0.2); color: #3d8bfd; }}
-  .badge-bubble {{ background: rgba(255,159,28,0.2); color: #ff9f1c; }}
-  .badge-eliminated {{ background: rgba(224,82,82,0.2); color: #e05252; }}
+  }}}}
+  .badge-clinched {{{{ background: rgba(47,179,68,0.2); color: #2fb344; }}}}
+  .badge-hunt {{{{ background: rgba(61,139,253,0.2); color: #3d8bfd; }}}}
+  .badge-bubble {{{{ background: rgba(255,159,28,0.2); color: #ff9f1c; }}}}
+  .badge-eliminated {{{{ background: rgba(224,82,82,0.2); color: #e05252; }}}}
 
-  footer {{ color: var(--muted); font-size: 12px; margin-top: 24px; text-align: center; }}
+  footer {{{{ color: var(--muted); font-size: 12px; margin-top: 24px; text-align: center; }}}}
 
   /* ---------- Mobile / small-screen adjustments ---------- */
-  @media (max-width: 640px) {{
-    body {{ padding: 12px; }}
-    h1 {{ font-size: 21px; }}
-    .subtitle {{ font-size: 12px; }}
-    .panel {{ padding: 12px; border-radius: 10px; }}
-    .hero {{ padding: 24px 18px; border-radius: 14px; margin-bottom: 18px; }}
-    .hero-title {{ font-size: 28px; }}
-    .hero-chip {{ font-size: 12px; padding: 5px 11px; }}
+  @media (max-width: 640px) {{{{
+    body {{{{ padding: 12px; }}}}
+    h1 {{{{ font-size: 21px; }}}}
+    .subtitle {{{{ font-size: 12px; }}}}
+    .panel {{{{ padding: 12px; border-radius: 10px; }}}}
+    .hero {{{{ padding: 24px 18px; border-radius: 14px; margin-bottom: 18px; }}}}
+    .hero-title {{{{ font-size: 28px; }}}}
+    .hero-chip {{{{ font-size: 12px; padding: 5px 11px; }}}}
 
     /* Tab bar becomes a single horizontally-scrolling row instead of
        wrapping to multiple lines, which eats a lot of vertical space on
        a phone and is a less familiar pattern than swipeable tabs. */
-    nav {{
+    nav {{{{
       flex-wrap: nowrap;
       overflow-x: auto;
       -webkit-overflow-scrolling: touch;
       scrollbar-width: none;
-    }}
-    nav::-webkit-scrollbar {{ display: none; }}
-    nav button {{
+    }}}}
+    nav::-webkit-scrollbar {{{{ display: none; }}}}
+    nav button {{{{
       padding: 10px 12px;
       font-size: 14px;
       min-height: 44px; /* comfortable touch target */
-    }}
+    }}}}
 
-    table {{ font-size: 12.5px; }}
-    th, td {{ padding: 7px 8px; }}
-    .logo {{ width: 18px; height: 18px; }}
-    .pbar {{ min-width: 64px; gap: 5px; }}
-    .pbar-label {{ font-size: 11px; min-width: 26px; }}
-    .sparkline {{ width: 60px; height: 20px; }}
+    table {{{{ font-size: 12.5px; }}}}
+    th, td {{{{ padding: 7px 8px; }}}}
+    .logo {{{{ width: 18px; height: 18px; }}}}
+    .pbar {{{{ min-width: 64px; gap: 5px; }}}}
+    .pbar-label {{{{ font-size: 11px; min-width: 26px; }}}}
+    .sparkline {{{{ width: 60px; height: 20px; }}}}
 
     /* Card grids: allow a single, full-width column on narrow phones
        instead of the wider desktop minimum, and tighten the gap. */
-    .matchup-list, .report-grid, .rivalry-grid, .trophy-wall, .record-grid {{
+    .matchup-list, .report-grid, .rivalry-grid, .trophy-wall, .record-grid {{{{
       grid-template-columns: 1fr;
       gap: 10px;
-    }}
-    .matchup-team .proj-score {{ font-size: 20px; }}
+    }}}}
+    .matchup-team .proj-score {{{{ font-size: 20px; }}}}
 
-    .playoff-grid {{ grid-template-columns: 1fr; gap: 16px; }}
-    .playoff-row {{
+    .playoff-grid {{{{ grid-template-columns: 1fr; gap: 16px; }}}}
+    .playoff-row {{{{
       grid-template-columns: 20px 1fr;
       grid-template-areas: "seed team" "record record" "detail detail" "badge badge";
       row-gap: 4px;
-    }}
-    .playoff-seed {{ grid-area: seed; }}
-    .playoff-row .team-cell {{ grid-area: team; }}
-    .playoff-record {{ grid-area: record; }}
-    .playoff-detail {{ grid-area: detail; }}
-    .playoff-badge {{ grid-area: badge; justify-self: start; }}
+    }}}}
+    .playoff-seed {{{{ grid-area: seed; }}}}
+    .playoff-row .team-cell {{{{ grid-area: team; }}}}
+    .playoff-record {{{{ grid-area: record; }}}}
+    .playoff-detail {{{{ grid-area: detail; }}}}
+    .playoff-badge {{{{ grid-area: badge; justify-self: start; }}}}
 
-    .subnav {{ gap: 4px; }}
-    .subtab {{ padding: 5px 10px; font-size: 12px; }}
+    .subnav {{{{ gap: 4px; }}}}
+    .subtab {{{{ padding: 5px 10px; font-size: 12px; }}}}
 
-    .draft-board th, .draft-board td {{ min-width: 96px; max-width: 108px; }}
-    .draft-board .draft-cell {{ height: 100px; padding: 8px; }}
-    .grade-badge {{ width: 28px; height: 28px; font-size: 13px; }}
-  }}
+    .draft-board th, .draft-board td {{{{ min-width: 96px; max-width: 108px; }}}}
+    .draft-board .draft-cell {{{{ height: 100px; padding: 8px; }}}}
+    .grade-badge {{{{ width: 28px; height: 28px; font-size: 13px; }}}}
+  }}}}
 </style>
 </head>
 <body>
