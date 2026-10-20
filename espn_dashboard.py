@@ -2649,7 +2649,7 @@ HTML_TEMPLATE = """<!DOCTYPE html>
     font-size: 12px;
     width: 100%;
     max-width: 280px;
-  }}}}
+  }}
   .parlay-table input.pq-row-player {{
     max-width: 400px;
   }}
@@ -2659,7 +2659,7 @@ HTML_TEMPLATE = """<!DOCTYPE html>
   .parlay-table select.pq-row-bet-type {{
     max-width: 160px;
   }}
-  .parlay-table input:focus, .parlay-table select:focus {{{{
+  .parlay-table input:focus, .parlay-table select:focus {{
     outline: none;
     border-color: var(--accent2);
   }}}}
@@ -3098,18 +3098,18 @@ function initializeParlayFirebase() {{
       return [];
     }}
   }}
-  async function pqSaveResults(entries) {
+  async function pqSaveResults(entries) {{
     const batch = pqDb().batch();
-    entries.forEach(function(e) {
+    entries.forEach(function(e) {{
       const id = e.season + '-' + e.week + '-' + pqSlug(e.manager);
-      batch.set(pqDb().collection('nbfflParlayLegs').doc(id), {
+      batch.set(pqDb().collection('nbfflParlayLegs').doc(id), {{
         season: e.season, week: e.week, manager: e.manager, 
         player: e.player, bet_type: e.betType, amount: e.amount, result: e.result,
         updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
-      }, {merge: true});
-    });
+      }}, {{merge: true}});
+    }});
     await batch.commit();
-  }  function pqTeamOptionsHtml(selected) {{
+  }}  function pqTeamOptionsHtml(selected) {{
     const managers = Object.keys(window.MANAGER_ROSTERS || {{}}).sort();
     return '<option value="">Select team...</option>' + managers.map(function(m) {{
       return '<option value="' + escapeHtml(m) + '"' + (m === selected ? ' selected' : '') + '>' + escapeHtml(m) + '</option>';
@@ -3126,7 +3126,7 @@ function initializeParlayFirebase() {{
     else if (resultVal === 'miss') tr.classList.add('pq-row-miss');
     else if (resultVal === 'push') tr.classList.add('pq-row-push');
   }}
-  function pqAddPicksRow(manager, player, betType, amount, result) {
+  function pqAddPicksRow(manager, player, betType, amount, result) {{
     const tbody = document.getElementById('pqPicksBody');
     if (!tbody) return;
     const resultVal = result || 'pending';
@@ -3158,21 +3158,21 @@ function initializeParlayFirebase() {{
     const resultSel = tr.querySelector('.pq-row-result');
     const betTypeSel = tr.querySelector('.pq-row-bet-type');
     const amountInput = tr.querySelector('.pq-row-amount');
-    resultSel.addEventListener('change', function() { pqApplyRowTint(tr, resultSel.value); });
-    tr.querySelector('.pq-row-remove').addEventListener('click', function() { tr.remove(); });
+    resultSel.addEventListener('change', function() {{ pqApplyRowTint(tr, resultSel.value); }});
+    tr.querySelector('.pq-row-remove').addEventListener('click', function() {{ tr.remove(); }});
     
     // Toggle amount field based on bet type
     // For "Anytime TD", amount is not needed
-    function updateAmountVisibility() {
-      if (betTypeSel.value === 'anytime_td') {
+    function updateAmountVisibility() {{
+      if (betTypeSel.value === 'anytime_td') {{
         amountInput.style.display = 'none';
-      } else {
+      }} else {{
         amountInput.style.display = '';
-      }
-    }
+      }}
+    }}
     betTypeSel.addEventListener('change', updateAmountVisibility);
     updateAmountVisibility();
-  }
+  }}
   function pqRenderWeekBand(season, week, filteredLegs) {{
     const titleEl = document.querySelector('#pqWeekBand .pq-week-band-title');
     const statsEl = document.getElementById('pqWeekBandStats');
@@ -3238,31 +3238,31 @@ function initializeParlayFirebase() {{
     }});
     wrap.innerHTML = '<div class="parlay-leaderboard">' + rows.join('') + '</div>';
   }}
-  function pqRenderHistory(allLegs) {
+  function pqRenderHistory(allLegs) {{
     const wrap = document.getElementById('pqWeekly');
     if (!wrap) return;
-    const byWeek = {};
-    allLegs.forEach(function(l) {
+    const byWeek = {{}};
+    allLegs.forEach(function(l) {{
       const key = l.season + '-' + String(l.week).padStart(2, '0');
       if (!byWeek[key]) byWeek[key] = [];
       byWeek[key].push(l);
-    });
+    }});
     const sortedKeys = Object.keys(byWeek).sort().reverse();
-    const slips = sortedKeys.map(function(key) {
+    const slips = sortedKeys.map(function(key) {{
       const legs = byWeek[key];
       const parts = key.split('-');
       const season = parseInt(parts[0], 10);
       const week = parseInt(parts[1], 10);
-      const hits = legs.filter(function(l) { return l.result === 'hit'; }).length;
-      const misses = legs.filter(function(l) { return l.result === 'miss'; }).length;
-      const pushes = legs.filter(function(l) { return l.result === 'push'; }).length;
+      const hits = legs.filter(function(l) {{ return l.result === 'hit'; }}).length;
+      const misses = legs.filter(function(l) {{ return l.result === 'miss'; }}).length;
+      const pushes = legs.filter(function(l) {{ return l.result === 'push'; }}).length;
       let outcome = 'pending';
-      if (hits + misses + pushes > 0) {
+      if (hits + misses + pushes > 0) {{
         if (misses > 0) outcome = 'miss';
         else if (hits > 0 && hits === legs.length) outcome = 'hit';
         else if (pushes === legs.length) outcome = 'push';
-      }
-      const legsHtml = legs.map(function(l) {
+      }}
+      const legsHtml = legs.map(function(l) {{
         const iconData = PQ_ICONS[l.result || 'pending'] || PQ_ICONS.pending;
         const betLabel = BET_TYPES.find(bt => bt.value === l.bet_type)?.label || l.bet_type || 'Custom';
         const amountStr = l.amount ? ' (' + escapeHtml(l.amount) + ')' : '';
@@ -3271,15 +3271,15 @@ function initializeParlayFirebase() {{
           '<div class="parlay-leg-body"><div class="parlay-leg-manager">' + escapeHtml(l.manager) + '</div>' +
           '<div class="parlay-leg-pick">' + escapeHtml(l.player) + ' - ' + escapeHtml(betLabel) + amountStr + '</div></div>' +
         '</div>';
-      }).join('');
+      }}).join('');
       return '<div class="parlay-slip">' +
         '<div class="parlay-slip-head"><div class="parlay-slip-title">Week ' + week + ', ' + season + '</div>' +
         '<div class="parlay-slip-status st-' + outcome + '">' + (outcome.charAt(0).toUpperCase() + outcome.slice(1)) + '</div></div>' +
         '<div>' + legsHtml + '</div>' +
       '</div>';
-    });
+    }});
     wrap.innerHTML = slips.join('');
-  }  function pqRenderHero(allLegs) {{
+  }}  function pqRenderHero(allLegs) {{
     const wrap = document.getElementById('pqHero');
     if (!wrap) return;
     const season = window.PQ_CURRENT_SEASON;
@@ -3296,77 +3296,77 @@ function initializeParlayFirebase() {{
       '<div class="parlay-summary-stat"><div class="psnum">' + totalWeeks + '</div><div class="pslbl">Weeks Tracked</div></div>' +
     '</div>';
   }}
-  async function pqLoadWeek() {
+  async function pqLoadWeek() {{
     currentSeason = parseInt(document.getElementById('pqSeason').value, 10);
     currentWeek = parseInt(document.getElementById('pqWeek').value, 10);
     const tbody = document.getElementById('pqPicksBody');
     if (!tbody) return;
-    if (!currentSeason || !currentWeek) {
+    if (!currentSeason || !currentWeek) {{
       setParlayAlert('pqSaveStatus', 'Enter a season and week first.', 'err');
       return;
-    }
+    }}
     setParlayAlert('pqSaveStatus', 'Loading...', 'info');
-    try {
+    try {{
       const legs = await pqFetchAllLegs();
-      const filtered = legs.filter(function(l) { return Number(l.season) === currentSeason && Number(l.week) === currentWeek; });
+      const filtered = legs.filter(function(l) {{ return Number(l.season) === currentSeason && Number(l.week) === currentWeek; }});
       tbody.innerHTML = '';
-      if (filtered.length) {
-        filtered.forEach(function(l) { 
+      if (filtered.length) {{
+        filtered.forEach(function(l) {{ 
           pqAddPicksRow(l.manager, l.player, l.bet_type, l.amount, l.result); 
-        });
-      } else {
-        Object.keys(window.MANAGER_ROSTERS || {}).sort().forEach(function(m) { 
+        }});
+      }} else {{
+        Object.keys(window.MANAGER_ROSTERS || {{}}).sort().forEach(function(m) {{ 
           pqAddPicksRow(m, '', '', '', 'pending'); 
-        });
-      }
+        }});
+      }}
       setParlayAlert('pqSaveStatus', '', null);
       pqRenderWeekBand(currentSeason, currentWeek, filtered);
       const allLegs = await pqFetchAllLegs();
       pqRenderTeamStats(allLegs);
       pqRenderHistory(allLegs);
       pqRenderHero(allLegs);
-    } catch (err) {
+    }} catch (err) {{
       setParlayAlert('pqSaveStatus', 'Could not load that week.', 'err');
       console.error(err);
-    }
-  }  async function pqSavePicks() {
+    }}
+  }}  async function pqSavePicks() {{
     currentSeason = parseInt(document.getElementById('pqSeason').value, 10);
     currentWeek = parseInt(document.getElementById('pqWeek').value, 10);
-    if (!currentSeason || !currentWeek) {
+    if (!currentSeason || !currentWeek) {{
       setParlayAlert('pqSaveStatus', 'Enter a season and week first.', 'err');
       return;
-    }
+    }}
     const rows = document.querySelectorAll('#pqPicksBody tr');
     const entries = [];
-    rows.forEach(function(tr) {
+    rows.forEach(function(tr) {{
       const manager = tr.querySelector('.pq-row-team').value;
       const player = tr.querySelector('.pq-row-player').value;
       const betType = tr.querySelector('.pq-row-bet-type').value;
       const amount = tr.querySelector('.pq-row-amount').value;
       const result = tr.querySelector('.pq-row-result').value;
-      if (manager && player && betType) {
-        entries.push({season: currentSeason, week: currentWeek, manager: manager, 
-                     player: player, betType: betType, amount: amount, result: result});
-      }
-    });
-    if (!entries.length) {
+      if (manager && player && betType) {{
+        entries.push({{season: currentSeason, week: currentWeek, manager: manager, 
+                     player: player, betType: betType, amount: amount, result: result}});
+      }}
+    }});
+    if (!entries.length) {{
       setParlayAlert('pqSaveStatus', 'Fill in at least one row (team, player, bet type required).', 'err');
       return;
-    }
+    }}
     setParlayAlert('pqSaveStatus', 'Saving...', 'info');
-    try {
+    try {{
       await pqSaveResults(entries);
       setParlayAlert('pqSaveStatus', 'Saved ' + entries.length + ' pick' + (entries.length === 1 ? '' : 's') + ' for Week ' + currentWeek + ', ' + currentSeason + '.', 'ok');
       pqLoadWeek();
-    } catch (err) {
+    }} catch (err) {{
       setParlayAlert('pqSaveStatus', 'Could not save: ' + err.message, 'err');
-    }
-  }  const loadBtn = document.getElementById('pqLoadWeekBtn');
+    }}
+  }}  const loadBtn = document.getElementById('pqLoadWeekBtn');
   const saveBtn = document.getElementById('pqSaveBtn');
   const addRowBtn = document.getElementById('pqAddRowBtn');
   if (loadBtn) loadBtn.addEventListener('click', pqLoadWeek);
   if (saveBtn) saveBtn.addEventListener('click', pqSavePicks);
-  if (addRowBtn) addRowBtn.addEventListener('click', function() { pqAddPicksRow('', '', '', '', 'pending'); });
+  if (addRowBtn) addRowBtn.addEventListener('click', function() {{ pqAddPicksRow('', '', '', '', 'pending'); }});
   if (document.getElementById('pqPicksBody')) {{ pqLoadWeek(); }}
 }}
 
