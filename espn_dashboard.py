@@ -3216,9 +3216,21 @@ document.addEventListener('DOMContentLoaded', () => {{
 // is referenced by the logic below; edit labels/values to match your league.
 const BET_TYPES = [
   {{value: 'anytime_td', label: 'Anytime TD'}},
-  {{value: 'over_yards', label: 'Over Yards'}},
   {{value: 'over_receptions', label: 'Over Receptions'}},
-  {{value: 'over_points', label: 'Over Points'}}
+  {{value: 'over_reception_yards', label: 'Over Reception Yards'}},
+  {{value: 'over_rushing_yards', label: 'Over Rushing Yards'}},
+  {{value: 'over_passing_yards', label: 'Over Passing Yards'}},
+  {{value: 'over_rushes', label: 'Over Rushes'}},
+  {{value: 'over_pass_attempts', label: 'Over Pass Attempts'}},
+  {{value: 'over_passing_tds', label: 'Over Passing Touchdowns'}},
+  {{value: 'over_points', label: 'Over Points'}},
+  {{value: 'under_receptions', label: 'Under Receptions'}},
+  {{value: 'under_reception_yards', label: 'Under Reception Yards'}},
+  {{value: 'under_rushing_yards', label: 'Under Rushing Yards'}},
+  {{value: 'under_passing_yards', label: 'Under Passing Yards'}},
+  {{value: 'under_rushes', label: 'Under Rushes'}},
+  {{value: 'under_pass_attempts', label: 'Under Pass Attempts'}},
+  {{value: 'under_passing_tds', label: 'Under Passing Touchdowns'}}
 ];
 function initializeParlayFirebase() {{
   if (!window.FIREBASE_CONFIG || !window.FIREBASE_CONFIG.projectId || !firebase.apps.length) {{
