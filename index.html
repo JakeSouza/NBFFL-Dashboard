@@ -1101,7 +1101,7 @@
 </style>
 </head>
 <body>
-<div class="ticker"><div class="ticker-track"><span>THE BIG 3 LEADS AT 5-1</span><span>LOVE SHACK ON A 6-GAME LOSING SKID</span><span>WALKERNDA FOREVER TOPS THE POWER RANKINGS</span><span>TRADE: MAKE THAT A** WADDLE ACQUIRES CHASE BROWN FROM THE BIG 3</span><span>DROPPED: EVAN SQUARED - MARK ANDREWS</span><span>FREE AGENT ADD: EVAN SQUARED - TERRANCE FERGUSON</span><span>FREE AGENT ADD: EVAN SQUARED - DEMARIO DOUGLAS</span><span>CANT FIND NICO  WON THE 2025 CHAMPIONSHIP</span><span>RECORD BOOK: LAMARVELOUS 8 PUT UP 243.4 IN WEEK 2, 2022</span><span>THE BIG 3 LEADS AT 5-1</span><span>LOVE SHACK ON A 6-GAME LOSING SKID</span><span>WALKERNDA FOREVER TOPS THE POWER RANKINGS</span><span>TRADE: MAKE THAT A** WADDLE ACQUIRES CHASE BROWN FROM THE BIG 3</span><span>DROPPED: EVAN SQUARED - MARK ANDREWS</span><span>FREE AGENT ADD: EVAN SQUARED - TERRANCE FERGUSON</span><span>FREE AGENT ADD: EVAN SQUARED - DEMARIO DOUGLAS</span><span>CANT FIND NICO  WON THE 2025 CHAMPIONSHIP</span><span>RECORD BOOK: LAMARVELOUS 8 PUT UP 243.4 IN WEEK 2, 2022</span></div></div>
+<div class="ticker"><div class="ticker-track"><span>THE BIG 3 LEADS AT 5-1</span><span>LOVE SHACK ON A 6-GAME LOSING SKID</span><span>WALKERNDA FOREVER TOPS THE POWER RANKINGS</span><span>TRADE: MAKE THAT A** WADDLE ACQUIRES CHASE BROWN FROM THE BIG 3</span><span>DROPPED: COOKIN WITH BIJAN - TYJAE SPEARS</span><span>FREE AGENT ADD: COOKIN WITH BIJAN - TYRONE TRACY JR.</span><span>DROPPED: EVAN SQUARED - MARK ANDREWS</span><span>CANT FIND NICO  WON THE 2025 CHAMPIONSHIP</span><span>RECORD BOOK: LAMARVELOUS 8 PUT UP 243.4 IN WEEK 2, 2022</span><span>THE BIG 3 LEADS AT 5-1</span><span>LOVE SHACK ON A 6-GAME LOSING SKID</span><span>WALKERNDA FOREVER TOPS THE POWER RANKINGS</span><span>TRADE: MAKE THAT A** WADDLE ACQUIRES CHASE BROWN FROM THE BIG 3</span><span>DROPPED: COOKIN WITH BIJAN - TYJAE SPEARS</span><span>FREE AGENT ADD: COOKIN WITH BIJAN - TYRONE TRACY JR.</span><span>DROPPED: EVAN SQUARED - MARK ANDREWS</span><span>CANT FIND NICO  WON THE 2025 CHAMPIONSHIP</span><span>RECORD BOOK: LAMARVELOUS 8 PUT UP 243.4 IN WEEK 2, 2022</span></div></div>
 <header class="hero">
   <div class="hero-glow"></div>
   <div class="hero-content">
@@ -1112,7 +1112,7 @@
       <span class="hero-chip">Week 7</span>
       <span class="hero-chip">10 Teams</span>
       <span class="hero-chip">🏆 The Big 3</span>
-      <span class="hero-chip hero-chip-muted">Updated Oct 21, 2026 11:09 AM</span>
+      <span class="hero-chip hero-chip-muted">Updated Oct 21, 2026 01:33 PM</span>
     </div>
   </div>
 </header>
@@ -2345,6 +2345,18 @@
       <tbody>
         <tr>
           <td>Oct 21, 2026</td>
+          <td>Cookin with Bijan</td>
+          <td class="action">Dropped</td>
+          <td>Tyjae Spears</td>
+        </tr>
+        <tr>
+          <td>Oct 21, 2026</td>
+          <td>Cookin with Bijan</td>
+          <td class="action">Free agent add</td>
+          <td>Tyrone Tracy Jr.</td>
+        </tr>
+        <tr>
+          <td>Oct 21, 2026</td>
           <td>Evan Squared</td>
           <td class="action">Dropped</td>
           <td>Mark Andrews</td>
@@ -2630,18 +2642,6 @@
           <td>Walkernda Forever</td>
           <td class="action">Waiver add</td>
           <td>Chiefs D/ST</td>
-        </tr>
-        <tr>
-          <td>Oct 14, 2026</td>
-          <td>Walkernda Forever</td>
-          <td class="action">Dropped</td>
-          <td>Jacoby Brissett</td>
-        </tr>
-        <tr>
-          <td>Oct 11, 2026</td>
-          <td>DRAKEEEEEE???</td>
-          <td class="action">Free agent add</td>
-          <td>Roman Wilson</td>
         </tr></tbody>
     </table>
 
@@ -4331,9 +4331,21 @@ document.addEventListener('DOMContentLoaded', () => {
 // is referenced by the logic below; edit labels/values to match your league.
 const BET_TYPES = [
   {value: 'anytime_td', label: 'Anytime TD'},
-  {value: 'over_yards', label: 'Over Yards'},
   {value: 'over_receptions', label: 'Over Receptions'},
-  {value: 'over_points', label: 'Over Points'}
+  {value: 'over_reception_yards', label: 'Over Reception Yards'},
+  {value: 'over_rushing_yards', label: 'Over Rushing Yards'},
+  {value: 'over_passing_yards', label: 'Over Passing Yards'},
+  {value: 'over_rushes', label: 'Over Rushes'},
+  {value: 'over_pass_attempts', label: 'Over Pass Attempts'},
+  {value: 'over_passing_tds', label: 'Over Passing Touchdowns'},
+  {value: 'over_points', label: 'Over Points'},
+  {value: 'under_receptions', label: 'Under Receptions'},
+  {value: 'under_reception_yards', label: 'Under Reception Yards'},
+  {value: 'under_rushing_yards', label: 'Under Rushing Yards'},
+  {value: 'under_passing_yards', label: 'Under Passing Yards'},
+  {value: 'under_rushes', label: 'Under Rushes'},
+  {value: 'under_pass_attempts', label: 'Under Pass Attempts'},
+  {value: 'under_passing_tds', label: 'Under Passing Touchdowns'}
 ];
 function initializeParlayFirebase() {
   if (!window.FIREBASE_CONFIG || !window.FIREBASE_CONFIG.projectId || !firebase.apps.length) {
